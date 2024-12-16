@@ -111,7 +111,7 @@ export const tools = [
   },
   {
     title: "Mastermind",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "",
     duration: "Sales Tools",
     category: "Sales Tools",
     url: "https://identity.automotivemastermind.com/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3DprodDashboard%26redirect_uri%3Dhttps%253A%252F%252Fdealer.automotivemastermind.com%252Fauth-callback%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520am.gateway%26state%3D9c7c3969653149fa89ff50d5c926883e%26code_challenge%3D0HpEm88pWxvx4bwyGjCazHAkjIg_W1bia-lF2lcWMp4%26code_challenge_method%3DS256%26response_mode%3Dquery",
@@ -125,7 +125,7 @@ export const tools = [
   },
   {
     title: "Email",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "",
     duration: "Gmail",
     category: "Communication",
     url: "https://mail.google.com/mail/u/0/#inbox",
@@ -142,7 +142,7 @@ export const tools = [
 export const resources = [
   {
     title: "Wire Instructions",
-    image: "https://utfs.io/f/WTe1MV8FTP1yMW72N3qwdDW3yj8ZpN1fxv5sVXhLtaFBTJPn",
+    coverText: "Wire Instructions",
     duration: "Finance",
     category: "Finance",
     component: "WireInstructionsDialog",
@@ -150,7 +150,7 @@ export const resources = [
   },
   {
     title: "EV FAQs",
-    image: "/placeholder.svg?height=200&width=300",
+    coverText: "Electric Vehicle FAQs",
     duration: "Electric Vehicles",
     category: "Product Info",
     component: "EVFAQDialog",
@@ -158,7 +158,7 @@ export const resources = [
   },
   {
     title: "Plug-In Hybrid FAQs",
-    image: "/placeholder.svg?height=200&width=300",
+    coverText: "Plug-In Hybrid FAQs",
     duration: "Hybrid Vehicles",
     category: "Product Info",
     component: "PHEVFAQDialog",
@@ -166,7 +166,7 @@ export const resources = [
   },
   {
     title: "Out Of State Deals",
-    image: "/placeholder.svg?height=200&width=300",
+    coverText: "Out Of State Deals",
     duration: "Sales Process",
     category: "Sales",
     component: "OutOfStateFAQDialog",
@@ -174,7 +174,7 @@ export const resources = [
   },
   {
     title: "Business Applications",
-    image: "/placeholder.svg?height=200&width=300",
+    coverText: "Business Applications",
     duration: "Business Sales",
     category: "Sales",
     component: "BusinessFAQDialog",
@@ -182,7 +182,7 @@ export const resources = [
   },
   {
     title: "3rd Party Payoffs",
-    image: "/placeholder.svg?height=200&width=300",
+    coverText: "3rd Party Payoffs",
     duration: "Finance",
     category: "Finance",
     content: "Information and requirements for 3rd party payoffs.",

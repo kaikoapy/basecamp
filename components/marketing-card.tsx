@@ -35,7 +35,8 @@ import {
 export interface MarketingCardProps {
   id: string;
   title: string;
-  image: string;
+  image?: string;
+  coverText?: string;
   duration: string;
   category: string;
   content?: string;
@@ -66,6 +67,7 @@ export function MarketingCard(props: MarketingCardProps) {
     id,
     title,
     image,
+    coverText,
     duration,
     category,
     slug,
@@ -151,12 +153,23 @@ export function MarketingCard(props: MarketingCardProps) {
       <div className="p-0">
         <div className="relative aspect-video">
           <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0 z-10" />
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover transition-all"
-          />
+          {image ? (
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover transition-all"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 bg-muted flex items-center justify-center p-6 text-center"
+              style={{ fontFamily: "var(--font-poppins)" }}
+            >
+              <h3 className="text-2xl font-semibold text-muted-foreground/70">
+                {coverText || title}
+              </h3>
+            </div>
+          )}
         </div>
         <div className="p-4">
           <div className="flex items-center justify-between mb-2">

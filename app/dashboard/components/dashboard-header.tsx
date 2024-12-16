@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { dealerInfo } from "@/app/data/dealer-info";
 import { cn } from "@/lib/utils";
@@ -66,14 +65,12 @@ export function DashboardHeader({}: DashboardHeaderProps) {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Image
-          src="https://utfs.io/f/WTe1MV8FTP1yrYpOrRHKQvElgKmYat2NTfp9hIdML7Rx8JWP"
-          alt="Volvo Cars North Miami Logo"
-          width={140}
-          height={40}
-          className="object-contain"
-          priority
-        />
+        <h1
+          className="text-xl font-semibold tracking-tight"
+          style={{ fontFamily: "var(--font-poppins)" }}
+        >
+          <span className="text-primary font-semibold">DealerHub</span>
+        </h1>
         <div className="w-[400px]">
           <CommandSearch />
         </div>
