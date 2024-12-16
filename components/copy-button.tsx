@@ -15,12 +15,14 @@ interface CopyButtonProps {
   value: string;
   className?: string;
   iconSize?: number;
+  tooltipText?: string;
 }
 
 export function CopyButton({
   value,
   className,
   iconSize = 14,
+  tooltipText = "link",
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
 
@@ -45,7 +47,7 @@ export function CopyButton({
             size="icon"
             className={cn("h-7 w-7 disabled:opacity-100", className)}
             onClick={handleCopy}
-            aria-label={copied ? "Copied" : "Copy link to clipboard"}
+            aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
             disabled={copied}
           >
             <div
@@ -72,7 +74,7 @@ export function CopyButton({
           </Button>
         </TooltipTrigger>
         <TooltipContent className="px-2 py-1 text-xs">
-          {copied ? "Copied!" : "Copy link to clipboard"}
+          {copied ? "Copied!" : `Copy ${tooltipText} to clipboard`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

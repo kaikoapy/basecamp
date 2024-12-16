@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { usePin } from "@/app/providers/pin-provider";
 import { WireInstructionsDialog } from "@/components/wire-instructions-dialog";
 import { CopyButton } from "@/components/copy-button";
+import { AffinityMenu } from "@/components/affinity-menu";
 
 interface MarketingCardProps {
   id: string;
@@ -68,6 +69,8 @@ export function MarketingCard({
     (new Date().getTime() - postedAt.getTime()) / (1000 * 60 * 60) <= 48;
   const isAnnouncement = category.toLowerCase() === "announcement";
   const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const isAffinitySearch = title === "Affinity Search";
 
   const handleCardClick = () => {
     if (isModal) {
@@ -140,7 +143,9 @@ export function MarketingCard({
           <div className="flex items-center justify-between mb-2">
             <Badge variant="secondary">{category}</Badge>
             <div className="flex items-center gap-2">
-              {url ? (
+              {isAffinitySearch ? (
+                <AffinityMenu />
+              ) : url ? (
                 <div className="flex gap-2">
                   <CopyButton value={url} />
                   <TooltipProvider delayDuration={0}>
@@ -206,6 +211,10 @@ export function MarketingCard({
         </DialogContent>
       </Dialog>
     );
+  }
+
+  if (isAffinitySearch) {
+    return renderCard;
   }
 
   if (url) {

@@ -54,7 +54,7 @@ const navigationItems: NavProject[] = [
 // This is sample data.
 const data = {
   user: {
-    name: "Serdar",
+    name: "Serdar Dosemecioglu",
     email: "serdar@volvocarsnorthmiami.com",
     avatar: "/avatars/shadcn.jpg",
   },
