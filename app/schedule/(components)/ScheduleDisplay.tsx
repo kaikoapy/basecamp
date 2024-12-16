@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { generateMonthlySchedule, DaySchedule } from "../lib/scheduling";
 import { ScheduleInfoDialog } from "./ScheduleInfoDialog";
+import { ZoomIn, ZoomOut } from "lucide-react";
 
 interface DateState {
   year: number;
@@ -9,12 +10,11 @@ interface DateState {
 }
 
 export default function ScheduleDisplay() {
-  // Use simple numbers instead of Date object for initial state
   const [currentDate, setCurrentDate] = useState<DateState | null>(null);
   const [data, setData] = useState<DaySchedule[]>([]);
+  const [zoom, setZoom] = useState(1); // 1 is default, < 1 is zoomed out, > 1 is zoomed in
 
   useEffect(() => {
-    // Set initial date state using simple numbers
     const now = new Date();
     setCurrentDate({
       year: now.getFullYear(),
@@ -56,10 +56,7 @@ export default function ScheduleDisplay() {
       const newMonth = currentDate.month === 11 ? 0 : currentDate.month + 1;
       const newYear =
         currentDate.month === 11 ? currentDate.year + 1 : currentDate.year;
-      setCurrentDate({
-        year: newYear,
-        month: newMonth,
-      });
+      setCurrentDate({ year: newYear, month: newMonth });
     }
   };
 
@@ -68,19 +65,19 @@ export default function ScheduleDisplay() {
       const newMonth = currentDate.month === 0 ? 11 : currentDate.month - 1;
       const newYear =
         currentDate.month === 0 ? currentDate.year - 1 : currentDate.year;
-      setCurrentDate({
-        year: newYear,
-        month: newMonth,
-      });
+      setCurrentDate({ year: newYear, month: newMonth });
     }
   };
+
+  const zoomIn = () => setZoom((prev) => Math.min(prev + 0.2, 2));
+  const zoomOut = () => setZoom((prev) => Math.max(prev - 0.2, 0.5));
 
   if (!currentDate) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
+    <div className="h-screen p-4 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={goToPreviousMonth}
@@ -88,11 +85,27 @@ export default function ScheduleDisplay() {
         >
           Previous Month
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold">
             {monthNames[currentDate.month]} Schedule
           </h1>
           <ScheduleInfoDialog />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={zoomOut}
+              className="p-1.5 hover:bg-gray-100 rounded-lg"
+              title="Zoom Out"
+            >
+              <ZoomOut className="h-5 w-5" />
+            </button>
+            <button
+              onClick={zoomIn}
+              className="p-1.5 hover:bg-gray-100 rounded-lg"
+              title="Zoom In"
+            >
+              <ZoomIn className="h-5 w-5" />
+            </button>
+          </div>
         </div>
         <button
           onClick={goToNextMonth}
@@ -101,157 +114,236 @@ export default function ScheduleDisplay() {
           Next Month
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-4">
-        {data.map((day, idx) => {
-          const d = day.date;
-          const dayOfMonth = d.getDate();
 
-          // Base classes for the cell
-          let cellClasses = "border p-2 rounded-lg";
-          if (day.isNextMonth) {
-            cellClasses += " bg-purple-50"; // Highlight days from next month
-          }
-          if (day.isPrevMonth) {
-            cellClasses += " bg-gray-50"; // Highlight days from previous month
-          }
-          if (day.isEffectiveLastDay) {
-            cellClasses += " border-2 border-purple-500"; // Highlight effective last day
-          }
+      <div className="flex-1 overflow-auto min-h-0">
+        <div
+          className="grid grid-cols-7 gap-2 h-full"
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: "top center",
+            height: `${100 / zoom}%`,
+          }}
+        >
+          {data.map((day, idx) => {
+            const d = day.date;
+            const dayOfMonth = d.getDate();
+            const today = new Date();
+            const isToday =
+              d.getDate() === today.getDate() &&
+              d.getMonth() === today.getMonth() &&
+              d.getFullYear() === today.getFullYear();
+            const isPastDay = d < new Date(today.setHours(0, 0, 0, 0));
 
-          // If it's a closed holiday
-          if (
-            day.holiday &&
-            day.open.length === 0 &&
-            day.mid.length === 0 &&
-            day.close.length === 0
-          ) {
-            return (
-              <div
-                key={idx}
-                className={`${cellClasses} bg-red-100 border-red-300 flex flex-col items-center justify-center min-h-[300px] text-center p-4`}
-              >
-                <div className="font-bold text-lg mb-4">
-                  {
-                    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
-                      day.weekday
-                    ]
-                  }{" "}
+            // Base classes for the cell
+            let cellClasses = "border p-2 rounded-lg text-sm relative";
+            if (day.isNextMonth) {
+              cellClasses += " bg-purple-50"; // Highlight days from next month
+            }
+            if (day.isPrevMonth) {
+              cellClasses += " bg-gray-50"; // Highlight days from previous month
+            }
+            if (day.isEffectiveLastDay) {
+              cellClasses += " border-2 border-purple-500"; // Highlight effective last day
+            }
+            if (isToday) {
+              cellClasses += " border-2 border-blue-500"; // Highlight current day
+            }
+
+            // Add overlay for past days with darker background
+            const pastDayOverlay = isPastDay ? (
+              <div className="absolute inset-0 bg-gray-600/30 rounded-lg pointer-events-none" />
+            ) : null;
+
+            // If it's a closed holiday
+            if (
+              day.holiday &&
+              day.open.length === 0 &&
+              day.mid.length === 0 &&
+              day.close.length === 0
+            ) {
+              return (
+                <div
+                  key={idx}
+                  className={`${cellClasses} bg-red-100 border-red-300 flex flex-col items-center justify-center text-center`}
+                >
+                  {pastDayOverlay}
+                  <div className="font-bold mb-1">
+                    {
+                      ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+                        day.weekday
+                      ]
+                    }{" "}
+                    {dayOfMonth}
+                  </div>
+                  <div className="font-bold text-red-600">
+                    {day.holiday === "New Year's Day" && "🎉 Happy New Year!"}
+                    {day.holiday === "Christmas" && "🎄 Merry Christmas!"}
+                    {day.holiday === "Thanksgiving" && "�� Happy Thanksgiving!"}
+                  </div>
+                  <div className="text-red-600 font-semibold">Closed</div>
+                </div>
+              );
+            }
+
+            // Function to render the header with indicators
+            const renderDateHeader = () => (
+              <div className="font-bold flex items-center justify-between gap-1">
+                <span>
+                  {day.weekday === 0
+                    ? "Sun"
+                    : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+                        day.weekday
+                      ]}{" "}
                   {dayOfMonth}
-                </div>
-                <div className="text-3xl font-bold text-red-600 mb-4">
-                  {day.holiday === "New Year's Day" && "🎉 Happy New Year! 🎊"}
-                  {day.holiday === "Christmas" && "🎄 Merry Christmas! 🎅"}
-                  {day.holiday === "Thanksgiving" &&
-                    "🦃 Happy Thanksgiving! 🍁"}
-                </div>
-                <div className="text-red-600 font-semibold text-xl border-t border-b border-red-300 py-3 px-6 mb-2">
-                  Dealership Closed
-                </div>
-                <div className="text-red-500">
-                  In Observance of {day.holiday}
-                </div>
-              </div>
-            );
-          }
-
-          // Sunday schedule
-          if (day.weekday === 0) {
-            return (
-              <div key={idx} className={cellClasses}>
-                <div className="font-bold mb-2">
-                  Sun {dayOfMonth}
-                  {day.isNextMonth && (
-                    <span className="text-purple-600 ml-1"></span>
+                </span>
+                <div className="flex gap-1">
+                  {isToday && (
+                    <span className="text-blue-600 text-xs px-1.5 py-0.5 bg-blue-50 rounded-full">
+                      Today
+                    </span>
                   )}
                   {day.holiday && (
-                    <div className="text-red-600 text-sm">{day.holiday}</div>
+                    <span className="text-red-600 text-xs px-1.5 py-0.5 bg-red-50 rounded-full">
+                      {day.holiday}
+                    </span>
                   )}
                   {day.isEffectiveLastDay && (
-                    <div className="text-purple-600 text-sm">Final Day</div>
+                    <span className="text-purple-600 text-xs px-1.5 py-0.5 bg-purple-50 rounded-full">
+                      Final Day
+                    </span>
                   )}
-                </div>
-                <div className="font-medium text-blue-800 mb-1">
-                  Sunday Shift (12pm-5pm):
-                </div>
-                <div className="bg-blue-100 p-2 rounded-md mb-2">
-                  {day.sundayShift?.map((name) => (
-                    <div key={name} className="text-blue-800">
-                      {name}
-                    </div>
-                  ))}
-                </div>
-                <div className="font-medium text-gray-600 mb-1">Off:</div>
-                <div className="bg-gray-100 p-2 rounded-md">
-                  {day.offList.map((name) => (
-                    <div key={name} className="text-gray-700">
-                      {name}
-                    </div>
-                  ))}
                 </div>
               </div>
             );
-          }
 
-          // Mon-Sat schedule
-          return (
-            <div key={idx} className={cellClasses}>
-              <div className="font-bold mb-2">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day.weekday]}{" "}
-                {dayOfMonth}
-                {day.isNextMonth && (
-                  <span className="text-purple-600 ml-1"></span>
-                )}
-                {day.holiday && (
-                  <div className="text-red-600 text-sm">{day.holiday}</div>
-                )}
-                {day.isEffectiveLastDay && (
-                  <div className="text-purple-600 text-sm">Final Day</div>
-                )}
-              </div>
-              <div className="font-medium text-yellow-700 mb-1">
-                Open (8:30am-5:30pm):
-              </div>
-              <div className="bg-yellow-100 p-2 rounded-md mb-2">
-                {day.open.map((name) => (
-                  <div key={name} className="text-yellow-700">
-                    {name}
+            // Sunday schedule
+            if (day.weekday === 0) {
+              return (
+                <div key={idx} className={cellClasses}>
+                  {pastDayOverlay}
+                  {renderDateHeader()}
+                  <div className="font-medium text-gray-900 text-xs">
+                    Sunday (12pm-5pm):
                   </div>
-                ))}
-              </div>
+                  <div className="bg-blue-100 p-1 rounded-md text-xs mb-1">
+                    <div className="flex flex-wrap gap-1">
+                      {day.sundayShift?.map((name) => (
+                        <div key={name} className="text-gray-900">
+                          {name}
+                          {day.sundayShift &&
+                          day.sundayShift.indexOf(name) <
+                            day.sundayShift.length - 1
+                            ? ","
+                            : ""}
+                          &nbsp;
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="font-medium text-gray-900 text-xs">Off:</div>
+                  <div className="bg-gray-100 p-1 rounded-md text-xs">
+                    <div className="flex flex-wrap gap-1">
+                      {day.offList.map((name) => (
+                        <div key={name} className="text-gray-900">
+                          {name}
+                          {day.offList.indexOf(name) < day.offList.length - 1
+                            ? ","
+                            : ""}
+                          &nbsp;
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
 
-              <div className="font-medium text-green-700 mb-1">
-                Mid (9am-6pm):
-              </div>
-              <div className="bg-green-100 p-2 rounded-md mb-2">
-                {day.mid.map((name) => (
-                  <div key={name} className="text-green-700">
-                    {name}
+            // Mon-Sat schedule
+            return (
+              <div key={idx} className={cellClasses}>
+                {pastDayOverlay}
+                {renderDateHeader()}
+                <div className="space-y-1">
+                  <div>
+                    <div className="font-medium text-gray-900 text-xs">
+                      Open (8:30am-5:30pm):
+                    </div>
+                    <div className="bg-yellow-100 p-1 rounded-md text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {day.open.map((name) => (
+                          <div key={name} className="text-gray-900">
+                            {name}
+                            {day.open.indexOf(name) < day.open.length - 1
+                              ? ","
+                              : ""}
+                            &nbsp;
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              <div className="font-medium text-blue-700 mb-1">
-                Close ({getCloseTime(day.weekday)}):
-              </div>
-              <div className="bg-blue-100 p-2 rounded-md mb-2">
-                {day.close.map((name) => (
-                  <div key={name} className="text-blue-700">
-                    {name}
+                  <div>
+                    <div className="font-medium text-gray-900 text-xs">
+                      Mid (9am-6pm):
+                    </div>
+                    <div className="bg-green-100 p-1 rounded-md text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {day.mid.map((name) => (
+                          <div key={name} className="text-gray-900">
+                            {name}
+                            {day.mid.indexOf(name) < day.mid.length - 1
+                              ? ","
+                              : ""}
+                            &nbsp;
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              <div className="font-medium text-gray-600 mb-1">Off:</div>
-              <div className="bg-gray-100 p-2 rounded-md">
-                {day.offList.map((name) => (
-                  <div key={name} className="text-gray-700">
-                    {name}
+                  <div>
+                    <div className="font-medium text-gray-900 text-xs">
+                      Close ({getCloseTime(day.weekday)}):
+                    </div>
+                    <div className="bg-blue-100 p-1 rounded-md text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {day.close.map((name) => (
+                          <div key={name} className="text-gray-900">
+                            {name}
+                            {day.close.indexOf(name) < day.close.length - 1
+                              ? ","
+                              : ""}
+                            &nbsp;
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                ))}
+
+                  <div>
+                    <div className="font-medium text-gray-900 text-xs">
+                      Off:
+                    </div>
+                    <div className="bg-gray-100 p-1 rounded-md text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {day.offList.map((name) => (
+                          <div key={name} className="text-gray-900">
+                            {name}
+                            {day.offList.indexOf(name) < day.offList.length - 1
+                              ? ","
+                              : ""}
+                            &nbsp;
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
