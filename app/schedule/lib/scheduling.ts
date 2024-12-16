@@ -335,7 +335,31 @@ export function generateMonthlySchedule(
             !daySchedule.forcedOpener.includes(name) &&
             !daySchedule.forcedCloser.includes(name)
         );
-        daySchedule.open.push(...availableForOpen.slice(0, remainingOpenSlots));
+
+        // Special handling for Friday openers to prevent same person opening Saturday
+        if (daySchedule.weekday === 5 && nextDay && nextDay.weekday === 6) {
+          // Filter out people who will be working Saturday and aren't off
+          const availableForFriday = availableForOpen.filter(
+            (name) => !nextDay.offList.includes(name)
+          );
+          daySchedule.open.push(
+            ...availableForFriday.slice(0, remainingOpenSlots)
+          );
+        } else if (daySchedule.weekday === 6) {
+          // For Saturday, filter out people who opened on Friday
+          const prevDay = schedule[i - 1];
+          const availableForSaturday = availableForOpen.filter(
+            (name) => !prevDay.open.includes(name)
+          );
+          daySchedule.open.push(
+            ...availableForSaturday.slice(0, remainingOpenSlots)
+          );
+        } else {
+          // Normal day distribution
+          daySchedule.open.push(
+            ...availableForOpen.slice(0, remainingOpenSlots)
+          );
+        }
       }
 
       // Get remaining employees to distribute (not openers)
@@ -371,34 +395,6 @@ export function generateMonthlySchedule(
         daySchedule.close = [...daySchedule.forcedCloser, ...additionalClosers];
       } else {
         daySchedule.close = daySchedule.forcedCloser;
-      }
-
-      // Handle Friday-Saturday opening shift swap
-      if (daySchedule.weekday === 5 && nextDay && nextDay.weekday === 6) {
-        // Check if anyone is opening both Friday and Saturday
-        const fridayOpeners = daySchedule.open;
-        const saturdayOpeners = nextDay.open;
-
-        for (const opener of fridayOpeners) {
-          if (saturdayOpeners.includes(opener)) {
-            // Find someone from mid shift to swap with
-            const availableForSwap = daySchedule.mid.filter(
-              (name) =>
-                !nextDay.offList.includes(name) &&
-                !nextDay.forcedCloser.includes(name)
-            );
-
-            if (availableForSwap.length > 0) {
-              // Swap the person opening both days with someone from mid shift for Saturday
-              const swapPerson = availableForSwap[0];
-              const openerIndex = nextDay.open.indexOf(opener);
-
-              // Perform the swap for Saturday
-              nextDay.open[openerIndex] = swapPerson;
-              nextDay.mid.push(opener);
-            }
-          }
-        }
       }
     }
   }
