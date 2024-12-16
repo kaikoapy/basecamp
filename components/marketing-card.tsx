@@ -25,19 +25,25 @@ import { usePin } from "@/app/providers/pin-provider";
 import { WireInstructionsDialog } from "@/components/wire-instructions-dialog";
 import { CopyButton } from "@/components/copy-button";
 import { AffinityMenu } from "@/components/affinity-menu";
+import {
+  EVFAQDialog,
+  PHEVFAQDialog,
+  OutOfStateFAQDialog,
+  BusinessFAQDialog,
+} from "@/components/dialogs";
 
-interface MarketingCardProps {
+export interface MarketingCardProps {
   id: string;
   title: string;
   image: string;
   duration: string;
   category: string;
-  slug?: string;
   content?: string;
+  url?: string;
   component?: string;
   isModal?: boolean;
   pinned?: boolean;
-  url?: string;
+  slug?: string;
   postedAt?: Date;
 }
 
@@ -48,20 +54,29 @@ const DialogComponents: Record<
   WireInstructionsDialog,
 };
 
-export function MarketingCard({
-  id,
-  title,
-  image,
-  duration,
-  category,
-  slug,
-  content,
-  component,
-  isModal = false,
-  pinned: defaultPinned = false,
-  url,
-  postedAt,
-}: MarketingCardProps) {
+const MODAL_COMPONENTS = {
+  EVFAQDialog,
+  PHEVFAQDialog,
+  OutOfStateFAQDialog,
+  BusinessFAQDialog,
+};
+
+export function MarketingCard(props: MarketingCardProps) {
+  const {
+    id,
+    title,
+    image,
+    duration,
+    category,
+    slug,
+    content,
+    component,
+    isModal = false,
+    pinned: defaultPinned = false,
+    url,
+    postedAt,
+  } = props;
+
   const { pinnedItems, togglePin } = usePin();
   const isPinned = defaultPinned || pinnedItems.has(id);
   const isNew =
@@ -86,6 +101,14 @@ export function MarketingCard({
     }
   };
 
+  const handlePinToggle = (e: React.MouseEvent, itemId?: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (itemId) {
+      togglePin(itemId);
+    }
+  };
+
   const renderCard = (
     <Card className="overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] relative group">
       <div className="absolute top-2 right-2 flex gap-2 z-20">
@@ -100,11 +123,7 @@ export function MarketingCard({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  togglePin(id);
-                }}
+                onClick={(e) => handlePinToggle(e, id)}
                 className={cn(
                   "absolute top-2 right-2 z-30 transition-all hover:scale-110",
                   !isPinned && "hidden group-hover:block"
@@ -184,6 +203,28 @@ export function MarketingCard({
       </div>
     </Card>
   );
+
+  if (
+    isModal &&
+    component &&
+    MODAL_COMPONENTS[component as keyof typeof MODAL_COMPONENTS]
+  ) {
+    const ModalComponent =
+      MODAL_COMPONENTS[component as keyof typeof MODAL_COMPONENTS];
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="cursor-pointer">{renderCard}</div>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+          <ModalComponent />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   if (isModal) {
     if (component && DialogComponents[component]) {

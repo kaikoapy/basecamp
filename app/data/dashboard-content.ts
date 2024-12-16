@@ -153,8 +153,7 @@ export const resources = [
     image: "/placeholder.svg?height=200&width=300",
     duration: "Electric Vehicles",
     category: "Product Info",
-    content:
-      "Frequently asked questions about Volvo's electric vehicles, charging, range, and maintenance.",
+    component: "EVFAQDialog",
     isModal: true,
   },
   {
@@ -162,8 +161,7 @@ export const resources = [
     image: "/placeholder.svg?height=200&width=300",
     duration: "Hybrid Vehicles",
     category: "Product Info",
-    content:
-      "Common questions about Volvo's plug-in hybrid vehicles, charging, fuel efficiency, and operation.",
+    component: "PHEVFAQDialog",
     isModal: true,
   },
   {
@@ -171,8 +169,7 @@ export const resources = [
     image: "/placeholder.svg?height=200&width=300",
     duration: "Sales Process",
     category: "Sales",
-    content:
-      "Guidelines and procedures for handling out-of-state vehicle sales and deliveries.",
+    component: "OutOfStateFAQDialog",
     isModal: true,
   },
   {
@@ -180,8 +177,7 @@ export const resources = [
     image: "/placeholder.svg?height=200&width=300",
     duration: "Business Sales",
     category: "Sales",
-    content:
-      "Information and requirements for business and fleet vehicle purchases.",
+    component: "BusinessFAQDialog",
     isModal: true,
   },
   {

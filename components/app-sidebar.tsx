@@ -4,11 +4,9 @@ import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
   Command,
   GalleryVerticalEnd,
   Settings2,
-  SquareTerminal,
   Bookmark,
   Wrench,
   FileText,
@@ -77,63 +75,63 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Sales",
       url: "#",
-      icon: SquareTerminal,
+      icon: Tag,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "New Inventory",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Used Inventory",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Deal Manager",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Service",
       url: "#",
-      icon: Bot,
+      icon: Wrench,
       items: [
         {
-          title: "Genesis",
+          title: "Appointments",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Work Orders",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Parts Orders",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Resources",
       url: "#",
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "Training",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Product Info",
           url: "#",
         },
         {
-          title: "Tutorials",
+          title: "Marketing",
           url: "#",
         },
         {
-          title: "Changelog",
+          title: "Updates",
           url: "#",
         },
       ],
@@ -144,19 +142,19 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Profile",
           url: "#",
         },
         {
-          title: "Team",
+          title: "Preferences",
           url: "#",
         },
         {
-          title: "Billing",
+          title: "Notifications",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "Security",
           url: "#",
         },
       ],
