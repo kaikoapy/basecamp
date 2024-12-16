@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -24,27 +23,21 @@ export function OpenLinkButton({ url }: OpenLinkButtonProps) {
   };
 
   return (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-7 w-7"
-            onClick={handleOpenLink}
-            aria-label="Open in new tab"
-          >
-            <SquareArrowOutUpRight
-              size={14}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="px-2 py-1 text-xs">
-          Open in new tab
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleOpenLink}
+          aria-label="Open in new tab"
+        >
+          <SquareArrowOutUpRight size={14} strokeWidth={2} aria-hidden="true" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className="px-2 py-1 text-xs">
+        Open in new tab
+      </TooltipContent>
+    </Tooltip>
   );
 }

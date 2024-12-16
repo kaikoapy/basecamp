@@ -53,18 +53,17 @@ export function NavHeader({}: NavHeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b sticky top-0 bg-background z-50">
       <div className="flex items-center gap-4">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <SidebarTrigger className="-ml-1" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Toggle Sidebar</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <SidebarTrigger className="-ml-1" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Toggle Sidebar</p>
+          </TooltipContent>
+        </Tooltip>
+
         <Link href="/dashboard">
           <h1
             className="text-xl font-semibold tracking-tight"
@@ -118,38 +117,37 @@ export function NavHeader({}: NavHeaderProps) {
                       <MapPin className="mr-2 h-4 w-4" />
                       Address
                     </div>
-                    <TooltipProvider delayDuration={0}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() =>
-                              handleCopy(dealerInfo.address, "address")
-                            }
-                            className="ml-6 flex items-center gap-1.5 w-full text-left"
+
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() =>
+                            handleCopy(dealerInfo.address, "address")
+                          }
+                          className="ml-6 flex items-center gap-1.5 w-full text-left"
+                        >
+                          <span
+                            className={cn(
+                              "text-sm text-muted-foreground transition-colors",
+                              copiedAddress && "text-emerald-500"
+                            )}
                           >
-                            <span
-                              className={cn(
-                                "text-sm text-muted-foreground transition-colors",
-                                copiedAddress && "text-emerald-500"
-                              )}
-                            >
-                              {dealerInfo.address}
-                            </span>
-                            <Check
-                              className={cn(
-                                "h-3.5 w-3.5 text-emerald-500 transition-all shrink-0",
-                                copiedAddress
-                                  ? "opacity-100 scale-100"
-                                  : "opacity-0 scale-0"
-                              )}
-                            />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{copiedAddress ? "Copied!" : "Click to copy"}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            {dealerInfo.address}
+                          </span>
+                          <Check
+                            className={cn(
+                              "h-3.5 w-3.5 text-emerald-500 transition-all shrink-0",
+                              copiedAddress
+                                ? "opacity-100 scale-100"
+                                : "opacity-0 scale-0"
+                            )}
+                          />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{copiedAddress ? "Copied!" : "Click to copy"}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -158,41 +156,40 @@ export function NavHeader({}: NavHeaderProps) {
                     <DropdownMenuGroup>
                       <DropdownMenuLabel className="flex items-center justify-between">
                         <span>{dept.name}</span>
-                        <TooltipProvider delayDuration={0}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                onClick={() => handleCopy(dept.phone, "phone")}
-                                className="flex items-center gap-1.5"
+
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => handleCopy(dept.phone, "phone")}
+                              className="flex items-center gap-1.5"
+                            >
+                              <span
+                                className={cn(
+                                  "text-xs text-muted-foreground transition-colors",
+                                  copiedPhone === dept.phone &&
+                                    "text-emerald-500"
+                                )}
                               >
-                                <span
-                                  className={cn(
-                                    "text-xs text-muted-foreground transition-colors",
-                                    copiedPhone === dept.phone &&
-                                      "text-emerald-500"
-                                  )}
-                                >
-                                  {dept.phone}
-                                </span>
-                                <Check
-                                  className={cn(
-                                    "h-3 w-3 text-emerald-500 transition-all",
-                                    copiedPhone === dept.phone
-                                      ? "opacity-100 scale-100"
-                                      : "opacity-0 scale-0"
-                                  )}
-                                />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                {copiedPhone === dept.phone
-                                  ? "Copied!"
-                                  : "Click to copy"}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                                {dept.phone}
+                              </span>
+                              <Check
+                                className={cn(
+                                  "h-3 w-3 text-emerald-500 transition-all",
+                                  copiedPhone === dept.phone
+                                    ? "opacity-100 scale-100"
+                                    : "opacity-0 scale-0"
+                                )}
+                              />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {copiedPhone === dept.phone
+                                ? "Copied!"
+                                : "Click to copy"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
                       </DropdownMenuLabel>
                       <div className="px-2 py-1.5 text-sm">
                         <div className="flex items-start gap-2">

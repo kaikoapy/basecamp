@@ -17,7 +17,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -121,34 +120,32 @@ export function MarketingCard(props: MarketingCardProps) {
         )}
       </div>
       {!isAnnouncement && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={(e) => handlePinToggle(e, id)}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={(e) => handlePinToggle(e, id)}
+              className={cn(
+                "absolute top-2 right-2 z-30 transition-all hover:scale-110",
+                !isPinned && "hidden group-hover:block"
+              )}
+              aria-label={isPinned ? "Unpin" : "Pin"}
+            >
+              <div
                 className={cn(
-                  "absolute top-2 right-2 z-30 transition-all hover:scale-110",
-                  !isPinned && "hidden group-hover:block"
+                  "w-7 h-7 rounded-full flex items-center justify-center shadow-sm transition-all",
+                  isPinned ? "bg-white" : "bg-gray-200"
                 )}
-                aria-label={isPinned ? "Unpin" : "Pin"}
               >
-                <div
-                  className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center shadow-sm transition-all",
-                    isPinned ? "bg-white" : "bg-gray-200"
-                  )}
-                >
-                  <span className="text-lg">📌</span>
-                </div>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                {isPinned ? "Remove from Quick Access" : "Add to Quick Access"}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+                <span className="text-lg">📌</span>
+              </div>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              {isPinned ? "Remove from Quick Access" : "Add to Quick Access"}
+            </p>
+          </TooltipContent>
+        </Tooltip>
       )}
       <div className="p-0">
         <div className="relative aspect-video">
@@ -180,28 +177,27 @@ export function MarketingCard(props: MarketingCardProps) {
               ) : url ? (
                 <div className="flex gap-2">
                   <CopyButton value={url} />
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={handleOpenLink}
-                          aria-label="Open in new tab"
-                        >
-                          <SquareArrowOutUpRight
-                            size={14}
-                            strokeWidth={2}
-                            aria-hidden="true"
-                          />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="px-2 py-1 text-xs">
-                        Open in new tab
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={handleOpenLink}
+                        aria-label="Open in new tab"
+                      >
+                        <SquareArrowOutUpRight
+                          size={14}
+                          strokeWidth={2}
+                          aria-hidden="true"
+                        />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="px-2 py-1 text-xs">
+                      Open in new tab
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               ) : (
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
