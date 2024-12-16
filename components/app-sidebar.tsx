@@ -54,25 +54,25 @@ const navigationItems: NavProject[] = [
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Serdar",
+    email: "serdar@volvocarsnorthmiami.com",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Sales",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Volvo Cars North Miami",
     },
     {
-      name: "Acme Corp.",
+      name: "Service",
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: "Volvo Cars North Miami",
     },
     {
-      name: "Evil Corp.",
+      name: "Accounting",
       logo: Command,
-      plan: "Free",
+      plan: "Volvo Cars North Miami",
     },
   ],
   navMain: [

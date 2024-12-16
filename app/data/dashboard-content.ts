@@ -1,6 +1,6 @@
 export const announcements = [
   {
-    title: "Welcome to Volvo Cars North Miami",
+    title: "Lease Return Rules - Reminder",
     image: "https://utfs.io/f/WTe1MV8FTP1yn5ZhGujPNfrkaCj6DHG1w3QYJsuBbXyl5dMR",
     duration: "2 min read",
     category: "Announcement",
@@ -55,7 +55,7 @@ export const tools = [
   },
   {
     title: "Costco Auto",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://utfs.io/f/WTe1MV8FTP1yzbm1QT0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
     duration: "Member Program",
     category: "Incentives",
     url: "https://www.costcoauto.com/enterzipcode.aspx?gotourl=%2f",
@@ -142,11 +142,10 @@ export const tools = [
 export const resources = [
   {
     title: "Wire Instructions",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://utfs.io/f/WTe1MV8FTP1yMW72N3qwdDW3yj8ZpN1fxv5sVXhLtaFBTJPn",
     duration: "Finance",
     category: "Finance",
-    content:
-      "Wire transfer instructions and banking details for vehicle purchases.",
+    component: "WireInstructionsDialog",
     isModal: true,
   },
   {
