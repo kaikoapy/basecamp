@@ -117,7 +117,7 @@ export function MarketingCard({
                     isPinned ? "bg-white" : "bg-gray-200"
                   )}
                 >
-                  <span className="text-lg">📍</span>
+                  <span className="text-lg">📌</span>
                 </div>
               </button>
             </TooltipTrigger>
