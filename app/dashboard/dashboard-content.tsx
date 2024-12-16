@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { DashboardHeader } from "./components/dashboard-header";
 import { MarketingCard } from "@/components/marketing-card";
-import { SearchWidgetCard } from "@/components/search-widget-card";
 import {
   announcements,
   pinnedContent,
   tools,
   resources,
-  widgets,
 } from "../data/dashboard-content";
 
 export function DashboardContent() {
@@ -45,14 +43,6 @@ export function DashboardContent() {
         setSearchQuery={setSearchQuery}
       />
       <main className="flex-1 p-6">
-        <section className="mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
-            {widgets.map((widget, index) =>
-              widget.type === "search" ? <SearchWidgetCard key={index} /> : null
-            )}
-          </div>
-        </section>
-
         {filteredContent.announcements.length > 0 && (
           <section className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Announcements</h2>

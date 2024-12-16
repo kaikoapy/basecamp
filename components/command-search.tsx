@@ -123,21 +123,21 @@ export function CommandSearch() {
   return (
     <>
       <button
-        className="inline-flex h-9 w-full rounded-lg border border-slate-700/50 bg-slate-800/50 px-3 py-2 text-sm text-slate-200 shadow-sm transition-colors hover:bg-slate-800 hover:border-slate-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-700"
+        className="inline-flex h-9 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => setOpen(true)}
       >
         <span className="flex grow items-center">
           <Search
-            className="-ms-1 me-3 text-slate-400"
+            className="-ms-1 me-3 text-muted-foreground"
             size={16}
             strokeWidth={2}
             aria-hidden="true"
           />
-          <span className="font-normal text-slate-400">
+          <span className="font-normal text-muted-foreground">
             Search by VIN or Stock #
           </span>
         </span>
-        <kbd className="-me-1 ms-12 inline-flex h-5 max-h-full items-center rounded border border-slate-700 bg-slate-800 px-1 font-[inherit] text-[0.625rem] font-medium text-slate-500">
+        <kbd className="-me-1 ms-12 inline-flex h-5 max-h-full items-center rounded border border-border px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground">
           ⌘K
         </kbd>
       </button>

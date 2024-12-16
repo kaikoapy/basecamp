@@ -32,6 +32,7 @@ import Image from "next/image";
 import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { dealerInfo } from "@/app/data/dealer-info";
 import { cn } from "@/lib/utils";
+import { CommandSearch } from "@/components/command-search";
 
 interface DashboardHeaderProps {
   searchQuery: string;
@@ -84,15 +85,8 @@ export function DashboardHeader({
           className="object-contain"
           priority
         />
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search tools..."
-            className="w-[200px] pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="w-[400px]">
+          <CommandSearch />
         </div>
       </div>
       <div className="flex items-center space-x-2">

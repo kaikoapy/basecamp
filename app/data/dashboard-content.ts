@@ -190,10 +190,10 @@ export const resources = [
   },
 ];
 
-export const widgets = [
-  {
-    type: "search",
-    title: "Quick Search",
-    description: "Search by VIN or stock number to find vehicle information",
-  },
-];
+// export const widgets = [
+//   {
+//     type: "search",
+//     title: "Quick Search",
+//     description: "Search by VIN or stock number to find vehicle information",
+//   },
+// ];
