@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Building, CalendarDays, Clock, MapPin, Check } from "lucide-react";
-import { SidebarTrigger } from "../../../components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,19 +11,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../components/ui/tooltip";
-import { Button } from "../../../components/ui/button";
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { OnboardingDialog } from "../../../components/onboarding-dialog";
-import { dealerInfo } from "../../../app/data/dealer-info";
-import { cn } from "../../../lib/utils";
-import { CommandSearch } from "../../../components/command-search";
+import { OnboardingDialog } from "@/components/onboarding-dialog";
+import { dealerInfo } from "@/app/data/dealer-info";
+import { cn } from "@/lib/utils";
+import { CommandSearch } from "@/components/command-search";
 
 interface DashboardHeaderProps {
   searchQuery: string;
@@ -65,12 +65,14 @@ export function DashboardHeader({}: DashboardHeaderProps) {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <h1
-          className="text-xl font-semibold tracking-tight"
-          style={{ fontFamily: "var(--font-poppins)" }}
-        >
-          <span className="text-primary font-semibold">DealerHub</span>
-        </h1>
+        <Link href="/dashboard">
+          <h1
+            className="text-xl font-semibold tracking-tight"
+            style={{ fontFamily: "var(--font-poppins)" }}
+          >
+            <span className="text-primary font-semibold">DealerHub</span>
+          </h1>
+        </Link>
         <div className="w-[400px]">
           <CommandSearch />
         </div>
