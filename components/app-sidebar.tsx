@@ -11,6 +11,7 @@ import {
   Wrench,
   FileText,
   Tag,
+  GraduationCap,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -119,7 +120,22 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "New Hire",
+          title: "Contact Directory",
+          url: "/directory",
+        },
+        {
+          title: "Rules & Policies",
+          url: "/rules",
+        },
+      ],
+    },
+    {
+      title: "New Hires",
+      url: "#",
+      icon: GraduationCap,
+      items: [
+        {
+          title: "Start Here",
           url: "/new-hires",
         },
         {
@@ -127,12 +143,12 @@ const data = {
           url: "#",
         },
         {
-          title: "Contact Directory",
+          title: "Key Contacts",
           url: "/directory",
         },
         {
-          title: "Rules & Policies",
-          url: "/rules",
+          title: "FAQ",
+          url: "/faq",
         },
       ],
     },
