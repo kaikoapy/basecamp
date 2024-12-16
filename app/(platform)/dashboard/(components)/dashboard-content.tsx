@@ -8,7 +8,7 @@ import {
   pinnedContent,
   tools,
   resources,
-} from "../../data/dashboard-content";
+} from "../../../data/dashboard-content";
 
 export function DashboardContent() {
   const [searchQuery, setSearchQuery] = useState("");

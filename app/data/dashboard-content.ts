@@ -17,6 +17,7 @@ export const pinnedContent = [
     image: "https://utfs.io/f/WTe1MV8FTP1yDUF5ghznNxGEbKORAcTIhe2u30QPvsHiaoCJ",
     duration: "View Inventory",
     category: "Sales",
+    description: "New car inventory",
     url: "https://www.volvocarsnorthmiami.com/inventory/new",
     pinned: true,
   },
@@ -25,6 +26,7 @@ export const pinnedContent = [
     image: "https://utfs.io/f/WTe1MV8FTP1yp8BMhsDhlLAq79zRfNpovKaWb2xCsrUuM4dj",
     duration: "View Inventory",
     category: "Sales",
+    description: "Used car inventory",
     url: "https://www.volvocarsnorthmiami.com/inventory/used",
     pinned: true,
   },
@@ -34,6 +36,7 @@ export const pinnedContent = [
     duration: "Apply Now",
     category: "Finance",
     url: "https://www.volvocarsnorthmiami.com/getfinancing",
+    description: "Credit application form",
     pinned: true,
   },
 ];
@@ -44,6 +47,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yb1RBCR9Y7a9wYoCTzdmeAphWyXuG0RsMUniq",
     duration: "Search Plans",
     category: "Incentives",
+    description: "A-Plan search tool for employer discounts",
     url: "https://aplanbyvolvo.com/Public/RegisterNew/Partner",
   },
   {
@@ -52,12 +56,14 @@ export const tools = [
     duration: "Search Programs",
     category: "Incentives",
     url: "https://volvoaffinity.com/programs",
+    description: "Occupational discount registration site",
   },
   {
     title: "Costco Auto",
     image: "https://utfs.io/f/WTe1MV8FTP1yzbm1QT0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
     duration: "Member Program",
     category: "Incentives",
+    description: "Costco member discount registration site",
     url: "https://www.costcoauto.com/enterzipcode.aspx?gotourl=%2f",
   },
   {
@@ -65,6 +71,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1ygvBVViOh5VF8J0GCIjukOL6mQAecdRNos9vt",
     duration: "Vehicle History",
     category: "Vehicle History",
+    description: "Vehicle history report lookup",
     url: "https://www.carfaxonline.com/",
   },
   {
@@ -72,6 +79,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yLykzRgU0NFxPEbliwHGXe5B84MSn3v7gULpk",
     duration: "View Documents",
     category: "Documents",
+    description: "Loyalty incentive forms and documentation",
     url: "https://www.reliablepdf.com/",
   },
   {
@@ -79,6 +87,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1ykVZ22DuFsEWx7DVwcNZMjq2n0UidaLQt9YAo",
     duration: "View Checklist",
     category: "Documents",
+    description: "Deal checklist for new and used car sales",
     url: "https://www.reliablepdf.com/checklist",
   },
   {
@@ -86,6 +95,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yPQdnwBAtom38vsBuiVZHzYGSdjOy0WFKRaLQ",
     duration: "Sign Documents",
     category: "Documents",
+    description: "Document e-signing platform",
     url: "https://www.docuseal.com/",
   },
   {
@@ -93,6 +103,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yHVAtBFfutJqgyQ0EBL2aKOAZ59sfx1mkbMzW",
     duration: "Voice Calls",
     category: "Communication",
+    description: "Dealership phone system",
     url: "https://app.goto.com/voice",
   },
   {
@@ -101,6 +112,7 @@ export const tools = [
     duration: "Dealer Portal",
     category: "Volvo Resources",
     url: "https://retailers.volvocars.biz/s/",
+    description: "Volvo Retail Experience training platform",
   },
   {
     title: "Volvo USA",
@@ -108,12 +120,14 @@ export const tools = [
     duration: "Configure Cars",
     category: "Volvo Resources",
     url: "https://www.volvocars.com/us/l/car-configurator/",
+    description: "Official Volvo website",
   },
   {
     title: "Mastermind",
     image: "",
     duration: "Sales Tools",
     category: "Sales Tools",
+    description: "Portfolio CRM",
     url: "https://identity.automotivemastermind.com/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3DprodDashboard%26redirect_uri%3Dhttps%253A%252F%252Fdealer.automotivemastermind.com%252Fauth-callback%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520am.gateway%26state%3D9c7c3969653149fa89ff50d5c926883e%26code_challenge%3D0HpEm88pWxvx4bwyGjCazHAkjIg_W1bia-lF2lcWMp4%26code_challenge_method%3DS256%26response_mode%3Dquery",
   },
   {
@@ -121,6 +135,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1y0cRMbJIKolB5RNMY7WFDQuvLrVwhPkTfyAab",
     duration: "CRM Access",
     category: "CRM",
+    description: "Main CRM",
     url: "https://bb.dealersocket.com/#/homepage",
   },
   {
@@ -128,6 +143,7 @@ export const tools = [
     image: "",
     duration: "Gmail",
     category: "Communication",
+    description: "Gmail",
     url: "https://mail.google.com/mail/u/0/#inbox",
   },
   {
@@ -135,6 +151,7 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yb3ZjDdY7a9wYoCTzdmeAphWyXuG0RsMUniqt",
     duration: "Calendar",
     category: "Calendar",
+    description: "Schedule deliveries with product specialists",
     url: "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ3OoqB6JqcGO7IWluhTORrp5hWuxjDnaA1Z78ds-MNA0VWCdl2iKPQ1-_-qaac71cTAp-eXlChI",
   },
 ];

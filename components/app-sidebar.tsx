@@ -120,7 +120,7 @@ const data = {
       items: [
         {
           title: "New Hire",
-          url: "#",
+          url: "/new-hires",
         },
         {
           title: "Product Info",
@@ -128,11 +128,11 @@ const data = {
         },
         {
           title: "Contact Directory",
-          url: "#",
+          url: "/directory",
         },
         {
           title: "Rules & Policies",
-          url: "#",
+          url: "/rules",
         },
       ],
     },

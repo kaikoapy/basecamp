@@ -4,7 +4,6 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, SquareArrowOutUpRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +33,7 @@ import {
 export interface MarketingCardProps {
   id: string;
   title: string;
+  description?: string;
   image?: string;
   coverText?: string;
   duration: string;
@@ -65,6 +65,7 @@ export function MarketingCard(props: MarketingCardProps) {
   const {
     id,
     title,
+    description,
     image,
     coverText,
     duration,
@@ -169,45 +170,50 @@ export function MarketingCard(props: MarketingCardProps) {
           )}
         </div>
         <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">{category}</Badge>
-            <div className="flex items-center gap-2">
-              {isAffinitySearch ? (
-                <AffinityMenu />
-              ) : url ? (
-                <div className="flex gap-2">
-                  <CopyButton value={url} />
-
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={handleOpenLink}
-                        aria-label="Open in new tab"
-                      >
-                        <SquareArrowOutUpRight
-                          size={14}
-                          strokeWidth={2}
-                          aria-hidden="true"
-                        />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="px-2 py-1 text-xs">
-                      Open in new tab
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  {duration}
-                </div>
-              )}
+          <div className="flex flex-col gap-1 mb-2">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">{title}</h3>
+              <div className="flex items-center gap-2">
+                {isAffinitySearch ? (
+                  <AffinityMenu />
+                ) : url ? (
+                  <div className="flex gap-2">
+                    <CopyButton value={url} />
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={handleOpenLink}
+                          aria-label="Open in new tab"
+                        >
+                          <SquareArrowOutUpRight
+                            size={14}
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="px-2 py-1 text-xs">
+                        Open in new tab
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    {duration}
+                  </div>
+                )}
+              </div>
             </div>
+            {description && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {description}
+              </p>
+            )}
           </div>
-          <h3 className="font-semibold">{title}</h3>
         </div>
       </div>
     </Card>
