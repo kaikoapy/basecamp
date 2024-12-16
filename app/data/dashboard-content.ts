@@ -75,7 +75,7 @@ export const tools = [
     url: "https://www.reliablepdf.com/",
   },
   {
-    title: "Checklist",
+    title: "Deal Checklist",
     image: "https://utfs.io/f/WTe1MV8FTP1ykVZ22DuFsEWx7DVwcNZMjq2n0UidaLQt9YAo",
     duration: "View Checklist",
     category: "Documents",
