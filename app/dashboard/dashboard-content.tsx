@@ -45,7 +45,7 @@ export function DashboardContent() {
       <main className="flex-1 p-6">
         {filteredContent.announcements.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Announcements</h2>
+            <h2 className="text-2xl font-bold mb-4">Announcements 📰</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {filteredContent.announcements.map((announcement, index) => (
                 <MarketingCard
@@ -60,7 +60,7 @@ export function DashboardContent() {
 
         {filteredContent.pinnedContent.length > 0 && (
           <section id="quick-access" className="mb-8 scroll-mt-20">
-            <h2 className="text-2xl font-bold mb-4">Quick Access</h2>
+            <h2 className="text-2xl font-bold mb-4">Quick Access 📌</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {filteredContent.pinnedContent.map((content, index) => (
                 <MarketingCard
@@ -91,7 +91,7 @@ export function DashboardContent() {
         {filteredContent.tools.filter((tool) => tool.category !== "Incentives")
           .length > 0 && (
           <section id="tools" className="mb-8 scroll-mt-20">
-            <h2 className="text-2xl font-bold mb-4">Tools</h2>
+            <h2 className="text-2xl font-bold mb-4">Tools 🛠️</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {filteredContent.tools
                 .filter((tool) => tool.category !== "Incentives")

@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import {
-  Building,
-  CalendarDays,
-  Clock,
-  MapPin,
-  Search,
-  Check,
-} from "lucide-react";
+import { Building, CalendarDays, Clock, MapPin, Check } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -39,10 +31,7 @@ interface DashboardHeaderProps {
   setSearchQuery: (query: string) => void;
 }
 
-export function DashboardHeader({
-  searchQuery,
-  setSearchQuery,
-}: DashboardHeaderProps) {
+export function DashboardHeader({}: DashboardHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
