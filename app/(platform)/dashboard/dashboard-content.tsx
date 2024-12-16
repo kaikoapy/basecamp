@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardHeader } from "./components/dashboard-header";
+import { NavHeader } from "@/components/nav-header";
 import { MarketingCard } from "@/components/marketing-card";
 import {
   announcements,
@@ -38,10 +38,7 @@ export function DashboardContent() {
 
   return (
     <>
-      <DashboardHeader
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      <NavHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <main className="flex-1 p-6">
         {filteredContent.announcements.length > 0 && (
           <section className="mb-8">

@@ -25,12 +25,12 @@ import { dealerInfo } from "@/app/data/dealer-info";
 import { cn } from "@/lib/utils";
 import { CommandSearch } from "@/components/command-search";
 
-interface DashboardHeaderProps {
+interface NavHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
-export function DashboardHeader({}: DashboardHeaderProps) {
+export function NavHeader({}: NavHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);

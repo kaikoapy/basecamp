@@ -119,7 +119,7 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Training",
+          title: "New Hire",
           url: "#",
         },
         {
@@ -127,11 +127,11 @@ const data = {
           url: "#",
         },
         {
-          title: "Marketing",
+          title: "Contact Directory",
           url: "#",
         },
         {
-          title: "Updates",
+          title: "Rules & Policies",
           url: "#",
         },
       ],

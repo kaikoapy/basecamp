@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Building, CalendarDays, Clock, MapPin, Check } from "lucide-react";
-import { SidebarTrigger } from "../../../components/ui/sidebar";
+import { SidebarTrigger } from "./ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,26 +11,26 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../components/ui/tooltip";
-import { Button } from "../../../components/ui/button";
+} from "./ui/tooltip";
+import { Button } from "./ui/button";
 import Link from "next/link";
-import { OnboardingDialog } from "../../../components/onboarding-dialog";
-import { dealerInfo } from "../../../app/data/dealer-info";
-import { cn } from "../../../lib/utils";
-import { CommandSearch } from "../../../components/command-search";
+import { OnboardingDialog } from "./onboarding-dialog";
+import { dealerInfo } from "../app/data/dealer-info";
+import { cn } from "../lib/utils";
+import { CommandSearch } from "./command-search";
 
-interface DashboardHeaderProps {
+interface NavHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
-export function DashboardHeader({}: DashboardHeaderProps) {
+export function NavHeader({}: NavHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
@@ -65,12 +65,14 @@ export function DashboardHeader({}: DashboardHeaderProps) {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <h1
-          className="text-xl font-semibold tracking-tight"
-          style={{ fontFamily: "var(--font-poppins)" }}
-        >
-          <span className="text-primary font-semibold">DealerHub</span>
-        </h1>
+        <Link href="/dashboard">
+          <h1
+            className="text-xl font-semibold tracking-tight"
+            style={{ fontFamily: "var(--font-poppins)" }}
+          >
+            <span className="text-primary font-semibold">DealerHub</span>
+          </h1>
+        </Link>
         <div className="w-[400px]">
           <CommandSearch />
         </div>
@@ -95,8 +97,9 @@ export function DashboardHeader({}: DashboardHeaderProps) {
           >
             <DropdownMenu open={isOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 px-0">
-                  <Building className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="h-8 px-3">
+                  <Building className="h-4 w-4 mr-2" />
+                  <span>Dealer Info</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -224,14 +227,10 @@ export function DashboardHeader({}: DashboardHeaderProps) {
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 px-0"
-                asChild
-              >
-                <Link href="/schedule">
-                  <CalendarDays className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="h-8 px-3" asChild>
+                <Link href="/schedule" className="flex items-center">
+                  <CalendarDays className="h-4 w-4 mr-2" />
+                  <span>Schedule</span>
                 </Link>
               </Button>
             </TooltipTrigger>
