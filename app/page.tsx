@@ -79,7 +79,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       {/* Visual Proof Section */}
       <div className="mt-16">
         <div className="max-w-6xl mx-auto">
@@ -226,14 +225,16 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       {/* Social Proof that Inspires Action */}
       <div className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">From Chaos to Clarity</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              From Chaos to Clarity: The DealerHub Revolution
+            </h2>
             <p className="text-gray-600">
-              See how other dealerships transformed their operations
+              Peek into how dealerships are turning the tables with our
+              software... or so they tell us.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -246,18 +247,23 @@ export default function Home() {
                 />
                 <div>
                   <p className="font-semibold">Capital Motors</p>
-                  <p className="text-sm text-gray-500">30+ Sales Reps</p>
+                  <p className="text-sm text-gray-500">
+                    30+ Sales Reps (All Now Part-Time Efficiency Gurus)
+                  </p>
                 </div>
               </div>
               <p className="text-gray-600 mb-6">
-                &quot;Our new hire training time dropped from 2 weeks to 3 days.
-                New reps can find everything they need without constantly asking
-                managers.&quot;
+                &quot;Training? We&apos;ve cut it down to a science. New reps
+                now go from zero to hero in three days flat, thanks to
+                DealerHub. They&apos;re so efficient, they might start selling
+                cars in their sleep.&quot;
               </p>
               <div className="border-t pt-6">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Training Time</span>
-                  <span className="text-green-600">↓ 75% Reduction</span>
+                  <span className="text-green-600">
+                    ↓ 75% Less Time Wasted, More Time Selling
+                  </span>
                 </div>
               </div>
             </div>
@@ -270,25 +276,29 @@ export default function Home() {
                 />
                 <div>
                   <p className="font-semibold">Premier Auto Group</p>
-                  <p className="text-sm text-gray-500">25+ Sales Reps</p>
+                  <p className="text-sm text-gray-500">
+                    25+ Sales Reps (Now With Superhuman Memory)
+                  </p>
                 </div>
               </div>
               <p className="text-gray-600 mb-6">
-                &quot;We saved 45 minutes per rep daily by eliminating the
-                constant search for tools and resources. That&apos;s 180+ extra
-                selling hours per month.&quot;
+                &quot;We&apos;ve turned time into gold. With DealerHub, reps no
+                longer spend hours on treasure hunts for tools. That&apos;s an
+                extra 180 hours a month to seal deals, not just hunt for them.
+                &quot;
               </p>
               <div className="border-t pt-6">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Monthly Time Saved</span>
-                  <span className="text-green-600">180+ Hours</span>
+                  <span className="text-green-600">
+                    180+ Hours of Selling, Not Searching
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       {/* Founder's Note */}
       <div className="bg-gray-50 py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
@@ -301,29 +311,34 @@ export default function Home() {
               />
               <div>
                 <h3 className="text-xl font-semibold">
-                  From a Former Sales Manager
+                  From the Sales Floor to the Tech Throne
                 </h3>
-                <p className="text-gray-600">Alex Chen, Founder of DealerHub</p>
+                <p className="text-gray-600">
+                  Alex Chen, Former Sales Maverick & Founder of DealerHub
+                </p>
               </div>
             </div>
             <p className="text-lg text-gray-600 mb-6">
-              &quot;After 12 years managing dealership sales teams, I saw the
-              same problem everywhere: talented salespeople spending hours
-              searching for basic tools and information instead of selling.
+              &quot;After years on the sales floor, I knew the drill:
+              everyone&apos;s looking for something - the right tool, the right
+              pitch, or just the nearest coffee. But with DealerHub, we&apos;ve
+              turned that search into a success story.&quot;
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              New hires were overwhelmed. Veteran reps were frustrated. Managers
-              were constantly interrupted with the same questions.
+              &quot;New hires used to drown in paperwork, and even the pros were
+              playing hide-and-seek with resources. Now, DealerHub puts
+              everything at their fingertips, so they can focus on what they do
+              best - selling cars like there&apos;s no tomorrow.&quot;
             </p>
             <p className="text-lg text-gray-600">
-              &quot;That&apos;s why I built DealerHub - to give sales teams one
-              simple place for everything they need. No more searching, no more
-              interruptions, just selling.&quot;
+              &quot;I created this to transform our dealerships into efficiency
+              machines, where every second counts, and every sale is just a
+              click away. Welcome to the new age of car sales - where the only
+              thing you&apos;re looking for is your next big win.&quot;
             </p>
           </div>
         </div>
       </div>
-
       {/* Final CTA */}
       <div className="bg-blue-600 text-white">
         <div className="mx-auto max-w-6xl px-6 py-24 lg:px-8">
@@ -345,7 +360,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       {/* Footer */}
       <footer className="border-t">
         <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
