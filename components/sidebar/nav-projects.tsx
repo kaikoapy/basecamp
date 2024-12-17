@@ -15,7 +15,14 @@ import {
 export interface NavProject {
   name: string;
   icon: LucideIcon;
-  section?: "dashboard" | "quick-access" | "incentives" | "tools" | "resources";
+  section?:
+    | "dashboard"
+    | "quick-access"
+    | "incentives"
+    | "tools"
+    | "volvo-sites"
+    | "communication"
+    | "resources";
 }
 
 const scrollToSection = (sectionId: string, isMobile: boolean) => {

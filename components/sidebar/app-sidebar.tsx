@@ -13,6 +13,8 @@ import {
   Tag,
   GraduationCap,
   Home,
+  Globe,
+  MessageSquare,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -48,6 +50,16 @@ const navigationItems: NavProject[] = [
     name: "Tools",
     icon: Wrench,
     section: "tools",
+  },
+  {
+    name: "Volvo Sites",
+    icon: Globe,
+    section: "volvo-sites",
+  },
+  {
+    name: "Communication",
+    icon: MessageSquare,
+    section: "communication",
   },
   {
     name: "Resources",
@@ -147,6 +159,10 @@ const data = {
         {
           title: "Start Here",
           url: "/new-hires",
+        },
+        {
+          title: "Dealer Map",
+          url: "/dealer-map",
         },
         {
           title: "Product Info",
