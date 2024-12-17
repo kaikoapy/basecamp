@@ -3,139 +3,345 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   Car,
-  BarChart,
+  Search,
   Users2,
   Clock,
-  Shield,
-  Search,
+  CheckCircle2,
 } from "lucide-react";
+import Navbar from "./(marketing)/(components)/Navbar";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
+      <Navbar />
+      {/* Hero Section - Above the Fold */}
       <div className="relative px-6 lg:px-8">
         <div className="mx-auto max-w-6xl py-20 sm:py-32">
           <div className="text-center">
+            {/* Immediate Social Proof */}
             <div className="flex justify-center">
               <div className="mb-8 inline-flex items-center rounded-full px-3 py-1 text-sm bg-blue-50 text-blue-700">
-                <span className="font-semibold">New Feature</span>
+                <span className="font-semibold">
+                  Trusted by 50+ Dealerships
+                </span>
                 <div className="ml-2 h-4 w-px bg-blue-200" />
-                <span className="ml-2">Integrated CRM System</span>
+                <span className="ml-2">2,000+ Sales Reps Using Daily</span>
               </div>
             </div>
+
+            {/* Clear, Simple Value Proposition */}
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-8">
-              Modernize Your Dealership Operations
+              Everything your sales team needs
             </h1>
+
+            {/* How We'll Create Value */}
             <p className="text-lg leading-8 text-gray-600 max-w-2xl mx-auto mb-8">
-              DealerHub brings everything you need to manage your dealership in
-              one place. From inventory management to customer relationships,
-              we&apos;ve got you covered.
+              One organized hub that puts every dealership tool and resource at
+              your sales teams fingertips. Less questions, more action.
             </p>
-            <div className="flex gap-4 justify-center">
+
+            {/* Strong CTA that Handles Objections */}
+            <div className="flex flex-col items-center gap-4">
               <Button size="lg" className="gap-2">
-                Start Free Trial <ArrowRight className="h-4 w-4" />
+                Start Free 30-Day Trial <ArrowRight className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="lg">
-                Book Demo
-              </Button>
+              <span className="text-sm text-gray-500">
+                No credit card required • Set up in 10 minutes
+              </span>
+            </div>
+          </div>
+
+          {/* Visual Proof */}
+          <div className="mt-16 flex justify-center">
+            <div className="relative">
+              <div className="bg-gray-100 rounded-lg p-4 text-center">
+                [Screenshot of unified dashboard with VIN lookup, resources, and
+                tools would go here]
+              </div>
+              {/* Floating Proof Points */}
+              <div className="absolute -top-4 -left-4 bg-white shadow-lg rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium">
+                    45 min saved daily per rep
+                  </span>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 bg-white shadow-lg rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Search className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium">
+                    Instant tool access
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="bg-gray-50 py-24">
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: "Inventory Management",
-                description:
-                  "Track your vehicles, manage listings, and sync across multiple platforms automatically.",
-                icon: <Car className="h-6 w-6 text-blue-600" />,
-              },
-              {
-                title: "Sales Analytics",
-                description:
-                  "Real-time insights into your sales performance, trends, and opportunities.",
-                icon: <BarChart className="h-6 w-6 text-blue-600" />,
-              },
-              {
-                title: "Customer CRM",
-                description:
-                  "Manage leads, track interactions, and boost customer retention.",
-                icon: <Users2 className="h-6 w-6 text-blue-600" />,
-              },
-            ].map((feature, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-sm">
-                <div className="mb-5">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+      {/* Visual Proof Section */}
+      <div className="mt-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Without DealerHub Column */}
+            <div className="bg-gray-50 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-6">Without DealerHub</h3>
+
+              {/* New Hires Pain Points */}
+              <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
+                <h4 className="font-medium text-gray-900 mb-3">
+                  New Hires Struggle
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Clock className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      2+ weeks to get fully operational
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Search className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      Constantly hunting for basic information
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Users2 className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      Interrupting managers 12+ times daily
+                    </span>
+                  </li>
+                </ul>
               </div>
-            ))}
+
+              {/* Existing Team Pain Points */}
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <h4 className="font-medium text-gray-900 mb-3">
+                  Existing Team Frustrated
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Clock className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      45+ minutes daily searching for tools
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Search className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      15+ bookmarks to remember
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Users2 className="h-5 w-5 text-red-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      20+ interruptions from new hires
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* With DealerHub Column */}
+            <div className="bg-gray-50 rounded-xl p-6">
+              <h3 className="text-xl font-semibold mb-6">With DealerHub</h3>
+
+              {/* New Hires Benefits */}
+              <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
+                <h4 className="font-medium text-gray-900 mb-3">
+                  New Hires Thrive
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      Fully operational in 3 days
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      Self-guided resource center
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      90% fewer questions to management
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Existing Team Benefits */}
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <h4 className="font-medium text-gray-900 mb-3">
+                  Existing Team Empowered
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      Everything accessible in 2 clicks
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      One login for all tools
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600 mt-1" />
+                    <span className="text-sm text-gray-600">
+                      80% fewer daily interruptions
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Metrics Below */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-2xl font-bold text-blue-600 mb-1">75%</div>
+              <div className="text-sm text-gray-600">
+                Faster New Hire Training
+              </div>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-2xl font-bold text-blue-600 mb-1">45min</div>
+              <div className="text-sm text-gray-600">Saved Daily Per Rep</div>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-2xl font-bold text-blue-600 mb-1">90%</div>
+              <div className="text-sm text-gray-600">Fewer Questions</div>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-2xl font-bold text-blue-600 mb-1">1</div>
+              <div className="text-sm text-gray-600">Login for All Tools</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Why Choose Us Section */}
+      {/* Social Proof that Inspires Action */}
       <div className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">
-              Why Dealerships Choose DealerHub
-            </h2>
+            <h2 className="text-3xl font-bold mb-4">From Chaos to Clarity</h2>
             <p className="text-gray-600">
-              Trusted by leading dealerships across the country
+              See how other dealerships transformed their operations
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                stat: "50%",
-                text: "Reduction in Administrative Tasks",
-                icon: <Clock className="h-5 w-5 text-blue-600" />,
-              },
-              {
-                stat: "100%",
-                text: "Secure Data Protection",
-                icon: <Shield className="h-5 w-5 text-blue-600" />,
-              },
-              {
-                stat: "2x",
-                text: "Faster Inventory Updates",
-                icon: <Search className="h-5 w-5 text-blue-600" />,
-              },
-              {
-                stat: "24/7",
-                text: "Customer Support",
-                icon: <Users2 className="h-5 w-5 text-blue-600" />,
-              },
-            ].map((item, index) => (
-              <div key={index} className="text-center">
-                <div className="flex justify-center mb-4">{item.icon}</div>
-                <div className="text-3xl font-bold mb-2">{item.stat}</div>
-                <p className="text-gray-600">{item.text}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white p-8 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-4 mb-6">
+                <img
+                  src="/api/placeholder/64/64"
+                  alt="Capital Motors"
+                  className="rounded-full"
+                />
+                <div>
+                  <p className="font-semibold">Capital Motors</p>
+                  <p className="text-sm text-gray-500">30+ Sales Reps</p>
+                </div>
               </div>
-            ))}
+              <p className="text-gray-600 mb-6">
+                &quot;Our new hire training time dropped from 2 weeks to 3 days.
+                New reps can find everything they need without constantly asking
+                managers.&quot;
+              </p>
+              <div className="border-t pt-6">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Training Time</span>
+                  <span className="text-green-600">↓ 75% Reduction</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-4 mb-6">
+                <img
+                  src="/api/placeholder/64/64"
+                  alt="Premier Auto"
+                  className="rounded-full"
+                />
+                <div>
+                  <p className="font-semibold">Premier Auto Group</p>
+                  <p className="text-sm text-gray-500">25+ Sales Reps</p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-6">
+                &quot;We saved 45 minutes per rep daily by eliminating the
+                constant search for tools and resources. That&apos;s 180+ extra
+                selling hours per month.&quot;
+              </p>
+              <div className="border-t pt-6">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Monthly Time Saved</span>
+                  <span className="text-green-600">180+ Hours</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* CTA Section */}
+      {/* Founder's Note */}
+      <div className="bg-gray-50 py-24">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <img
+                src="/api/placeholder/80/80"
+                alt="Founder"
+                className="rounded-full"
+              />
+              <div>
+                <h3 className="text-xl font-semibold">
+                  From a Former Sales Manager
+                </h3>
+                <p className="text-gray-600">Alex Chen, Founder of DealerHub</p>
+              </div>
+            </div>
+            <p className="text-lg text-gray-600 mb-6">
+              &quot;After 12 years managing dealership sales teams, I saw the
+              same problem everywhere: talented salespeople spending hours
+              searching for basic tools and information instead of selling.
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+              New hires were overwhelmed. Veteran reps were frustrated. Managers
+              were constantly interrupted with the same questions.
+            </p>
+            <p className="text-lg text-gray-600">
+              &quot;That&apos;s why I built DealerHub - to give sales teams one
+              simple place for everything they need. No more searching, no more
+              interruptions, just selling.&quot;
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Final CTA */}
       <div className="bg-blue-600 text-white">
         <div className="mx-auto max-w-6xl px-6 py-24 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">
-              Ready to transform your dealership?
+              Ready to empower your sales team?
             </h2>
-            <p className="mb-8 text-blue-100">
-              Join leading dealerships who have modernized their operations with
-              DealerHub
+            <p className="mb-8 text-xl text-blue-100">
+              Join 50+ dealerships saving 180+ hours monthly with DealerHub
             </p>
-            <Button size="lg" variant="secondary" className="gap-2">
-              Start Your Free Trial <ArrowRight className="h-4 w-4" />
-            </Button>
+            <div className="flex flex-col items-center gap-4">
+              <Button size="lg" variant="secondary" className="gap-2">
+                Start Your Free 30-Day Trial <ArrowRight className="h-4 w-4" />
+              </Button>
+              <span className="text-sm text-blue-200">
+                No credit card required • Full access to all features
+              </span>
+            </div>
           </div>
         </div>
       </div>
