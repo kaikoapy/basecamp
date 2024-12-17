@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CommandSearch } from "@/components/sidebar/command-search";
+import { CommandSearch } from "@/components/command-search";
 import { cn } from "@/lib/utils";
 
 export function SearchWidgetCard() {
