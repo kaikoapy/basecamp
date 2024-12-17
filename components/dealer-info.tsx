@@ -40,7 +40,7 @@ export function DealerInfo() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 px-3">
+        <Button variant="ghost" size="lg" className="h-8 px-3">
           <Building className="h-4 w-4 mr-2" />
           <span>Dealer Info</span>
         </Button>

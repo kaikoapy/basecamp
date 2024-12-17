@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AppSidebar } from "../../components/app-sidebar";
+import { AppSidebar } from "../../components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PinProvider } from "../providers/pin-provider";
 

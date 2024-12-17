@@ -22,62 +22,8 @@ import {
   TooltipArrow,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-
-const speedDialContacts = {
-  management: [
-    {
-      name: "Serdar",
-      title: "New Car Sales Manager",
-      phone: "(555) 123-4567",
-    },
-    {
-      name: "Marlon",
-      title: "also a manager",
-      phone: "(555) 123-4568",
-    },
-    {
-      name: "Cesar",
-      title: "Service Manager",
-      phone: "(555) 123-4568",
-    },
-  ],
-  porters: [
-    { name: "Andres", phone: "(555) 123-4569" },
-    { name: "Jaramio", phone: "(555) 123-4570" },
-    { name: "Ramon", phone: "(555) 123-4571" },
-  ],
-  salespeople: [
-    { name: "Ron", phone: "(555) 123-4572" },
-    { name: "Juan", phone: "(555) 123-4573" },
-    { name: "Moudy", phone: "(555) 123-4574" },
-    { name: "Kai", phone: "(555) 123-4575" },
-    { name: "Gio", phone: "(555) 123-4576" },
-    { name: "Amr", phone: "(555) 123-4577" },
-    { name: "Tito", phone: "(555) 123-4578" },
-    { name: "Alex", phone: "(555) 123-4579" },
-    { name: "Gabriel", phone: "(555) 123-4580" },
-  ],
-  productSpecialists: [
-    { name: "Josh", phone: "(555) 123-4581" },
-    { name: "Nick", phone: "(555) 123-4582" },
-  ],
-  external: {
-    vfs: {
-      name: "Volvo Financial Services",
-      address:
-        "Volvo Car Financial Services\nPO Box 91300\nMobile, AL 36691-1300",
-      phone: "1-866-499-6793",
-    },
-    aPlan: {
-      name: "A Plan",
-      email: "Support@aplanbyvolvo.com",
-    },
-    costco: {
-      name: "Costco Auto Program",
-      phone: "1-800-755-2519",
-    },
-  },
-};
+import Link from "next/link";
+import { speedDialContacts } from "@/app/data/speed-dial";
 
 export function SpeedDial() {
   const [copiedPhone, setCopiedPhone] = useState<string | null>(null);
@@ -137,7 +83,7 @@ export function SpeedDial() {
     <TooltipProvider delayDuration={0}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-8 px-3">
+          <Button variant="ghost" size="lg" className="h-8 px-3">
             <Users className="h-4 w-4 mr-2" />
             <span>Speed Dial</span>
           </Button>
@@ -243,7 +189,7 @@ export function SpeedDial() {
                     onMouseLeave={() => setHoveredItem(null)}
                   >
                     <h4 className="text-sm font-semibold mb-2">
-                      Volvo Financial Services
+                      {speedDialContacts.external.vfs.name}
                     </h4>
                     <div className="space-y-2">
                       <Tooltip>
@@ -251,7 +197,7 @@ export function SpeedDial() {
                           <button
                             onClick={() =>
                               handleCopy(
-                                speedDialContacts.external.vfs.address,
+                                speedDialContacts.external.vfs.address!,
                                 "address"
                               )
                             }
@@ -292,9 +238,10 @@ export function SpeedDial() {
                           <TooltipArrow />
                         </TooltipContent>
                       </Tooltip>
-                      {renderContactButton(
-                        speedDialContacts.external.vfs.phone
-                      )}
+                      {speedDialContacts.external.vfs.phone &&
+                        renderContactButton(
+                          speedDialContacts.external.vfs.phone
+                        )}
                     </div>
                   </div>
 
@@ -310,9 +257,10 @@ export function SpeedDial() {
                     <h4 className="text-sm font-semibold">
                       A-Plan & Affinity Support
                     </h4>
-                    {renderContactButton(
-                      speedDialContacts.external.aPlan.email
-                    )}
+                    {speedDialContacts.external.aPlan.email &&
+                      renderContactButton(
+                        speedDialContacts.external.aPlan.email
+                      )}
                   </div>
 
                   {/* Costco */}
@@ -325,16 +273,25 @@ export function SpeedDial() {
                     onMouseLeave={() => setHoveredItem(null)}
                   >
                     <h4 className="text-sm font-semibold">
-                      Costco Auto Program
+                      {speedDialContacts.external.costco.name}
                     </h4>
-                    {renderContactButton(
-                      speedDialContacts.external.costco.phone
-                    )}
+                    {speedDialContacts.external.costco.phone &&
+                      renderContactButton(
+                        speedDialContacts.external.costco.phone
+                      )}
                   </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          <div className="mt-2 pt-2">
+            <Link
+              href="/directory"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center"
+            >
+              View Complete Directory →
+            </Link>
+          </div>
         </PopoverContent>
       </Popover>
     </TooltipProvider>

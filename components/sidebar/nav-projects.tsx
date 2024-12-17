@@ -1,6 +1,7 @@
 "use client";
 
 import { type LucideIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   SidebarGroup,
@@ -14,7 +15,7 @@ import {
 export interface NavProject {
   name: string;
   icon: LucideIcon;
-  section?: "quick-access" | "incentives" | "tools" | "resources";
+  section?: "dashboard" | "quick-access" | "incentives" | "tools" | "resources";
 }
 
 const scrollToSection = (sectionId: string, isMobile: boolean) => {
@@ -34,10 +35,24 @@ const scrollToSection = (sectionId: string, isMobile: boolean) => {
 
 export function NavProjects({ projects }: { projects: NavProject[] }) {
   const { isMobile } = useSidebar();
+  const pathname = usePathname();
+  const router = useRouter();
+  const isDashboard = pathname === "/dashboard";
 
-  const handleClick = (e: React.MouseEvent, section?: string) => {
+  const handleClick = async (e: React.MouseEvent, section?: string) => {
     e.preventDefault();
-    if (section) {
+
+    if (section === "dashboard" || !isDashboard) {
+      // Always navigate to dashboard if dashboard is clicked or if we're not on dashboard
+      await router.push("/dashboard");
+      // Only scroll if it's not the dashboard button
+      if (section && section !== "dashboard") {
+        setTimeout(() => {
+          scrollToSection(section, isMobile);
+        }, 100);
+      }
+    } else if (section) {
+      // If we're already on dashboard and it's not the dashboard button, just scroll
       scrollToSection(section, isMobile);
     }
   };

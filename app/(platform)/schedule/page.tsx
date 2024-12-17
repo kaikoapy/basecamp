@@ -4,7 +4,7 @@
 
 "use client";
 import ScheduleDisplay from "./(components)/ScheduleDisplay";
-import { NavHeader } from "@/components/nav-header";
+import { NavHeader } from "@/components/sidebar/nav-header";
 import { useState } from "react";
 
 export default function Home() {

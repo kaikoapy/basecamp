@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { NavHeader } from "@/components/nav-header";
+import { NavHeader } from "@/components/sidebar/nav-header";
 import { MarketingCard } from "@/components/marketing-card";
 import {
   announcements,

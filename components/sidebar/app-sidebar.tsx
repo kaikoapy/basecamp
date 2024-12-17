@@ -12,6 +12,7 @@ import {
   FileText,
   Tag,
   GraduationCap,
+  Home,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -28,6 +29,11 @@ import {
 import type { NavProject } from "./nav-projects";
 
 const navigationItems: NavProject[] = [
+  {
+    name: "Dashboard",
+    icon: Home,
+    section: "dashboard",
+  },
   {
     name: "Quick Access",
     icon: Bookmark,
@@ -124,6 +130,10 @@ const data = {
           url: "/directory",
         },
         {
+          title: "Overseas Delivery",
+          url: "#",
+        },
+        {
           title: "Rules & Policies",
           url: "/rules",
         },
@@ -185,8 +195,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
         <NavProjects projects={navigationItems} />
+        <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
