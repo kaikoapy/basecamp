@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { NavHeader } from "@/components/sidebar/nav-header";
 import { MarketingCard } from "@/components/marketing-card";
 import {
   announcements,
@@ -11,7 +10,7 @@ import {
 } from "../../../data/dashboard-content";
 
 export function DashboardContent() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery] = useState("");
 
   const filteredContent = {
     announcements: announcements.filter(
@@ -51,110 +50,95 @@ export function DashboardContent() {
   };
 
   return (
-    <>
-      <NavHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <main className="flex-1 p-6">
-        {filteredContent.announcements.length > 0 && (
-          <section id="announcements" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Announcements 📰</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {filteredContent.announcements.map((announcement, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`announcement-${index}`}
-                  {...announcement}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+    <main className="flex-1 p-6">
+      {filteredContent.announcements.length > 0 && (
+        <section id="announcements" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Announcements 📰</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {filteredContent.announcements.map((announcement, index) => (
+              <MarketingCard
+                key={index}
+                id={`announcement-${index}`}
+                {...announcement}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {filteredContent.pinnedContent.length > 0 && (
-          <section id="quick-access" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Quick Access 📌</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {filteredContent.pinnedContent.map((content, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`pinned-${index}`}
-                  {...content}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+      {filteredContent.pinnedContent.length > 0 && (
+        <section id="quick-access" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Quick Access 📌</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {filteredContent.pinnedContent.map((content, index) => (
+              <MarketingCard key={index} id={`pinned-${index}`} {...content} />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {toolsByCategory.incentives.length > 0 && (
-          <section id="incentives" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Incentives 🏷️</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {toolsByCategory.incentives.map((tool, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`incentive-${index}`}
-                  {...tool}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+      {toolsByCategory.incentives.length > 0 && (
+        <section id="incentives" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Incentives 🏷️</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {toolsByCategory.incentives.map((tool, index) => (
+              <MarketingCard key={index} id={`incentive-${index}`} {...tool} />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {toolsByCategory.tools.length > 0 && (
-          <section id="tools" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Tools 🛠️</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {toolsByCategory.tools.map((tool, index) => (
-                <MarketingCard key={index} id={`tool-${index}`} {...tool} />
-              ))}
-            </div>
-          </section>
-        )}
+      {toolsByCategory.tools.length > 0 && (
+        <section id="tools" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Tools 🛠️</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {toolsByCategory.tools.map((tool, index) => (
+              <MarketingCard key={index} id={`tool-${index}`} {...tool} />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {toolsByCategory.volvoSites.length > 0 && (
-          <section id="volvo-sites" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Volvo Sites 🌐</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {toolsByCategory.volvoSites.map((tool, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`volvo-site-${index}`}
-                  {...tool}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+      {toolsByCategory.volvoSites.length > 0 && (
+        <section id="volvo-sites" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Volvo Sites 🌐</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {toolsByCategory.volvoSites.map((tool, index) => (
+              <MarketingCard key={index} id={`volvo-site-${index}`} {...tool} />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {toolsByCategory.communication.length > 0 && (
-          <section id="communication" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Communication 💬</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {toolsByCategory.communication.map((tool, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`communication-${index}`}
-                  {...tool}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+      {toolsByCategory.communication.length > 0 && (
+        <section id="communication" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Communication 💬</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {toolsByCategory.communication.map((tool, index) => (
+              <MarketingCard
+                key={index}
+                id={`communication-${index}`}
+                {...tool}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-        {filteredContent.resources.length > 0 && (
-          <section id="resources" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Resources 📚</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {filteredContent.resources.map((resource, index) => (
-                <MarketingCard
-                  key={index}
-                  id={`resource-${index}`}
-                  {...resource}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-      </main>
-    </>
+      {filteredContent.resources.length > 0 && (
+        <section id="resources" className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Resources 📚</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {filteredContent.resources.map((resource, index) => (
+              <MarketingCard
+                key={index}
+                id={`resource-${index}`}
+                {...resource}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
   );
 }
