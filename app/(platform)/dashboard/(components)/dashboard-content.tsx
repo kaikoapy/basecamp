@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { MarketingCard } from "@/components/marketing-card";
 import {
   announcements,
@@ -9,9 +8,11 @@ import {
   resources,
 } from "../../../data/dashboard-content";
 
-export function DashboardContent() {
-  const [searchQuery] = useState("");
+interface DashboardContentProps {
+  searchQuery?: string;
+}
 
+export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const filteredContent = {
     announcements: announcements.filter(
       (item) =>
