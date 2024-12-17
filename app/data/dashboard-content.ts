@@ -155,12 +155,20 @@ export const tools = [
     description: "Volvo's official resource for vehicle info",
   },
   {
+    title: "Pin Validation",
+    image: "https://utfs.io/f/WTe1MV8FTP1yEyc50BWDklFzfROq8JsG95chaXIYwZ1gjMnV",
+    duration: "Dealer Portal",
+    category: "Incentives",
+    url: "https://aplanbyvolvo.com/Affinity-Tools/A-Plan-Affinity/PIN-Look-Up",
+    description: "Validate Costco, A-Plan, and Affinity pins",
+  },
+  {
     title: "Used Car App",
     image: "https://utfs.io/f/WTe1MV8FTP1ykg7BQWFsEWx7DVwcNZMjq2n0UidaLQt9YAoJ",
     duration: "Dealer Portal",
     category: "Volvo Sites",
     url: "https://volvocarsamericas.my.site.com/usedcar/s/",
-    description: "Volvo's official resource for used car info",
+    description: "Volvo's official tool for used Volvo info",
   },
   {
     title: "Thrive",
