@@ -28,7 +28,7 @@ export const dealerInfo: DealerInfo = {
     },
     {
       name: "Parts",
-      hours: "Mon-Fri: 7:30AM-6PM\nSat: Closed\nSun: Closed",
+      hours: "Mon-Fri: 7:30AM-6PM\nSat-Sun: Closed",
       phone: "786-629-5610",
     },
   ],
