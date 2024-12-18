@@ -44,10 +44,10 @@ export default function AnnouncementsPage() {
   });
 
   return (
-    <div className="container py-8 space-y-6">
+    <main className="flex-1 p-6 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Announcements</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Announcements 📰</h1>
         <Link href="/announcements/new">
           <Button>
             <Plus className="w-4 h-4 mr-2" />
@@ -57,7 +57,7 @@ export default function AnnouncementsPage() {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-3 items-center mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -84,11 +84,11 @@ export default function AnnouncementsPage() {
       {/* Announcements Grid */}
       {announcements === undefined ? (
         // Loading state
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {[...Array(10)].map((_, i) => (
             <div
               key={i}
-              className="h-[300px] rounded-lg bg-muted animate-pulse"
+              className="aspect-[1.5] rounded-lg bg-muted animate-pulse"
             />
           ))}
         </div>
@@ -108,7 +108,7 @@ export default function AnnouncementsPage() {
         </div>
       ) : (
         // Announcements grid
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filteredAnnouncements?.map((announcement) => (
             <MarketingCard
               key={announcement._id}
@@ -120,6 +120,7 @@ export default function AnnouncementsPage() {
               category="announcement"
               createdBy={announcement.createdBy}
               isAnnouncement={true}
+              isEmail={announcement.isEmailGenerated}
             />
           ))}
         </div>
@@ -136,6 +137,6 @@ export default function AnnouncementsPage() {
           </p>
         </div>
       )}
-    </div>
+    </main>
   );
 }

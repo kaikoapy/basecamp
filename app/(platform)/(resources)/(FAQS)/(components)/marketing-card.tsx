@@ -19,7 +19,7 @@ import { WireInstructionsDialog } from "@/app/(platform)/(resources)/wire-instru
 import { OutOfStateDialog } from "@/app/(platform)/(resources)/out-of-state-dialog";
 import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/business-applications-dialog";
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
-import { AnnouncementDialog } from "@/app/(platform)/dashboard/announcements/(components)/AnnouncementDialog";
+import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
 
 export interface MarketingCardProps {
   id: string;

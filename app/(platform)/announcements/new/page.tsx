@@ -1,5 +1,5 @@
 // app/(dashboard)/announcements/new/page.tsx
-import AnnouncementForm from "@/app/(platform)/dashboard/announcements/(components)/AccouncementForm";
+import AnnouncementForm from "@/app/(platform)/announcements/(components)/AccouncementForm";
 
 export default function NewAnnouncementPage() {
   return (
