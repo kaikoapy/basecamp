@@ -20,7 +20,7 @@ interface CopyButtonProps {
 export function CopyButton({
   value,
   className,
-  iconSize = 14,
+  iconSize = 12,
   tooltipText = "link",
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
@@ -43,7 +43,7 @@ export function CopyButton({
         <Button
           variant="outline"
           size="icon"
-          className={cn("h-7 w-7 disabled:opacity-100", className)}
+          className={cn("h-6 w-6 disabled:opacity-100", className)}
           onClick={handleCopy}
           aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
           disabled={copied}

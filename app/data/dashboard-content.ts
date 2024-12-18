@@ -1,5 +1,6 @@
 export const announcements = [
   {
+    id: "announcement-1",
     title: "Lease Return Rules - Reminder",
     image: "https://utfs.io/f/WTe1MV8FTP1yn5ZhGujPNfrkaCj6DHG1w3QYJsuBbXyl5dMR",
     duration: "2 min read",
@@ -13,6 +14,7 @@ export const announcements = [
 
 export const pinnedContent = [
   {
+    id: "new-cars",
     title: "New Cars",
     image: "https://utfs.io/f/WTe1MV8FTP1yDUF5ghznNxGEbKORAcTIhe2u30QPvsHiaoCJ",
     duration: "View Inventory",
@@ -22,6 +24,7 @@ export const pinnedContent = [
     pinned: true,
   },
   {
+    id: "used-cars",
     title: "Used Cars",
     image: "https://utfs.io/f/WTe1MV8FTP1yp8BMhsDhlLAq79zRfNpovKaWb2xCsrUuM4dj",
     duration: "View Inventory",
@@ -31,6 +34,7 @@ export const pinnedContent = [
     pinned: true,
   },
   {
+    id: "credit-app",
     title: "Credit Application",
     image: "https://utfs.io/f/WTe1MV8FTP1ysXOlny1UoIShzARj4Eer1uOngfm9tc72CvHq",
     duration: "Apply Now",
@@ -43,6 +47,7 @@ export const pinnedContent = [
 
 export const tools = [
   {
+    id: "a-plan-search",
     title: "A-Plan Search",
     image: "https://utfs.io/f/WTe1MV8FTP1yb1RBCR9Y7a9wYoCTzdmeAphWyXuG0RsMUniq",
     duration: "Search Plans",
@@ -51,6 +56,7 @@ export const tools = [
     url: "https://aplanbyvolvo.com/Public/RegisterNew/Partner",
   },
   {
+    id: "affinity-search",
     title: "Affinity Search",
     image: "https://utfs.io/f/WTe1MV8FTP1yQ700AJTVtS2ZJfTqXEoMUNvb6wImc7sWyn1g",
     duration: "Search Programs",
@@ -59,6 +65,7 @@ export const tools = [
     description: "Occupational discount registration site",
   },
   {
+    id: "costco-auto",
     title: "Costco Auto",
     image: "https://utfs.io/f/WTe1MV8FTP1yzbm1QT0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
     duration: "Member Program",
@@ -67,6 +74,7 @@ export const tools = [
     url: "https://www.costcoauto.com/enterzipcode.aspx?gotourl=%2f",
   },
   {
+    id: "carfax",
     title: "Carfax",
     image: "https://utfs.io/f/WTe1MV8FTP1ygvBVViOh5VF8J0GCIjukOL6mQAecdRNos9vt",
     duration: "Vehicle History",
@@ -75,6 +83,7 @@ export const tools = [
     url: "https://www.carfaxonline.com/",
   },
   {
+    id: "reliable-pdf",
     title: "Reliable PDF",
     image: "https://utfs.io/f/WTe1MV8FTP1yLykzRgU0NFxPEbliwHGXe5B84MSn3v7gULpk",
     duration: "View Documents",
@@ -83,6 +92,7 @@ export const tools = [
     url: "https://www.reliablepdf.com/",
   },
   {
+    id: "deal-checklist",
     title: "Deal Checklist",
     image: "https://utfs.io/f/WTe1MV8FTP1ykVZ22DuFsEWx7DVwcNZMjq2n0UidaLQt9YAo",
     duration: "View Checklist",
@@ -91,6 +101,7 @@ export const tools = [
     url: "https://www.reliablepdf.com/checklist",
   },
   {
+    id: "docuseal",
     title: "DocuSeal",
     image: "https://utfs.io/f/WTe1MV8FTP1yPQdnwBAtom38vsBuiVZHzYGSdjOy0WFKRaLQ",
     duration: "Sign Documents",
@@ -99,14 +110,16 @@ export const tools = [
     url: "https://www.docuseal.com/",
   },
   {
+    id: "email",
     title: "Email",
-    image: "",
+    image: "https://utfs.io/f/WTe1MV8FTP1y0cHBd7IKolB5RNMY7WFDQuvLrVwhPkTfyAab",
     duration: "Gmail",
     category: "Communication",
     description: "Gmail",
     url: "https://mail.google.com/mail/u/0/#inbox",
   },
   {
+    id: "goto",
     title: "GoTo",
     image: "https://utfs.io/f/WTe1MV8FTP1yHVAtBFfutJqgyQ0EBL2aKOAZ59sfx1mkbMzW",
     duration: "Voice Calls",
@@ -115,6 +128,25 @@ export const tools = [
     url: "https://app.goto.com/voice",
   },
   {
+    id: "vauto",
+    title: "VAuto",
+    image: "https://utfs.io/f/WTe1MV8FTP1yzCCxBp0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
+    duration: "Sales",
+    category: "Tools",
+    description: "Trade-in appraisal tool",
+    url: "https://signin.coxautoinc.com/?solutionID=CRS_prod&clientId=7e3b8832caae4765bebfb06220d0c80f",
+  },
+  {
+    id: "podium",
+    title: "Podium",
+    image: "https://utfs.io/f/WTe1MV8FTP1yD6EUCnznNxGEbKORAcTIhe2u30QPvsHiaoCJ",
+    duration: "Voice Calls",
+    category: "Communication",
+    description: "Software to request payments and reviews",
+    url: "https://app.podium.com/inbox",
+  },
+  {
+    id: "dealer-socket",
     title: "DealerSocket",
     image: "https://utfs.io/f/WTe1MV8FTP1y0cRMbJIKolB5RNMY7WFDQuvLrVwhPkTfyAab",
     duration: "CRM Access",
@@ -123,14 +155,16 @@ export const tools = [
     url: "https://bb.dealersocket.com/#/homepage",
   },
   {
+    id: "mastermind",
     title: "Mastermind",
-    image: "",
+    image: "https://utfs.io/f/WTe1MV8FTP1ygDSxdCrOh5VF8J0GCIjukOL6mQAecdRNos9v",
     duration: "Sales Tools",
     category: "Communication",
     description: "Portfolio CRM",
     url: "https://identity.automotivemastermind.com/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3DprodDashboard%26redirect_uri%3Dhttps%253A%252F%252Fdealer.automotivemastermind.com%252Fauth-callback%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520am.gateway%26state%3D9c7c3969653149fa89ff50d5c926883e%26code_challenge%3D0HpEm88pWxvx4bwyGjCazHAkjIg_W1bia-lF2lcWMp4%26code_challenge_method%3DS256%26response_mode%3Dquery",
   },
   {
+    id: "schedule-delivery",
     title: "Schedule Delivery",
     image: "https://utfs.io/f/WTe1MV8FTP1yb3ZjDdY7a9wYoCTzdmeAphWyXuG0RsMUniqt",
     duration: "Calendar",
@@ -139,6 +173,7 @@ export const tools = [
     url: "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ3OoqB6JqcGO7IWluhTORrp5hWuxjDnaA1Z78ds-MNA0VWCdl2iKPQ1-_-qaac71cTAp-eXlChI",
   },
   {
+    id: "volvo-portal",
     title: "Volvo Portal",
     image: "https://utfs.io/f/WTe1MV8FTP1yigacdjrGWDJBSPkiAbVLgH6UvF7dCXhEYpIQ",
     duration: "Dealer Portal",
@@ -147,6 +182,7 @@ export const tools = [
     description: "Volvo's official resources portal",
   },
   {
+    id: "vin-inquiry",
     title: "Vin Inquiry",
     image: "https://utfs.io/f/WTe1MV8FTP1yN81stTQEli6rP8E17pB0M92umLfXUcSwKzn5",
     duration: "Dealer Portal",
@@ -155,6 +191,7 @@ export const tools = [
     description: "Volvo's official resource for vehicle info",
   },
   {
+    id: "pin-validation",
     title: "Pin Validation",
     image: "https://utfs.io/f/WTe1MV8FTP1yEyc50BWDklFzfROq8JsG95chaXIYwZ1gjMnV",
     duration: "Dealer Portal",
@@ -163,6 +200,7 @@ export const tools = [
     description: "Validate Costco, A-Plan, and Affinity pins",
   },
   {
+    id: "used-car-app",
     title: "Used Car App",
     image: "https://utfs.io/f/WTe1MV8FTP1ykg7BQWFsEWx7DVwcNZMjq2n0UidaLQt9YAoJ",
     duration: "Dealer Portal",
@@ -171,6 +209,7 @@ export const tools = [
     description: "Volvo's official tool for used Volvo info",
   },
   {
+    id: "thrive",
     title: "Thrive",
     image: "https://utfs.io/f/WTe1MV8FTP1yrYRfjBqKQvElgKmYat2NTfp9hIdML7Rx8JWP",
     duration: "Dealer Portal",
@@ -179,6 +218,7 @@ export const tools = [
     description: "Volvo's mandatory training platform",
   },
   {
+    id: "volvo-usa",
     title: "Volvo USA",
     image: "https://utfs.io/f/WTe1MV8FTP1yhgkFnv6uJpeyjWPSn2v3rc0zk71VadbIi4CG",
     duration: "Configure Cars",
@@ -190,6 +230,7 @@ export const tools = [
 
 export const resources = [
   {
+    id: "wire-instructions",
     title: "Wire Instructions",
     coverText: "Wire Instructions",
     duration: "Finance",
@@ -198,22 +239,23 @@ export const resources = [
     isModal: true,
   },
   {
+    id: "ev-faqs",
     title: "EV FAQs",
     coverText: "Electric Vehicle FAQs",
     duration: "Electric Vehicles",
     category: "Product Info",
-    component: "EVFAQDialog",
-    isModal: true,
+    resourcePath: "/ev-faqs",
   },
   {
+    id: "phev-faqs",
     title: "Plug-In Hybrid FAQs",
     coverText: "Plug-In Hybrid FAQs",
     duration: "Hybrid Vehicles",
     category: "Product Info",
-    component: "PHEVFAQDialog",
-    isModal: true,
+    resourcePath: "/phev-faqs",
   },
   {
+    id: "out-of-state",
     title: "Out Of State Deals",
     coverText: "Out Of State Deals",
     duration: "Sales Process",
@@ -222,6 +264,7 @@ export const resources = [
     isModal: true,
   },
   {
+    id: "business-apps",
     title: "Business Applications",
     coverText: "Business Applications",
     duration: "Business Sales",
@@ -230,11 +273,12 @@ export const resources = [
     isModal: true,
   },
   {
+    id: "third-party-payoffs",
     title: "3rd Party Payoffs",
     coverText: "3rd Party Payoffs",
     duration: "Finance",
     category: "Finance",
-    content: "Information and requirements for 3rd party payoffs.",
+    component: "ThirdPartyPayoffsDialog",
     isModal: true,
   },
 ];
