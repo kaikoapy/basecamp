@@ -26,6 +26,7 @@ export interface MarketingCardProps {
   title: string;
   description?: string;
   images?: string[];
+  image?: string;
   coverText?: string;
   duration?: string;
   category: string;
@@ -49,6 +50,7 @@ export function MarketingCard(props: MarketingCardProps) {
     title,
     description,
     images,
+    image,
     coverText,
     duration,
     category,
@@ -99,6 +101,9 @@ export function MarketingCard(props: MarketingCardProps) {
     }
   };
 
+  // Determine which image to use
+  const displayImage = images?.[0] || image;
+
   const renderCard = (
     <Card
       className="overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] relative group"
@@ -142,9 +147,9 @@ export function MarketingCard(props: MarketingCardProps) {
       <div className="p-0">
         <div className="relative aspect-video">
           <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0 z-10" />
-          {images && images.length > 0 ? (
+          {displayImage ? (
             <Image
-              src={images[0]}
+              src={displayImage}
               alt={title}
               fill
               quality={100}
@@ -214,7 +219,7 @@ export function MarketingCard(props: MarketingCardProps) {
             </div>
             {isAnnouncement && createdBy && (
               <p className="text-xs text-muted-foreground">
-                Posted by {createdBy}
+                {isEmail ? "Emailed by" : "Posted by"} {createdBy}
               </p>
             )}
             {description && (
@@ -271,8 +276,8 @@ export function MarketingCard(props: MarketingCardProps) {
           announcement={{
             title,
             description: description || "",
-            images: props.images || [],
-            createdBy: props.createdBy || "",
+            images: images || [],
+            createdBy: createdBy || "",
             postedAt: postedAt?.toISOString() || new Date().toISOString(),
             isEmail,
           }}

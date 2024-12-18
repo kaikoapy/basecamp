@@ -237,6 +237,7 @@ export const resources = [
     category: "Finance",
     component: "WireInstructionsDialog",
     isModal: true,
+    image: "",
   },
   {
     id: "ev-faqs",
@@ -245,6 +246,7 @@ export const resources = [
     duration: "Electric Vehicles",
     category: "Product Info",
     resourcePath: "/ev-faqs",
+    image: "",
   },
   {
     id: "phev-faqs",
@@ -253,6 +255,7 @@ export const resources = [
     duration: "Hybrid Vehicles",
     category: "Product Info",
     resourcePath: "/phev-faqs",
+    image: "",
   },
   {
     id: "out-of-state",
@@ -262,6 +265,7 @@ export const resources = [
     category: "Sales",
     component: "OutOfStateFAQDialog",
     isModal: true,
+    image: "https://utfs.io/f/WTe1MV8FTP1ylnjIuHAQj02raSZcg6NUhEuidDsxeABF7Cfk",
   },
   {
     id: "business-apps",
@@ -271,6 +275,7 @@ export const resources = [
     category: "Sales",
     component: "BusinessFAQDialog",
     isModal: true,
+    image: "",
   },
   {
     id: "third-party-payoffs",
@@ -280,6 +285,7 @@ export const resources = [
     category: "Finance",
     component: "ThirdPartyPayoffsDialog",
     isModal: true,
+    image: "https://utfs.io/f/WTe1MV8FTP1yNr3ZoUEli6rP8E17pB0M92umLfXUcSwKzn5Q",
   },
 ];
 

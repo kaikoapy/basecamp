@@ -64,12 +64,14 @@ export default defineSchema({
     title: v.string(),
     description: v.string(),
     images: v.array(v.string()),
-    files: v.array(
-      v.object({
-        url: v.string(),
-        name: v.string(),
-        type: v.string(),
-      })
+    files: v.optional(
+      v.array(
+        v.object({
+          url: v.string(),
+          name: v.string(),
+          type: v.string(),
+        })
+      )
     ),
     postedAt: v.string(),
     category: v.string(),

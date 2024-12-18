@@ -15,7 +15,6 @@ import type {
 } from "convex/server";
 import type * as announcements from "../announcements.js";
 import type * as files from "../files.js";
-import type * as seed from "../seed.js";
 import type * as types from "../types.js";
 
 /**
@@ -29,7 +28,6 @@ import type * as types from "../types.js";
 declare const fullApi: ApiFromModules<{
   announcements: typeof announcements;
   files: typeof files;
-  seed: typeof seed;
   types: typeof types;
 }>;
 export declare const api: FilterApi<
