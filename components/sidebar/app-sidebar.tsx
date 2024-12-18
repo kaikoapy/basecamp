@@ -70,11 +70,6 @@ const navigationItems: NavProject[] = [
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Serdar Dosemecioglu",
-    email: "serdar@volvocarsnorthmiami.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Sales",
@@ -184,20 +179,16 @@ const data = {
       icon: Settings2,
       items: [
         {
-          title: "Profile",
-          url: "#",
+          title: "Organization",
+          url: "/organization-profile",
         },
         {
-          title: "Preferences",
-          url: "#",
+          title: "Members",
+          url: "/organization-profile/members",
         },
         {
-          title: "Notifications",
-          url: "#",
-        },
-        {
-          title: "Security",
-          url: "#",
+          title: "Billing",
+          url: "/organization-profile/billing",
         },
       ],
     },
@@ -215,7 +206,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

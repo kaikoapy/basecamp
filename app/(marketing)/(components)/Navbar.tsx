@@ -1,7 +1,12 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { SignInButton, SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 
 export default function Navbar() {
+  const { signOut } = useClerk();
+
   return (
     <nav className="border-b">
       <div className="mx-auto max-w-6xl px-6 py-4">
@@ -16,10 +21,27 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="text-sm font-medium">
-              Sign In
-            </Button>
-            <Button className="text-sm font-medium">Start Free Trial</Button>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="ghost" className="text-sm font-medium">
+                  Sign In
+                </Button>
+              </SignInButton>
+              <SignInButton mode="modal">
+                <Button className="text-sm font-medium">
+                  Start Free Trial
+                </Button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <Button
+                variant="ghost"
+                className="text-sm font-medium"
+                onClick={() => signOut()}
+              >
+                Sign Out
+              </Button>
+            </SignedIn>
           </div>
         </div>
       </div>
