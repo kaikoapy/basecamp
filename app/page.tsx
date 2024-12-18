@@ -9,7 +9,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Navbar from "./(marketing)/(components)/Navbar";
-
+import Image from "next/image";
+import { HighlightedOne } from "@/components/HighlightedOne";
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -32,6 +33,9 @@ export default function Home() {
             {/* Clear, Simple Value Proposition */}
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-8">
               Everything your sales team needs
+              <span className="block text-3xl sm:text-5xl text-gray-600 font-normal">
+                in <HighlightedOne /> place
+              </span>
             </h1>
 
             {/* How We'll Create Value */}
@@ -240,9 +244,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm">
               <div className="flex items-center gap-4 mb-6">
-                <img
+                <Image
                   src="/api/placeholder/64/64"
                   alt="Capital Motors"
+                  width={64}
+                  height={64}
                   className="rounded-full"
                 />
                 <div>
@@ -269,9 +275,11 @@ export default function Home() {
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-sm">
               <div className="flex items-center gap-4 mb-6">
-                <img
+                <Image
                   src="/api/placeholder/64/64"
                   alt="Premier Auto"
+                  width={64}
+                  height={64}
                   className="rounded-full"
                 />
                 <div>
@@ -304,9 +312,11 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-              <img
+              <Image
                 src="/api/placeholder/80/80"
                 alt="Founder"
+                width={80}
+                height={80}
                 className="rounded-full"
               />
               <div>
