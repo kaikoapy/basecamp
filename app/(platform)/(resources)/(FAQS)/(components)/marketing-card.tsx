@@ -19,12 +19,13 @@ import { WireInstructionsDialog } from "@/app/(platform)/(resources)/wire-instru
 import { OutOfStateDialog } from "@/app/(platform)/(resources)/out-of-state-dialog";
 import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/business-applications-dialog";
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
+import { AnnouncementDialog } from "@/app/(platform)/dashboard/announcements/(components)/AnnouncementDialog";
 
 export interface MarketingCardProps {
   id: string;
   title: string;
   description?: string;
-  image?: string;
+  images?: string[];
   coverText?: string;
   duration?: string;
   category: string;
@@ -37,6 +38,9 @@ export interface MarketingCardProps {
   resourcePath?: string;
   isAffinitySearch?: boolean;
   component?: string;
+  createdBy?: string;
+  isAnnouncement?: boolean;
+  isEmail?: boolean;
 }
 
 export function MarketingCard(props: MarketingCardProps) {
@@ -44,7 +48,7 @@ export function MarketingCard(props: MarketingCardProps) {
     id,
     title,
     description,
-    image,
+    images,
     coverText,
     duration,
     category,
@@ -55,6 +59,8 @@ export function MarketingCard(props: MarketingCardProps) {
     isAffinitySearch = false,
     component,
     isModal,
+    createdBy,
+    isEmail,
   } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -87,6 +93,8 @@ export function MarketingCard(props: MarketingCardProps) {
 
   const handleCardClick = () => {
     if (isModal && component) {
+      setDialogOpen(true);
+    } else if (isAnnouncement) {
       setDialogOpen(true);
     }
   };
@@ -134,9 +142,9 @@ export function MarketingCard(props: MarketingCardProps) {
       <div className="p-0">
         <div className="relative aspect-video">
           <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0 z-10" />
-          {image ? (
+          {images && images.length > 0 ? (
             <Image
-              src={image}
+              src={images[0]}
               alt={title}
               fill
               quality={100}
@@ -204,8 +212,13 @@ export function MarketingCard(props: MarketingCardProps) {
                 ) : null}
               </div>
             </div>
+            {isAnnouncement && createdBy && (
+              <p className="text-xs text-muted-foreground">
+                Posted by {createdBy}
+              </p>
+            )}
             {description && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                 {description}
               </p>
             )}
@@ -249,6 +262,20 @@ export function MarketingCard(props: MarketingCardProps) {
         <ThirdPartyPayoffsDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
+        />
+      )}
+      {isAnnouncement && (
+        <AnnouncementDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          announcement={{
+            title,
+            description: description || "",
+            images: props.images || [],
+            createdBy: props.createdBy || "",
+            postedAt: postedAt?.toISOString() || new Date().toISOString(),
+            isEmail,
+          }}
         />
       )}
     </>

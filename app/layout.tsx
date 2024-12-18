@@ -10,7 +10,7 @@ import {
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-
+import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -58,6 +58,7 @@ export default function RootLayout({
                 </SignedIn>
               </div>
               {children}
+              <Toaster />
             </body>
           </html>
         </ConvexClientProvider>

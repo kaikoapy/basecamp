@@ -14,13 +14,6 @@ const baseContentFields = {
 };
 
 export default defineSchema({
-  // Announcements table
-  announcements: defineTable({
-    ...baseContentFields,
-    content: v.string(),
-    postedAt: v.number(), // Store as timestamp
-  }),
-
   // Pinned content table
   pinnedContent: defineTable({
     ...baseContentFields,
@@ -50,6 +43,12 @@ export default defineSchema({
     updatedAt: v.number(),
   }),
 
+  users: defineTable({
+    email: v.string(),
+    isManager: v.boolean(),
+    // Add any other user fields you need
+  }),
+
   // Department table (related to dealerInfo)
   departments: defineTable({
     dealerInfoId: v.id("dealerInfo"),
@@ -59,4 +58,29 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_dealer_info", ["dealerInfoId"]),
+
+  // Announcements table
+  announcements: defineTable({
+    title: v.string(),
+    description: v.string(),
+    images: v.array(v.string()),
+    files: v.array(
+      v.object({
+        url: v.string(),
+        name: v.string(),
+        type: v.string(),
+      })
+    ),
+    postedAt: v.string(),
+    category: v.string(),
+    createdBy: v.string(),
+    isEmailGenerated: v.boolean(),
+    emailMetadata: v.optional(
+      v.object({
+        from: v.string(),
+        originalEmailId: v.string(),
+        receivedAt: v.string(),
+      })
+    ),
+  }),
 });

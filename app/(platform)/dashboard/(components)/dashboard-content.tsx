@@ -1,13 +1,15 @@
 "use client";
 
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
 import { usePin } from "@/app/providers/pin-provider";
 import {
-  announcements,
   pinnedContent as defaultPinnedContent,
   tools,
   resources,
 } from "../../../data/dashboard-content";
+import { Announcement } from "@/convex/types";
 
 interface DashboardContentProps {
   searchQuery?: string;
@@ -15,6 +17,8 @@ interface DashboardContentProps {
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const { pinnedItems } = usePin();
+  // Fetch announcements from Convex
+  const announcements = useQuery(api.announcements.list);
 
   // Get all items that can be pinned
   const allItems = [...tools, ...resources];
@@ -28,11 +32,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const allPinnedContent = [...defaultPinnedContent, ...dynamicPinnedContent];
 
   const filteredContent = {
-    announcements: announcements.filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
+    announcements:
+      announcements?.filter(
+        (item: Announcement) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ?? [],
     pinnedContent: allPinnedContent.filter(
       (item) =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,7 +55,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     ),
   };
 
-  // Group tools by category
+  // Group tools by category (rest of the code remains the same)
   const toolsByCategory = {
     incentives: filteredContent.tools.filter(
       (tool) => tool.category === "Incentives"
@@ -71,7 +76,18 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           <h2 className="text-2xl font-bold mb-3">Announcements 📰</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.announcements.map((announcement) => (
-              <MarketingCard key={announcement.id} {...announcement} />
+              <MarketingCard
+                key={announcement._id}
+                id={announcement._id}
+                title={announcement.title}
+                description={announcement.description}
+                images={announcement.images}
+                category="announcement"
+                postedAt={new Date(announcement.postedAt)}
+                createdBy={announcement.createdBy} // Add this line
+                isAnnouncement={true} // Add this
+                isEmail={announcement.isEmailGenerated}
+              />
             ))}
           </div>
         </section>
