@@ -11,6 +11,8 @@ import {
 import Navbar from "./(marketing)/(components)/Navbar";
 import Image from "next/image";
 import { HighlightedOne } from "@/components/HighlightedOne";
+import { HighlightedNumber } from "@/components/HighlightedNumber";
+
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -58,10 +60,14 @@ export default function Home() {
           {/* Visual Proof */}
           <div className="mt-16 flex justify-center">
             <div className="relative">
-              <div className="bg-gray-100 rounded-lg p-4 text-center">
-                [Screenshot of unified dashboard with VIN lookup, resources, and
-                tools would go here]
-              </div>
+              <Image
+                src="https://utfs.io/f/WTe1MV8FTP1y6c66a5izlvmXCscai1MT9SpUGERnFPV3k05g"
+                alt="Unified dashboard with VIN lookup and tools"
+                width={1024}
+                height={680}
+                priority
+                className="rounded-lg w-full"
+              />
               {/* Floating Proof Points */}
               <div className="absolute -top-4 -left-4 bg-white shadow-lg rounded-lg p-3">
                 <div className="flex items-center gap-2">
@@ -223,7 +229,9 @@ export default function Home() {
               <div className="text-sm text-gray-600">Fewer Questions</div>
             </div>
             <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-2xl font-bold text-blue-600 mb-1">1</div>
+              <div className="text-2xl font-bold mb-1">
+                <HighlightedNumber number="1" />
+              </div>
               <div className="text-sm text-gray-600">Login for All Tools</div>
             </div>
           </div>
