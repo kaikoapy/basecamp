@@ -28,38 +28,38 @@ export const speedDialContacts: SpeedDialContacts = {
     {
       name: "Serdar",
       title: "New Car Sales Manager",
-      phone: "(555) 123-4567",
+      phone: "(954) 478-0068",
     },
     {
       name: "Marlon",
       title: "also a manager",
-      phone: "(555) 123-4568",
+      phone: "(305) 495-6700",
     },
     {
       name: "Cesar",
       title: "Service Manager",
-      phone: "(555) 123-4568",
+      phone: "(305) 333-9525",
     },
   ],
   porters: [
-    { name: "Andres", phone: "(555) 123-4569" },
-    { name: "Jaramio", phone: "(555) 123-4570" },
-    { name: "Ramon", phone: "(555) 123-4571" },
+    { name: "Andres", phone: "(786) 449-5934" },
+    { name: "Jaramio", phone: "(786) 413-4991" },
+    { name: "Ramon", phone: "(754) 368-6895" },
   ],
   salespeople: [
-    { name: "Ron", phone: "(555) 123-4572" },
-    { name: "Juan", phone: "(555) 123-4573" },
-    { name: "Moudy", phone: "(555) 123-4574" },
-    { name: "Kai", phone: "(555) 123-4575" },
-    { name: "Gio", phone: "(555) 123-4576" },
-    { name: "Amr", phone: "(555) 123-4577" },
-    { name: "Tito", phone: "(555) 123-4578" },
-    { name: "Alex", phone: "(555) 123-4579" },
-    { name: "Gabriel", phone: "(555) 123-4580" },
+    { name: "Ron", phone: "(239) 565-6765" },
+    { name: "Juan", phone: "(305) 705-5822" }, // Goto
+    { name: "Moudy", phone: "(786) 271-7515" },
+    { name: "Kai", phone: "(786) 305-5161" },
+    { name: "Gio", phone: "(786) 444-8322" },
+    { name: "Amr", phone: "(305)690-6038" }, // Goto
+    { name: "Tito", phone: "(973) 420-9482" },
+    { name: "Alex", phone: "(305) 586-6687" },
+    { name: "Gabriel", phone: "(954) 995-4180" },
   ],
   productSpecialists: [
-    { name: "Josh", phone: "(555) 123-4581" },
-    { name: "Nick", phone: "(555) 123-4582" },
+    { name: "Josh", phone: "(930) 569-0611" }, // Goto
+    { name: "Nick", phone: "(305) 907-6871" }, // Goto
   ],
   external: {
     vfs: {
