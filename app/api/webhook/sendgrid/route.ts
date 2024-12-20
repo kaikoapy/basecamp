@@ -20,73 +20,67 @@ export async function POST(request: Request) {
   try {
     console.log("📨 Received SendGrid webhook request");
 
-    // Get the raw body
-    const rawBody = await request.text();
-    console.log("📝 Raw body:", rawBody);
+    // Parse form data
+    const formData = await request.formData();
 
-    // Parse the body
-    const params = new URLSearchParams(rawBody);
+    // Extract email content
+    const from = formData.get("from") as string;
+    const subject = formData.get("subject") as string;
+    const text = formData.get("text") as string;
+    const html = formData.get("html") as string;
+    const email = formData.get("email") as string;
 
-    // Extract and log basic email data
-    const emailData = {
-      from: params.get("from"),
-      subject: params.get("subject"),
-      text: params.get("text"),
-      html: params.get("html"),
-      attachments: params.get("attachment-info"),
-    };
-    console.log("📧 Parsed email data:", emailData);
+    console.log("📧 Parsed email content:", {
+      from,
+      subject,
+      text,
+      html,
+    });
 
-    // Ensure we have the required fields
-    if (!emailData.from || !emailData.subject) {
+    // Ensure we have required fields
+    if (!from || !subject) {
       throw new Error("Missing required email fields");
     }
 
-    // Get the email content
-    const body = emailData.text || emailData.html || "No content provided";
+    // Get the email content (prefer text over HTML)
+    const body = text || html?.replace(/<[^>]*>/g, "") || "No content provided";
+
+    console.log("📝 Processed body:", body);
 
     const processedAttachments: ProcessedAttachment[] = [];
 
-    // Handle attachments if present
-    if (emailData.attachments) {
-      try {
-        const attachmentsInfo = JSON.parse(emailData.attachments) as Record<
-          string,
-          AttachmentInfo
-        >;
-        console.log(`📎 Processing attachments:`, attachmentsInfo);
+    // Handle attachments if they exist
+    const attachmentCount = formData.get("attachments");
+    if (attachmentCount) {
+      const count = parseInt(attachmentCount as string);
+      console.log(`📎 Processing ${count} attachments`);
 
-        // Get upload URLs for attachments
-        const uploadUrls = await convex.mutation(api.files.generateUploadUrls, {
-          count: Object.keys(attachmentsInfo).length,
-        });
-        console.log("🔗 Generated upload URLs:", uploadUrls);
+      const uploadUrls = await convex.mutation(api.files.generateUploadUrls, {
+        count,
+      });
 
-        // Process each attachment
-        for (const [key, info] of Object.entries(attachmentsInfo)) {
-          const attachmentContent = params.get(key);
-          if (attachmentContent) {
-            const index = parseInt(key.replace("attachment", "")) - 1;
-            console.log(`📦 Processing attachment ${key}`);
+      for (let i = 1; i <= count; i++) {
+        const attachment = formData.get(`attachment${i}`);
+        const attachmentInfo = formData.get(`attachment-info${i}`);
 
-            // Upload to Convex
-            await fetch(uploadUrls[index], {
-              method: "POST",
-              body: attachmentContent,
-              headers: {
-                "Content-Type": info.type || "application/octet-stream",
-              },
-            });
+        if (attachment && attachmentInfo) {
+          const info = JSON.parse(attachmentInfo as string) as AttachmentInfo;
+          console.log(`📦 Processing attachment ${i}:`, info);
 
-            processedAttachments.push({
-              url: uploadUrls[index].split("?")[0],
-              type: info.type || "application/octet-stream",
-              name: info.filename || `attachment${index + 1}`,
-            });
-          }
+          await fetch(uploadUrls[i - 1], {
+            method: "POST",
+            body: attachment,
+            headers: {
+              "Content-Type": info.type || "application/octet-stream",
+            },
+          });
+
+          processedAttachments.push({
+            url: uploadUrls[i - 1].split("?")[0],
+            type: info.type,
+            name: info.filename,
+          });
         }
-      } catch (attachmentError) {
-        console.error("📎 Error processing attachments:", attachmentError);
       }
     }
 
@@ -94,19 +88,18 @@ export async function POST(request: Request) {
     const result = await convex.mutation(
       api.announcements.processEmailToAnnouncement,
       {
-        from: emailData.from,
-        subject: emailData.subject,
+        from,
+        subject,
         body,
         attachments: processedAttachments,
-        emailId: new Date().toISOString(),
+        emailId: email || new Date().toISOString(),
       }
     );
-    console.log("✅ Successfully created announcement:", result);
 
+    console.log("✅ Successfully created announcement:", result);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     console.error("❌ Error processing email:", error);
-    // Log the full error for debugging
     if (error instanceof Error) {
       console.error("Detailed error:", {
         message: error.message,
