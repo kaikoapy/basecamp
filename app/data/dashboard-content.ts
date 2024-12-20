@@ -227,12 +227,13 @@ export const tools = [
     description: "Official Volvo website",
   },
   {
-    id: "business-applications",
-    title: "Business Applications",
-    description: "Access and print business application forms",
+    id: "next-up",
+    title: "Next Up",
+    image: "https://utfs.io/f/WTe1MV8FTP1yLykzRgU0NFxPEbliwHGXe5B84MSn3v7gULpk",
+    duration: "Lead Management",
     category: "Tools",
-    type: "business-application",
-    image: "/path/to/image",
+    description: "Up List Software",
+    url: "https://login.thenextup.com/",
   },
 ];
 
