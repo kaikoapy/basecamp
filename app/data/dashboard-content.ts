@@ -226,6 +226,14 @@ export const tools = [
     url: "https://www.volvocars.com/us/l/car-configurator/",
     description: "Official Volvo website",
   },
+  {
+    id: "business-applications",
+    title: "Business Applications",
+    description: "Access and print business application forms",
+    category: "Tools",
+    type: "business-application",
+    image: "/path/to/image",
+  },
 ];
 
 export const resources = [

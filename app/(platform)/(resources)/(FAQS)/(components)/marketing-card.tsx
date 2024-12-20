@@ -20,6 +20,7 @@ import { OutOfStateDialog } from "@/app/(platform)/(resources)/out-of-state-dial
 import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/business-applications-dialog";
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
 import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
+import { useDialog } from "@/hooks/use-dialog";
 
 export interface MarketingCardProps {
   id: string;
@@ -42,6 +43,7 @@ export interface MarketingCardProps {
   createdBy?: string;
   isAnnouncement?: boolean;
   isEmail?: boolean;
+  type?: string;
 }
 
 export function MarketingCard(props: MarketingCardProps) {
@@ -63,6 +65,7 @@ export function MarketingCard(props: MarketingCardProps) {
     isModal,
     createdBy,
     isEmail,
+    type,
   } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -76,6 +79,8 @@ export function MarketingCard(props: MarketingCardProps) {
     category === "Product Info" ||
     category === "Finance" ||
     category === "Sales";
+
+  const dialog = useDialog();
 
   const handlePinToggle = (e: React.MouseEvent, itemId?: string) => {
     e.preventDefault();
@@ -98,6 +103,8 @@ export function MarketingCard(props: MarketingCardProps) {
       setDialogOpen(true);
     } else if (isAnnouncement) {
       setDialogOpen(true);
+    } else if (type === "business-application") {
+      dialog.onOpen();
     }
   };
 
@@ -281,6 +288,12 @@ export function MarketingCard(props: MarketingCardProps) {
             postedAt: postedAt?.toISOString() || new Date().toISOString(),
             isEmail,
           }}
+        />
+      )}
+      {type === "business-application" && (
+        <BusinessApplicationsDialog
+          open={dialog.isOpen}
+          onOpenChange={dialog.onOpenChange}
         />
       )}
     </>

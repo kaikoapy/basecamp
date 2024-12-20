@@ -5,12 +5,27 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { FullscreenImage } from "@/components/fullscreen-image";
+import { PrintBusinessApplication } from "@/app/(platform)/(components)/print-business-application";
+import { DOCUMENT_URLS } from "@/app/config/constants";
+import { Separator } from "@/components/ui/separator";
 
 interface BusinessApplicationsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const GUIDELINES_IMAGE =
+  "https://utfs.io/f/WTe1MV8FTP1ymwKBBnyKv3dxk5GC76MncbHBIJiVoQqgsUR1";
+
+const BUSINESS_APP_PREVIEW =
+  "https://utfs.io/f/WTe1MV8FTP1yyrskCSu6DcpWYFfvkCVrn34LQaxXdtMy18om";
 
 export function BusinessApplicationsDialog({
   open,
@@ -18,82 +33,75 @@ export function BusinessApplicationsDialog({
 }: BusinessApplicationsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogTrigger asChild>
+        {/* Your existing trigger button */}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[825px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Business Application Requirements
-          </DialogTitle>
+          <DialogTitle>Business Applications</DialogTitle>
+          <DialogDescription>
+            Review guidelines and access the business application form.
+          </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6 py-4 overflow-y-auto pr-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-primary">
-                Required Documents
-              </h3>
-              <div className="grid gap-2 text-sm">
-                <p>For all business applications, we require:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Articles of Incorporation or Organization</li>
-                  <li>EIN (Employer Identification Number)</li>
-                  <li>Business License</li>
-                  <li>Previous two years of business tax returns</li>
-                  <li>Bank statements (last 3 months)</li>
-                  <li>Profit & Loss statement (current year)</li>
-                </ul>
+
+        <div className="flex-1 overflow-y-auto">
+          <div className="space-y-6 py-6">
+            {/* Guidelines Section */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold">
+                  Guidelines & Requirements
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Review these guidelines carefully before submitting your
+                  application. Click the image to view in full size.
+                </p>
+              </div>
+              <div className="h-[300px] border rounded-lg overflow-hidden">
+                <FullscreenImage
+                  src={GUIDELINES_IMAGE}
+                  alt="Business Applications Guidelines"
+                />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-primary">
-                Additional Requirements
-              </h3>
-              <div className="grid gap-2 text-sm">
-                <p>For businesses less than 2 years old:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Business plan</li>
-                  <li>Personal tax returns (last 2 years)</li>
-                  <li>Personal financial statement</li>
-                  <li>Resume of principal owners</li>
-                </ul>
+            <Separator />
+
+            {/* Application Form Section */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold">
+                  Business Application Form
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Once you&apos;ve reviewed the guidelines, click below to open
+                  and print the official business application form.
+                </p>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-primary">
-                Guarantor Information
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                For each guarantor (anyone owning 20% or more of the business),
-                we need:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 text-sm text-muted-foreground">
-                <li>Valid government-issued ID</li>
-                <li>Social Security number</li>
-                <li>Personal income verification</li>
-                <li>Proof of residence</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-primary">
-                Processing Timeline
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Applications are typically processed within 2-3 business days
-                after receiving all required documentation. Complex applications
-                may require additional time for review.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200">
-              <p>
-                All documents must be current and valid. Incomplete applications
-                may result in processing delays. Please ensure all information
-                is accurate and verifiable.
-              </p>
+              <div className="h-[300px] border rounded-lg overflow-hidden">
+                <FullscreenImage
+                  src={BUSINESS_APP_PREVIEW}
+                  alt="Business Application Form Preview"
+                />
+              </div>
+              <div className="border rounded-lg p-4 bg-muted/50">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Click the button below to open and print the business
+                  application form:
+                </p>
+                <PrintBusinessApplication
+                  pdfUrl={DOCUMENT_URLS.BUSINESS_APPLICATION}
+                />
+              </div>
             </div>
           </div>
         </div>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Close</Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
