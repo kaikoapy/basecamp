@@ -295,6 +295,16 @@ export const resources = [
     isModal: true,
     image: "https://utfs.io/f/WTe1MV8FTP1yNr3ZoUEli6rP8E17pB0M92umLfXUcSwKzn5Q",
   },
+  {
+    id: "ex90-sheet",
+    title: "EX90 Sheet",
+    coverText: "EX90 Form Sheet",
+    duration: "Product Info",
+    category: "Product Info",
+    component: "EX90SheetDialog",
+    isModal: true,
+    image: "https://utfs.io/f/WTe1MV8FTP1yIDOOqYvkUzZSeqajA682byYFBfWmhDPKXOQE",
+  },
 ];
 
 // export const widgets = [

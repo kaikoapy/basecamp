@@ -172,6 +172,33 @@ export function SpeedDial() {
               </AccordionContent>
             </AccordionItem>
 
+            {/* Delivery Specialists Section */}
+            <AccordionItem value="deliverySpecialists">
+              <AccordionTrigger className="text-sm font-semibold">
+                Delivery Specialists
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-1">
+                  {speedDialContacts.deliverySpecialists.map((specialist) => (
+                    <div
+                      key={specialist.name}
+                      className={cn(
+                        "p-2 rounded-md transition-colors flex items-center justify-between",
+                        hoveredItem === specialist.name && "bg-muted"
+                      )}
+                      onMouseEnter={() => setHoveredItem(specialist.name)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                    >
+                      <span className="text-sm font-semibold">
+                        {specialist.name}
+                      </span>
+                      {renderContactButton(specialist.phone)}
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
             {/* External Contacts Section */}
             <AccordionItem value="external">
               <AccordionTrigger className="text-sm font-semibold">

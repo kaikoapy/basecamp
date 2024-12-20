@@ -15,7 +15,7 @@ interface SpeedDialContacts {
   management: Contact[];
   porters: Contact[];
   salespeople: Contact[];
-  productSpecialists: Contact[];
+  deliverySpecialists: Contact[];
   external: {
     vfs: ExternalContact;
     aPlan: ExternalContact;
@@ -57,9 +57,9 @@ export const speedDialContacts: SpeedDialContacts = {
     { name: "Alex", phone: "(305) 586-6687" },
     { name: "Gabriel", phone: "(954) 995-4180" },
   ],
-  productSpecialists: [
-    { name: "Josh", phone: "(930) 569-0611" }, // Goto
-    { name: "Nick", phone: "(305) 907-6871" }, // Goto
+  deliverySpecialists: [
+    { name: "Nicolas Meek", phone: "(305) 907-6871" },
+    { name: "Josh Sadov", phone: "(305) 690-6116" },
   ],
   external: {
     vfs: {

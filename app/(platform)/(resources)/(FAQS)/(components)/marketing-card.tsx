@@ -21,6 +21,7 @@ import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/busines
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
 import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
 import { useDialog } from "@/hooks/use-dialog";
+import { EX90SheetDialog } from "@/app/(platform)/(resources)/ex90-sheet-dialog";
 
 export interface MarketingCardProps {
   id: string;
@@ -295,6 +296,9 @@ export function MarketingCard(props: MarketingCardProps) {
           open={dialog.isOpen}
           onOpenChange={dialog.onOpenChange}
         />
+      )}
+      {component === "EX90SheetDialog" && (
+        <EX90SheetDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       )}
     </>
   );
