@@ -73,7 +73,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     <main className="flex-1 p-6 max-w-[1600px] mx-auto">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Announcements 📰</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Announcements <span className="apple-emoji">📰</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.announcements.map((announcement) => (
               <MarketingCard
@@ -95,7 +97,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {filteredContent.pinnedContent.length > 0 && (
         <section id="quick-access" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Quick Access 📌</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Quick Access <span className="apple-emoji">📌</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.pinnedContent.map((content) => (
               <MarketingCard
@@ -110,7 +114,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {toolsByCategory.incentives.length > 0 && (
         <section id="incentives" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Incentives 🏷️</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Incentives <span className="apple-emoji">🏷️</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.incentives.map((tool) => (
               <MarketingCard key={tool.id} {...tool} image={tool.image} />
@@ -121,7 +127,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {toolsByCategory.tools.length > 0 && (
         <section id="tools" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Tools 🛠️</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Tools <span className="apple-emoji">🛠️</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.tools.map((tool) => (
               <MarketingCard key={tool.id} {...tool} image={tool.image} />
@@ -132,7 +140,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {toolsByCategory.volvoSites.length > 0 && (
         <section id="volvo-sites" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Volvo Sites 🌐</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Volvo Sites <span className="apple-emoji">🌐</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.volvoSites.map((tool) => (
               <MarketingCard key={tool.id} {...tool} image={tool.image} />
@@ -143,7 +153,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {toolsByCategory.communication.length > 0 && (
         <section id="communication" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Communication 💬</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Communication <span className="apple-emoji">💬</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.communication.map((tool) => (
               <MarketingCard key={tool.id} {...tool} image={tool.image} />
@@ -154,7 +166,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {filteredContent.resources.length > 0 && (
         <section id="resources" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Resources 📚</h2>
+          <h2 className="text-xl font-bold mb-3">
+            Resources <span className="apple-emoji">📚</span>
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.resources.map((resource) => (
               <MarketingCard

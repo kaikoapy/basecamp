@@ -88,3 +88,8 @@ body {
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+.apple-emoji {
+  font-family: "Apple Color Emoji", system-ui;
+  font-style: normal;
+}
