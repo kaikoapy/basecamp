@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       (formData.get("attachments") as string) || "0"
     );
 
-    let processedAttachments = [];
+    const processedAttachments = [];
 
     if (attachments > 0) {
       // Get upload URLs for attachments
