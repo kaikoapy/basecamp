@@ -11,6 +11,28 @@ export async function GET() {
   return NextResponse.json({ success: true });
 }
 
+// Function to extract email body from raw email content
+function extractEmailBody(rawEmail: string): string {
+  // Look for text/plain content
+  const textMatch = rawEmail.match(
+    /Content-Type: text\/plain;.*?\r\n\r\n([\s\S]*?)\r\n--/i
+  );
+  if (textMatch && textMatch[1]) {
+    return textMatch[1].trim();
+  }
+
+  // Fallback to HTML content
+  const htmlMatch = rawEmail.match(
+    /Content-Type: text\/html;.*?\r\n\r\n([\s\S]*?)\r\n--/i
+  );
+  if (htmlMatch && htmlMatch[1]) {
+    // Strip HTML tags
+    return htmlMatch[1].replace(/<[^>]*>/g, "").trim();
+  }
+
+  return "No content available";
+}
+
 // Handle POST requests (actual emails)
 export async function POST(request: Request) {
   try {
@@ -20,18 +42,20 @@ export async function POST(request: Request) {
     const formData = await request.formData();
 
     // Log received data for debugging
+    const emailRaw = formData.get("email") as string;
     console.log("📝 Form data received:", {
       from: formData.get("from"),
       subject: formData.get("subject"),
       attachmentsCount: formData.get("attachments"),
-      emailId: formData.get("email"),
+      emailId: emailRaw,
     });
 
-    // Extract and validate email data
+    // Extract email data
     const from = formData.get("from") as string;
     const subject = formData.get("subject") as string;
-    let text = formData.get("text") as string;
-    const html = formData.get("html") as string;
+
+    // Extract body from raw email content
+    const body = extractEmailBody(emailRaw);
 
     // Validate required fields
     if (!from || !subject) {
@@ -41,26 +65,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // If text is not available, try to extract from HTML
-    if (!text && html) {
-      // Simple HTML to text conversion
-      text = html.replace(/<[^>]*>/g, "").trim();
-    }
-
-    // Ensure we have a body
-    if (!text) {
-      text = "No content provided";
-    }
-
     // Create announcement
     const result = await convex.mutation(
       api.announcements.processEmailToAnnouncement,
       {
         from,
         subject,
-        body: text,
-        attachments: [], // Handle attachments if needed
-        emailId: (formData.get("email") as string) || `email_${Date.now()}`, // Fallback ID if none provided
+        body: body || "No content provided",
+        attachments: [],
+        emailId: `email_${Date.now()}`, // Generate unique ID
       }
     );
 
