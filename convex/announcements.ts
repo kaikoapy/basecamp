@@ -1,3 +1,4 @@
+// convex/announcements.ts
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
@@ -9,12 +10,9 @@ export const create = mutation({
     category: v.string(),
   },
   handler: async (ctx, args) => {
-    // For now, let's skip auth since it's not set up
-    // When you're ready to add auth, we can add it back
-
     return await ctx.db.insert("announcements", {
       ...args,
-      createdBy: "test_user", // Temporarily hardcoded
+      createdBy: "test_user",
       postedAt: new Date().toISOString(),
       isEmailGenerated: false,
       files: [],
@@ -37,36 +35,51 @@ export const processEmailToAnnouncement = mutation({
     emailId: v.string(),
   },
   handler: async (ctx, args) => {
-    const senderName = args.from.split("<")[0].trim() || args.from;
+    try {
+      const senderName = args.from.split("<")[0].trim() || args.from;
 
-    // Split attachments by type
-    const images = args.attachments
-      .filter((att) => att.type.startsWith("image/"))
-      .map((att) => att.url);
+      // Ensure we have valid data
+      if (!args.body) {
+        console.error("Missing body in email processing");
+        throw new Error("Email body is required");
+      }
 
-    const files = args.attachments
-      .filter((att) => !att.type.startsWith("image/"))
-      .map((att) => ({
-        url: att.url,
-        name: att.name,
-        type: att.type,
-      }));
+      // Split attachments by type
+      const images = args.attachments
+        .filter((att) => att.type.startsWith("image/"))
+        .map((att) => att.url);
 
-    return await ctx.db.insert("announcements", {
-      title: args.subject,
-      description: args.body,
-      images: images,
-      files: files, // Add this to your schema
-      category: "announcement",
-      createdBy: senderName,
-      postedAt: new Date().toISOString(),
-      isEmailGenerated: true,
-      emailMetadata: {
-        from: args.from,
-        originalEmailId: args.emailId,
-        receivedAt: new Date().toISOString(),
-      },
-    });
+      const files = args.attachments
+        .filter((att) => !att.type.startsWith("image/"))
+        .map((att) => ({
+          url: att.url,
+          name: att.name,
+          type: att.type,
+        }));
+
+      const announcement = {
+        title: args.subject,
+        description: args.body,
+        images,
+        files,
+        category: "announcement",
+        createdBy: senderName,
+        postedAt: new Date().toISOString(),
+        isEmailGenerated: true,
+        emailMetadata: {
+          from: args.from,
+          originalEmailId: args.emailId,
+          receivedAt: new Date().toISOString(),
+        },
+      };
+
+      console.log("Creating announcement:", announcement);
+
+      return await ctx.db.insert("announcements", announcement);
+    } catch (error) {
+      console.error("Error in processEmailToAnnouncement:", error);
+      throw error;
+    }
   },
 });
 

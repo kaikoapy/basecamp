@@ -5,12 +5,6 @@ import { NextResponse } from "next/server";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-// Handle GET requests (SendGrid verification)
-export async function GET() {
-  console.log("📝 Received GET request - SendGrid verification");
-  return NextResponse.json({ success: true });
-}
-
 // Function to extract email body from raw email content
 function extractEmailBody(rawEmail: string): string {
   // Look for text/plain content
@@ -26,72 +20,73 @@ function extractEmailBody(rawEmail: string): string {
     /Content-Type: text\/html;.*?\r\n\r\n([\s\S]*?)\r\n--/i
   );
   if (htmlMatch && htmlMatch[1]) {
-    // Strip HTML tags
     return htmlMatch[1].replace(/<[^>]*>/g, "").trim();
   }
 
   return "No content available";
 }
 
-// Handle POST requests (actual emails)
 export async function POST(request: Request) {
   try {
     console.log("📨 Received SendGrid webhook request");
 
-    // SendGrid sends multipart/form-data
     const formData = await request.formData();
-
-    // Log received data for debugging
     const emailRaw = formData.get("email") as string;
-    console.log("📝 Form data received:", {
-      from: formData.get("from"),
-      subject: formData.get("subject"),
-      attachmentsCount: formData.get("attachments"),
-      emailId: emailRaw,
-    });
-
-    // Extract email data
     const from = formData.get("from") as string;
     const subject = formData.get("subject") as string;
 
     // Extract body from raw email content
     const body = extractEmailBody(emailRaw);
 
-    // Validate required fields
-    if (!from || !subject) {
+    console.log("📧 Processed email data:", {
+      from,
+      subject,
+      bodyLength: body.length,
+    });
+
+    if (!body) {
+      console.error("❌ No email body extracted");
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "No email body found" },
         { status: 400 }
       );
     }
 
-    // Create announcement
+    // Prepare payload for Convex
+    const payload = {
+      from,
+      subject,
+      body,
+      attachments: [], // No attachments for now
+      emailId: `email_${Date.now()}`,
+    };
+
+    console.log("📤 Sending to Convex:", payload);
+
+    // Send to Convex
     const result = await convex.mutation(
       api.announcements.processEmailToAnnouncement,
-      {
-        from,
-        subject,
-        body: body || "No content provided",
-        attachments: [],
-        emailId: `email_${Date.now()}`, // Generate unique ID
-      }
+      payload
     );
 
     console.log("✅ Successfully created announcement:", result);
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id: result });
   } catch (error) {
     console.error("❌ Error processing email:", error);
 
-    // Improved error response
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json(
-      {
-        error: "Failed to process email",
-        details: errorMessage,
-      },
-      { status: 500 }
-    );
+    // Improved error handling
+    let statusCode = 500;
+    let message = "Failed to process email";
+
+    if (error instanceof Error) {
+      if (error.message.includes("ArgumentValidationError")) {
+        statusCode = 400;
+        message = "Invalid email data format";
+      }
+      console.error("Error details:", error.message);
+    }
+
+    return NextResponse.json({ error: message }, { status: statusCode });
   }
 }
 
