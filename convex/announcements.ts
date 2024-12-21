@@ -38,34 +38,16 @@ export const processEmailToAnnouncement = mutation({
     try {
       const senderName = args.from.split("<")[0].trim() || args.from;
 
-      // Ensure we have valid data
-      if (!args.body) {
-        console.error("Missing body in email processing");
-        throw new Error("Email body is required");
-      }
-
-      // Split attachments by type
-      const images = args.attachments
-        .filter((att) => att.type.startsWith("image/"))
-        .map((att) => att.url);
-
-      const files = args.attachments
-        .filter((att) => !att.type.startsWith("image/"))
-        .map((att) => ({
-          url: att.url,
-          name: att.name,
-          type: att.type,
-        }));
-
+      // Create the announcement document matching our schema
       const announcement = {
         title: args.subject,
         description: args.body,
-        images,
-        files,
-        category: "announcement",
-        createdBy: senderName,
+        images: [], // Empty array since we're not handling images yet
         postedAt: new Date().toISOString(),
+        category: "email", // Default category for email announcements
+        createdBy: senderName,
         isEmailGenerated: true,
+        files: [], // Empty array as per schema
         emailMetadata: {
           from: args.from,
           originalEmailId: args.emailId,

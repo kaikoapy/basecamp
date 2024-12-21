@@ -35,15 +35,16 @@ export async function POST(request: Request) {
     const from = formData.get("from") as string;
     const subject = formData.get("subject") as string;
 
-    // Extract body from raw email content
+    // Validate required fields
+    if (!from || !subject) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Extract and validate body
     const body = extractEmailBody(emailRaw);
-
-    console.log("📧 Processed email data:", {
-      from,
-      subject,
-      bodyLength: body.length,
-    });
-
     if (!body) {
       console.error("❌ No email body extracted");
       return NextResponse.json(
@@ -74,19 +75,25 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("❌ Error processing email:", error);
 
-    // Improved error handling
-    let statusCode = 500;
-    let message = "Failed to process email";
-
+    // Error handling with type checking
     if (error instanceof Error) {
-      if (error.message.includes("ArgumentValidationError")) {
-        statusCode = 400;
-        message = "Invalid email data format";
-      }
-      console.error("Error details:", error.message);
+      const message = error.message;
+      // Determine if it's a validation error
+      const isValidationError = message.includes("ArgumentValidationError");
+
+      return NextResponse.json(
+        {
+          error: isValidationError ? "Invalid email format" : "Server error",
+          details: message,
+        },
+        { status: isValidationError ? 400 : 500 }
+      );
     }
 
-    return NextResponse.json({ error: message }, { status: statusCode });
+    return NextResponse.json(
+      { error: "Unknown error occurred" },
+      { status: 500 }
+    );
   }
 }
 
