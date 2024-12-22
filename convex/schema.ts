@@ -9,7 +9,6 @@ const baseContentFields = {
   category: v.string(),
   description: v.optional(v.string()),
   url: v.optional(v.string()),
-  createdAt: v.number(),
   updatedAt: v.number(),
 };
 
@@ -27,19 +26,35 @@ export default defineSchema({
 
   // Resources table (including FAQs)
   resources: defineTable({
-    ...baseContentFields,
-    coverText: v.string(),
+    title: v.string(),
+    type: v.union(
+      v.literal("tool"),
+      v.literal("resource"),
+      v.literal("incentive"),
+      v.literal("volvo-site"),
+      v.literal("communication"),
+      v.literal("pinned")
+    ),
+    image: v.optional(v.string()),
+    duration: v.string(),
+    category: v.string(),
+    description: v.optional(v.string()),
+    url: v.optional(v.string()),
+    coverText: v.optional(v.string()),
     component: v.optional(v.string()),
-    isModal: v.boolean(),
-    content: v.optional(v.string()),
-  }),
+    isModal: v.optional(v.boolean()),
+    resourcePath: v.optional(v.string()),
+    pinned: v.optional(v.boolean()),
+    order: v.optional(v.number()),
+    updatedAt: v.number(),
+    createdAt: v.optional(v.number()),
+  }).index("by_type", ["type"]),
 
   // Dealer information table
   dealerInfo: defineTable({
     name: v.string(),
     address: v.string(),
     googleMapsUrl: v.string(),
-    createdAt: v.number(),
     updatedAt: v.number(),
   }),
 
@@ -55,7 +70,6 @@ export default defineSchema({
     name: v.string(),
     hours: v.string(),
     phone: v.string(),
-    createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_dealer_info", ["dealerInfoId"]),
 

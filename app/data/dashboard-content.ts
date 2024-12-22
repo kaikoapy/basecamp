@@ -130,7 +130,7 @@ export const tools = [
   {
     id: "vauto",
     title: "VAuto",
-    image: "https://utfs.io/f/WTe1MV8FTP1yzCCxBp0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
+    image: "https://utfs.io/f/WTe1MV8FTP1yQ5qxMyTVtS2ZJfTqXEoMUNvb6wImc7sWyn1g",
     duration: "Sales",
     category: "Tools",
     description: "Trade-in appraisal tool",

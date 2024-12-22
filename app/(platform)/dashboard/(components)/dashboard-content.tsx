@@ -4,54 +4,47 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
 import { usePin } from "@/app/providers/pin-provider";
-import {
-  pinnedContent as defaultPinnedContent,
-  tools,
-  resources,
-} from "../../../data/dashboard-content";
-import { Announcement } from "@/convex/types";
 
 interface DashboardContentProps {
   searchQuery?: string;
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
-  const { pinnedItems } = usePin();
-  // Fetch announcements from Convex
+  usePin();
+
+  // Fetch all resources from Convex
   const announcements = useQuery(api.announcements.list);
+  // Get all resources and filter for pinned ones client-side
+  const allResources = useQuery(api.resources.getAllResources);
 
-  // Get all items that can be pinned
-  const allItems = [...tools, ...resources];
+  if (!allResources || !announcements) {
+    return <div>Loading...</div>;
+  }
 
-  // Get dynamically pinned items
-  const dynamicPinnedContent = allItems.filter((item) =>
-    pinnedItems.has(item.id)
-  );
-
-  // Combine default and dynamically pinned items
-  const allPinnedContent = [...defaultPinnedContent, ...dynamicPinnedContent];
-
+  // Filter content based on search query and type/pinned status
   const filteredContent = {
-    announcements:
-      announcements?.filter(
-        (item: Announcement) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ?? [],
-    pinnedContent: allPinnedContent.filter(
+    announcements: announcements.filter(
       (item) =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.category.toLowerCase().includes(searchQuery.toLowerCase())
     ),
-    tools: tools.filter(
+    pinnedContent: allResources.filter(
       (item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+        item.pinned && // Filter for pinned items
+        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase()))
     ),
-    resources: resources.filter(
+    tools: allResources.filter(
       (item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+        item.type === "tool" &&
+        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase()))
+    ),
+    resources: allResources.filter(
+      (item) =>
+        item.type === "resource" &&
+        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase()))
     ),
   };
 
@@ -103,9 +96,14 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.pinnedContent.map((content) => (
               <MarketingCard
-                key={content.id}
-                {...content}
-                image={content.image}
+                key={content._id}
+                id={content._id}
+                title={content.title}
+                image={content.image ?? ""}
+                duration={content.duration}
+                category={content.category}
+                description={content.description}
+                url={content.url}
               />
             ))}
           </div>
@@ -119,7 +117,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.incentives.map((tool) => (
-              <MarketingCard key={tool.id} {...tool} image={tool.image} />
+              <MarketingCard
+                key={tool._id}
+                id={tool._id}
+                {...tool}
+                image={tool.image ?? ""}
+              />
             ))}
           </div>
         </section>
@@ -132,7 +135,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.tools.map((tool) => (
-              <MarketingCard key={tool.id} {...tool} image={tool.image} />
+              <MarketingCard
+                key={tool._id}
+                id={tool._id}
+                {...tool}
+                image={tool.image ?? ""}
+              />
             ))}
           </div>
         </section>
@@ -145,7 +153,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.volvoSites.map((tool) => (
-              <MarketingCard key={tool.id} {...tool} image={tool.image} />
+              <MarketingCard
+                key={tool._id}
+                id={tool._id}
+                {...tool}
+                image={tool.image ?? ""}
+              />
             ))}
           </div>
         </section>
@@ -158,7 +171,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {toolsByCategory.communication.map((tool) => (
-              <MarketingCard key={tool.id} {...tool} image={tool.image} />
+              <MarketingCard
+                key={tool._id}
+                id={tool._id}
+                {...tool}
+                image={tool.image ?? ""}
+              />
             ))}
           </div>
         </section>
@@ -172,9 +190,10 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.resources.map((resource) => (
               <MarketingCard
-                key={resource.id}
+                key={resource._id}
+                id={resource._id}
                 {...resource}
-                image={resource.image}
+                image={resource.image ?? ""}
               />
             ))}
           </div>
