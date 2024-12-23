@@ -4,6 +4,9 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
 import { usePin } from "@/app/providers/pin-provider";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const DEFAULT_COVER_IMAGE =
   "https://utfs.io/f/WTe1MV8FTP1yx3tWeG50m3fOZqTYSyoQcrgMelRFbzW79pIu";
@@ -45,33 +48,47 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     ),
   };
 
-  // Group resources by category
+  // Group resources by category and sort by order
   const resourcesByCategory = {
-    incentives: filteredContent.resources.filter(
-      (resource) => resource.category === "Incentives"
-    ),
-    tools: filteredContent.resources.filter(
-      (resource) => resource.category === "Tools"
-    ),
-    volvoSites: filteredContent.resources.filter(
-      (resource) => resource.category === "Volvo Sites"
-    ),
-    communication: filteredContent.resources.filter(
-      (resource) => resource.category === "Communication"
-    ),
-    salesAndFinance: filteredContent.resources.filter(
-      (resource) =>
-        resource.category === "Sales" || resource.category === "Finance"
-    ),
+    incentives: filteredContent.resources
+      .filter((resource) => resource.category === "Incentives")
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+
+    tools: filteredContent.resources
+      .filter((resource) => resource.category === "Tools")
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+
+    volvoSites: filteredContent.resources
+      .filter((resource) => resource.category === "Volvo Sites")
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+
+    communication: filteredContent.resources
+      .filter((resource) => resource.category === "Communication")
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+
+    salesAndFinance: filteredContent.resources
+      .filter(
+        (resource) =>
+          resource.category === "Sales" || resource.category === "Finance"
+      )
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   };
 
   return (
     <main className="flex-1 p-6 max-w-[1600px] mx-auto">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Announcements <span className="apple-emoji">📰</span>
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-bold">
+              Announcements <span className="apple-emoji">📰</span>
+            </h2>
+            <Button variant="outline" size="sm" className="text-sm" asChild>
+              <Link href="/announcements">
+                See All Announcements
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.announcements.map((announcement) => (
               <MarketingCard

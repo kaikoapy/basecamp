@@ -135,12 +135,12 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "New Inventory",
-          url: "https://www.volvocarsnorthmiami.com/inventory/new",
+          title: "XC90 2025.5",
+          url: "/product-knowledge/xc90-2025.5",
         },
         {
-          title: "Used Inventory",
-          url: "https://www.volvocarsnorthmiami.com/inventory/used",
+          title: "EX30",
+          url: "/product-knowledge/ex90",
         },
         {
           title: "EX90",
