@@ -2,14 +2,20 @@
 
 import React, { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X, Check, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { useUser } from "@clerk/nextjs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Custom Dialog components for test
 const DialogContent = React.forwardRef<
@@ -59,6 +65,12 @@ interface NewAnnouncementDialogProps {
   };
 }
 
+interface Reader {
+  userId: string;
+  userName: string;
+  readAt: string;
+}
+
 export function NewAnnouncementDialog({
   open,
   onOpenChange,
@@ -70,6 +82,11 @@ export function NewAnnouncementDialog({
     announcement.htmlDescription || announcement.description
   );
   const updateAnnouncement = useMutation(api.announcements.update);
+  const markAsRead = useMutation(api.announcements.markAsRead);
+  const readStatus = useQuery(api.announcements.getReadStatus, {
+    id: announcement._id,
+  }) as Reader[] | undefined;
+  const { user } = useUser();
   const { toast } = useToast();
 
   const formatDate = (dateString: string | number | Date) => {
@@ -108,6 +125,34 @@ export function NewAnnouncementDialog({
       console.error("Error updating announcement:", error);
     }
   };
+
+  const handleMarkAsRead = async () => {
+    if (!user) return;
+    try {
+      await markAsRead({
+        id: announcement._id,
+        userId: user.id,
+        userName:
+          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+          user.username ||
+          user.id,
+      });
+      toast({
+        title: "Success",
+        description: "Marked as read",
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to mark as read",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const hasUserRead = readStatus?.some((reader) => reader.userId === user?.id);
+  const readCount = readStatus?.length || 0;
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -239,36 +284,72 @@ export function NewAnnouncementDialog({
           </div>
         )}
 
-        {/* Footer with edit buttons */}
-        <div className="border-t pt-4 mt-4 flex justify-end">
-          {!isEditing ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit
-            </Button>
-          ) : (
-            <div className="flex items-center gap-2">
+        {/* Footer with edit buttons and read status */}
+        <div className="border-t pt-4 mt-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span>{readCount} read</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="space-y-1">
+                  {readStatus?.map((reader) => (
+                    <div key={reader.userId} className="text-sm">
+                      {reader.userName}
+                      <span className="text-xs text-muted-foreground ml-1">
+                        ({new Date(reader.readAt).toLocaleDateString()})
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+            {!hasUserRead && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMarkAsRead}
+                className="gap-1"
+              >
+                <Check className="h-4 w-4" />
+                Mark as read
+              </Button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {!isEditing ? (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  setEditedTitle(announcement.title);
-                  setEditedDescription(
-                    announcement.htmlDescription || announcement.description
-                  );
-                  setIsEditing(false);
-                }}
+                onClick={() => setIsEditing(true)}
               >
-                Cancel
+                Edit
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save
-              </Button>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setEditedTitle(announcement.title);
+                    setEditedDescription(
+                      announcement.htmlDescription || announcement.description
+                    );
+                    setIsEditing(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleSave}>
+                  Save
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </DialogPrimitive.Root>

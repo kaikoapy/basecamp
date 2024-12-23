@@ -41,27 +41,36 @@ export default defineSchema({
     description: v.string(),
     htmlDescription: v.optional(v.string()),
     images: v.array(v.string()),
+    category: v.string(),
+    createdBy: v.string(),
+    postedAt: v.string(),
+    expiresAt: v.optional(v.string()),
+    isArchived: v.optional(v.boolean()),
+    isEmailGenerated: v.boolean(),
     files: v.optional(
       v.array(
         v.object({
           url: v.string(),
-          name: v.string(),
           type: v.string(),
+          name: v.string(),
         })
       )
     ),
-    postedAt: v.string(),
-    expiresAt: v.optional(v.string()),
-    isArchived: v.optional(v.boolean()),
-    category: v.string(),
-    createdBy: v.string(),
-    isEmailGenerated: v.boolean(),
     emailMetadata: v.optional(
       v.object({
         from: v.string(),
         originalEmailId: v.string(),
         receivedAt: v.string(),
       })
+    ),
+    readBy: v.optional(
+      v.array(
+        v.object({
+          userId: v.string(),
+          userName: v.string(),
+          readAt: v.string(),
+        })
+      )
     ),
   }).index("by_status", ["isArchived"]),
 });

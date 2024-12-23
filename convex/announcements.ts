@@ -2,6 +2,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+interface Reader {
+  userId: string;
+  userName: string;
+  readAt: string;
+}
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -16,6 +22,7 @@ export const create = mutation({
       postedAt: new Date().toISOString(),
       isEmailGenerated: false,
       files: [],
+      readBy: [] as Reader[],
     });
   },
 });
@@ -49,6 +56,7 @@ export const processEmailToAnnouncement = mutation({
         category: "email",
         createdBy: senderName,
         isEmailGenerated: true,
+        readBy: [] as Reader[],
         files: args.attachments.map((attachment) => ({
           url: attachment.url,
           name: attachment.name,
@@ -119,5 +127,42 @@ export const generateUploadUrl = mutation({
   },
   handler: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const markAsRead = mutation({
+  args: {
+    id: v.id("announcements"),
+    userId: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const announcement = await ctx.db.get(args.id);
+    if (!announcement) return;
+
+    const readBy = announcement.readBy || [];
+    // Check if user has already read it
+    if (!readBy.some((reader: Reader) => reader.userId === args.userId)) {
+      readBy.push({
+        userId: args.userId,
+        userName: args.userName,
+        readAt: new Date().toISOString(),
+      });
+
+      await ctx.db.patch(args.id, {
+        readBy,
+      });
+    }
+    return readBy;
+  },
+});
+
+export const getReadStatus = query({
+  args: {
+    id: v.id("announcements"),
+  },
+  handler: async (ctx, args) => {
+    const announcement = await ctx.db.get(args.id);
+    return announcement?.readBy || [];
   },
 });
