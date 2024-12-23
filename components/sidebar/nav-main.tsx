@@ -1,9 +1,10 @@
 "use client";
 
-import { WireInstructionsDialog } from "@/app/(platform)/(resources)/wire-instructions-dialog";
-import { OutOfStateDialog } from "@/app/(platform)/(resources)/out-of-state-dialog";
-import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/business-applications-dialog";
-import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
+import { useEffect, useState } from "react";
+import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
+import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
+import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
+import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
 import React from "react";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
@@ -44,6 +45,15 @@ interface MenuItem {
 export function NavMain({ items }: { items: MenuItem[] }) {
   const clerk = useClerk();
   const [activeDialog, setActiveDialog] = React.useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   const handleItemClick = (subItem: SubItem) => {
     if (subItem.isModal && subItem.component) {

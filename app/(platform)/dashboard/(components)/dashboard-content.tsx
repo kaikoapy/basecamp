@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
+import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
 import { usePin } from "@/app/providers/pin-provider";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -13,6 +13,18 @@ const DEFAULT_COVER_IMAGE =
 
 interface DashboardContentProps {
   searchQuery?: string;
+}
+
+// Add a helper function for consistent date formatting
+function formatDate(date: Date | string) {
+  // Use UTC to ensure consistent formatting between server and client
+  const d = new Date(date);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(d);
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
@@ -94,14 +106,15 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.announcements.map((announcement) => (
-              <MarketingCard
+              <DashboardCard
                 key={announcement._id}
                 id={announcement._id}
                 title={announcement.title}
                 description={announcement.description}
                 images={announcement.images}
                 category="announcement"
-                postedAt={new Date(announcement.postedAt)}
+                postedAt={announcement.postedAt}
+                formattedDate={formatDate(announcement.postedAt)}
                 createdBy={announcement.createdBy}
                 isAnnouncement={true}
                 isEmail={announcement.isEmailGenerated}
@@ -119,7 +132,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.pinnedContent.map((content) => (
-              <MarketingCard
+              <DashboardCard
                 key={content._id}
                 id={content._id}
                 title={content.title}
@@ -143,7 +156,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.incentives.map((resource) => (
-              <MarketingCard
+              <DashboardCard
                 key={resource._id}
                 id={resource._id}
                 {...resource}
@@ -161,7 +174,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.tools.map((resource) => (
-              <MarketingCard
+              <DashboardCard
                 key={resource._id}
                 id={resource._id}
                 {...resource}
@@ -179,7 +192,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.volvoSites.map((resource) => (
-              <MarketingCard
+              <DashboardCard
                 key={resource._id}
                 id={resource._id}
                 {...resource}
@@ -197,7 +210,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.dealerSites.map((resource) => (
-              <MarketingCard
+              <DashboardCard
                 key={resource._id}
                 id={resource._id}
                 {...resource}
@@ -215,7 +228,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.communication.map((resource) => (
-              <MarketingCard
+              <DashboardCard
                 key={resource._id}
                 id={resource._id}
                 {...resource}

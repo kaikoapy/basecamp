@@ -29,23 +29,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <TooltipProvider>
-      <ClerkProvider>
-        <ConvexClientProvider>
-          <html lang="en">
-            <body
-              className={`${inter.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
-            >
+    <html lang="en" suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={`${inter.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
+      >
+        <TooltipProvider>
+          <ClerkProvider>
+            <ConvexClientProvider>
               {children}
               <Toaster />
-            </body>
-          </html>
-        </ConvexClientProvider>
-      </ClerkProvider>
-    </TooltipProvider>
+            </ConvexClientProvider>
+          </ClerkProvider>
+        </TooltipProvider>
+      </body>
+    </html>
   );
 }

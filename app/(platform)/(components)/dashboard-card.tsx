@@ -15,15 +15,15 @@ import { cn } from "@/lib/utils";
 import { usePin } from "@/app/providers/pin-provider";
 import { CopyButton } from "@/components/copy-button";
 import { AffinityMenu } from "@/components/affinity-menu";
-import { WireInstructionsDialog } from "@/app/(platform)/(resources)/wire-instructions-dialog";
-import { OutOfStateDialog } from "@/app/(platform)/(resources)/out-of-state-dialog";
-import { BusinessApplicationsDialog } from "@/app/(platform)/(resources)/business-applications-dialog";
-import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(resources)/third-party-payoffs-dialog";
+import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
+import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
+import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
+import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
 import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
 import { useDialog } from "@/hooks/use-dialog";
-import { EX90SheetDialog } from "@/app/(platform)/(resources)/ex90-sheet-dialog";
+import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
 
-export interface MarketingCardProps {
+export interface DashboardCardProps {
   id: string;
   title: string;
   description?: string;
@@ -37,7 +37,8 @@ export interface MarketingCardProps {
   isModal?: boolean;
   pinned?: boolean;
   slug?: string;
-  postedAt?: Date;
+  postedAt?: string;
+  formattedDate?: string;
   resourcePath?: string;
   isAffinitySearch?: boolean;
   component?: string;
@@ -49,7 +50,7 @@ export interface MarketingCardProps {
   showExternalLink?: boolean;
 }
 
-export function MarketingCard(props: MarketingCardProps) {
+export function DashboardCard(props: DashboardCardProps) {
   const {
     id,
     title,
@@ -62,6 +63,7 @@ export function MarketingCard(props: MarketingCardProps) {
     pinned: defaultPinned = false,
     url,
     postedAt,
+    formattedDate,
     resourcePath,
     isAffinitySearch = false,
     component,
@@ -76,9 +78,11 @@ export function MarketingCard(props: MarketingCardProps) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { pinnedItems, togglePin } = usePin();
   const isPinned = defaultPinned || pinnedItems.has(id);
-  const isNew =
-    postedAt &&
-    (new Date().getTime() - postedAt.getTime()) / (1000 * 60 * 60) <= 48;
+  const isNew = postedAt
+    ? (new Date().getTime() - new Date(postedAt).getTime()) /
+        (1000 * 60 * 60) <=
+      48
+    : false;
   const isAnnouncement = category.toLowerCase() === "announcement";
   const isResource =
     category === "Product Info" ||
@@ -213,15 +217,10 @@ export function MarketingCard(props: MarketingCardProps) {
                       </Tooltip>
                     )}
                   </div>
-                ) : isAnnouncement && postedAt ? (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
+                ) : isAnnouncement && formattedDate ? (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="w-3 h-3" />
-                    <span>
-                      {postedAt.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
+                    <span>{formattedDate}</span>
                   </div>
                 ) : !isResource && duration ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -292,7 +291,7 @@ export function MarketingCard(props: MarketingCardProps) {
             description: description || "",
             images: images || [],
             createdBy: createdBy || "",
-            postedAt: postedAt?.toISOString() || new Date().toISOString(),
+            postedAt: postedAt || new Date().toISOString(),
             isEmail,
           }}
         />

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
-import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
+import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,10 @@ export default function AnnouncementsPage() {
   const announcements = useQuery(api.announcements.list);
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
+
+  if (!announcements) {
+    return <div>Loading...</div>;
+  }
 
   // Filter announcements based on search query and time filter
   const filteredAnnouncements = announcements?.filter((announcement) => {
@@ -82,7 +86,7 @@ export default function AnnouncementsPage() {
       </div>
 
       {/* Announcements Grid */}
-      {announcements === undefined ? (
+      {filteredAnnouncements === undefined ? (
         // Loading state
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {[...Array(10)].map((_, i) => (
@@ -92,7 +96,7 @@ export default function AnnouncementsPage() {
             />
           ))}
         </div>
-      ) : announcements.length === 0 ? (
+      ) : filteredAnnouncements.length === 0 ? (
         // Empty state
         <div className="text-center py-12">
           <h3 className="text-lg font-semibold mb-2">No announcements yet</h3>
@@ -110,13 +114,13 @@ export default function AnnouncementsPage() {
         // Announcements grid
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filteredAnnouncements?.map((announcement) => (
-            <MarketingCard
+            <DashboardCard
               key={announcement._id}
               id={announcement._id}
               title={announcement.title}
               description={announcement.description}
               images={announcement.images}
-              postedAt={new Date(announcement.postedAt)}
+              postedAt={announcement.postedAt}
               category="announcement"
               createdBy={announcement.createdBy}
               isAnnouncement={true}
