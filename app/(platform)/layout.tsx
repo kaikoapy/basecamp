@@ -14,7 +14,7 @@ export default function PlatformLayout({
         <Suspense fallback={<div className="w-64 bg-muted animate-pulse" />}>
           <AppSidebar />
         </Suspense>
-        <div className="flex-1 overflow-auto">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <MountProvider>
             <Suspense>{children}</Suspense>
           </MountProvider>
