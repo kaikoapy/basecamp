@@ -93,6 +93,15 @@ export const update = mutation({
     htmlDescription: v.optional(v.string()),
     images: v.array(v.string()),
     expiresAt: v.optional(v.string()),
+    files: v.optional(
+      v.array(
+        v.object({
+          url: v.string(),
+          type: v.string(),
+          name: v.string(),
+        })
+      )
+    ),
   },
   handler: async (ctx, args) => {
     return await ctx.db.patch(args.id, {
@@ -101,6 +110,7 @@ export const update = mutation({
       htmlDescription: args.htmlDescription,
       images: args.images,
       expiresAt: args.expiresAt,
+      files: args.files,
     });
   },
 });

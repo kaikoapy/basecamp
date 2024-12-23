@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X, Check } from "lucide-react";
+import { X, Check, Trash2, Upload, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -82,7 +82,10 @@ export function NewAnnouncementDialog({
   const [editedDescription, setEditedDescription] = useState(
     announcement.htmlDescription || announcement.description
   );
+  const [editedFiles, setEditedFiles] = useState(announcement.files || []);
+  const [isUploading, setIsUploading] = useState(false);
   const updateAnnouncement = useMutation(api.announcements.update);
+  const generateUploadUrl = useMutation(api.announcements.generateUploadUrl);
   const markAsRead = useMutation(api.announcements.markAsRead);
   const readStatus = useQuery(api.announcements.getReadStatus, {
     id: announcement._id,
@@ -103,6 +106,52 @@ export function NewAnnouncementDialog({
     });
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+
+    setIsUploading(true);
+    try {
+      const newFiles = await Promise.all(
+        Array.from(e.target.files).map(async (file) => {
+          const uploadUrl = await generateUploadUrl({
+            type: file.type,
+          });
+
+          await fetch(uploadUrl, {
+            method: "PUT",
+            body: file,
+            headers: { "Content-Type": file.type },
+          });
+
+          const fileUrl = uploadUrl.split("?")[0];
+          return {
+            url: fileUrl,
+            name: file.name,
+            type: file.type,
+          };
+        })
+      );
+
+      setEditedFiles([...editedFiles, ...newFiles]);
+      toast({
+        title: "Success",
+        description: "Files uploaded successfully",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to upload files",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveFile = (fileToRemove: (typeof editedFiles)[0]) => {
+    setEditedFiles(editedFiles.filter((file) => file.url !== fileToRemove.url));
+  };
+
   const handleSave = async () => {
     try {
       await updateAnnouncement({
@@ -111,7 +160,9 @@ export function NewAnnouncementDialog({
         description: editedDescription,
         htmlDescription: editedDescription,
         images: announcement.images || [],
+        files: editedFiles,
       });
+
       setIsEditing(false);
       toast({
         title: "Success",
@@ -199,17 +250,38 @@ export function NewAnnouncementDialog({
           )}
         </div>
 
-        {/* Attachments section */}
-        {announcement.files && announcement.files.length > 0 && (
-          <div className="border-t pt-4">
-            <div className="space-y-3">
-              {announcement.files.map((file, index) => (
-                <a
+        {/* Attachments section in edit mode */}
+        {isEditing ? (
+          <div className="border-t pt-4 mt-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium">Attachments</h3>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  disabled={isUploading}
+                  onClick={() =>
+                    document.getElementById("file-upload")?.click()
+                  }
+                >
+                  <Upload className="h-4 w-4" />
+                  {isUploading ? "Uploading..." : "Add Files"}
+                </Button>
+                <input
+                  id="file-upload"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {editedFiles.map((file, index) => (
+                <div
                   key={index}
-                  href={file.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-4 p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="group flex items-center gap-4 p-3 rounded-lg border bg-muted/30 w-[300px]"
                 >
                   <div className="flex-shrink-0">
                     {file.type.includes("pdf") ? (
@@ -257,32 +329,127 @@ export function NewAnnouncementDialog({
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate group-hover:text-primary">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {file.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {file.type.split("/")[1]?.toUpperCase() || "FILE"}
                     </p>
                   </div>
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      asChild
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      />
-                    </svg>
+                      <a
+                        href={file.url}
+                        download={file.name}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Download className="h-4 w-4" />
+                      </a>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleRemoveFile(file)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           </div>
+        ) : (
+          /* View mode attachments */
+          announcement.files &&
+          announcement.files.length > 0 && (
+            <div className="border-t pt-4 mt-4">
+              <h3 className="text-sm font-medium mb-4">Attachments</h3>
+              <div className="flex flex-wrap gap-4">
+                {announcement.files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="group flex items-center gap-4 p-3 rounded-lg border bg-muted/30 w-[300px]"
+                  >
+                    <div className="flex-shrink-0">
+                      {file.type.includes("pdf") ? (
+                        <svg
+                          className="w-8 h-8 text-red-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                          />
+                        </svg>
+                      ) : file.type.includes("image") ? (
+                        <svg
+                          className="w-8 h-8 text-blue-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-8 h-8 text-gray-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {file.type.split("/")[1]?.toUpperCase() || "FILE"}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      asChild
+                    >
+                      <a
+                        href={file.url}
+                        download={file.name}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Download className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
         )}
 
         {/* Footer with edit buttons and read status */}
