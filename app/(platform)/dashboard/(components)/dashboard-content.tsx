@@ -29,12 +29,22 @@ function formatDate(date: Date | string) {
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
-  // Create a temporary div to parse HTML
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  // Get text content and truncate it
-  const text = tempDiv.textContent || tempDiv.innerText || "";
-  return text.length > 150 ? text.substring(0, 150) + "..." : text;
+  if (typeof window === "undefined") {
+    // Server-side: Use basic regex to extract text
+    return (
+      html
+        .replace(/<[^>]*>/g, "") // Remove HTML tags
+        .replace(/&nbsp;/g, " ") // Replace &nbsp; with space
+        .replace(/\s+/g, " ") // Normalize whitespace
+        .trim()
+        .substring(0, 150) + (html.length > 150 ? "..." : "")
+    );
+  }
+
+  // Client-side: Use DOM parser
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = doc.body.textContent || "";
+  return text.trim().substring(0, 150) + (text.length > 150 ? "..." : "");
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {

@@ -58,10 +58,15 @@ const htmlContentStyles = `
   .email-content {
     font-family: system-ui, -apple-system, sans-serif;
     line-height: 1.6;
+    color: var(--foreground);
+  }
+  .email-content div[dir="ltr"] {
+    white-space: pre-line;
   }
   .email-content [style*="background-color"] {
     padding: 0.125rem 0.25rem;
     border-radius: 0.125rem;
+    display: inline-block;
   }
   .email-content font[color] {
     color: var(--custom-color, inherit);
@@ -74,6 +79,7 @@ const htmlContentStyles = `
   }
   .email-content b, .email-content strong {
     font-weight: 600;
+    color: var(--foreground);
   }
   .email-content u {
     text-decoration: underline;
@@ -83,7 +89,7 @@ const htmlContentStyles = `
   }
   .email-content br {
     display: block;
-    margin: 0.5rem 0;
+    margin: 0.25rem 0;
   }
   .email-content p {
     margin-bottom: 1rem;
@@ -299,7 +305,7 @@ export function AnnouncementDialog({
                   dangerouslySetInnerHTML={{
                     __html: announcement.htmlDescription,
                   }}
-                  className="email-content prose prose-sm max-w-none dark:prose-invert"
+                  className="email-content prose prose-sm max-w-none dark:prose-invert [&_a]:text-primary [&_a:hover]:text-primary/90"
                 />
               ) : (
                 <div className="whitespace-pre-wrap">
@@ -329,7 +335,6 @@ export function AnnouncementDialog({
                   </div>
                   <div className="space-y-2">
                     {announcement.files.map((file, index) => {
-                      // Determine file type icon and styling
                       const isPDF = file.type === "application/pdf";
                       const isImage = file.type.startsWith("image/");
 
@@ -353,13 +358,7 @@ export function AnnouncementDialog({
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth={1.5}
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M15 2v5a2 2 0 002 2h5"
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z M15 2v5a2 2 0 002 2h5"
                               />
                             </svg>
                           ) : isImage ? (
