@@ -45,6 +45,8 @@ export interface MarketingCardProps {
   isAnnouncement?: boolean;
   isEmail?: boolean;
   type?: string;
+  showCopyButton?: boolean;
+  showExternalLink?: boolean;
 }
 
 export function MarketingCard(props: MarketingCardProps) {
@@ -67,6 +69,8 @@ export function MarketingCard(props: MarketingCardProps) {
     createdBy,
     isEmail,
     type,
+    showCopyButton,
+    showExternalLink,
   } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -185,27 +189,29 @@ export function MarketingCard(props: MarketingCardProps) {
                   <AffinityMenu />
                 ) : url ? (
                   <div className="flex gap-1">
-                    <CopyButton value={url} />
-                    <Tooltip delayDuration={0}>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={handleOpenLink}
-                          aria-label="Open in new tab"
-                        >
-                          <SquareArrowOutUpRight
-                            size={12}
-                            strokeWidth={2}
-                            aria-hidden="true"
-                          />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="px-2 py-1 text-xs">
-                        Open in new tab
-                      </TooltipContent>
-                    </Tooltip>
+                    {showCopyButton && <CopyButton value={url} />}
+                    {showExternalLink && (
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={handleOpenLink}
+                            aria-label="Open in new tab"
+                          >
+                            <SquareArrowOutUpRight
+                              size={12}
+                              strokeWidth={2}
+                              aria-hidden="true"
+                            />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="px-2 py-1 text-xs">
+                          Open in new tab
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                   </div>
                 ) : isAnnouncement && postedAt ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">

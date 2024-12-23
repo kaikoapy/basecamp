@@ -15,6 +15,8 @@ import {
   Home,
   Globe,
   MessageSquare,
+  Printer,
+  Brain,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -89,40 +91,20 @@ const data = {
   ],
   navMain: [
     {
-      title: "Sales",
+      title: "Click to Print",
       url: "#",
-      icon: Tag,
-      isActive: true,
+      icon: Printer,
       items: [
         {
-          title: "New Inventory",
+          title: "Credit Application",
           url: "#",
         },
         {
-          title: "Used Inventory",
+          title: "Business Application",
           url: "#",
         },
         {
-          title: "Deal Manager",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Service",
-      url: "#",
-      icon: Wrench,
-      items: [
-        {
-          title: "Appointments",
-          url: "#",
-        },
-        {
-          title: "Work Orders",
-          url: "#",
-        },
-        {
-          title: "Parts Orders",
+          title: "Wire Instructions",
           url: "#",
         },
       ],
@@ -143,6 +125,26 @@ const data = {
         {
           title: "Rules & Policies",
           url: "/rules",
+        },
+      ],
+    },
+    {
+      title: "Product Knowledge",
+      url: "#",
+      icon: Brain,
+      isActive: true,
+      items: [
+        {
+          title: "New Inventory",
+          url: "#",
+        },
+        {
+          title: "Used Inventory",
+          url: "#",
+        },
+        {
+          title: "Deal Manager",
+          url: "#",
         },
       ],
     },

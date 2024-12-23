@@ -61,8 +61,8 @@ export const tools = [
     image: "https://utfs.io/f/WTe1MV8FTP1yQ700AJTVtS2ZJfTqXEoMUNvb6wImc7sWyn1g",
     duration: "Search Programs",
     category: "Incentives",
-    url: "https://volvoaffinity.com/programs",
     description: "Occupational discount registration site",
+    isAffinitySearch: true,
   },
   {
     id: "costco-auto",

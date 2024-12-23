@@ -14,7 +14,6 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
   // Fetch all resources from Convex
   const announcements = useQuery(api.announcements.list);
-  // Get all resources and filter for pinned ones client-side
   const allResources = useQuery(api.resources.getAllResources);
 
   if (!allResources || !announcements) {
@@ -30,7 +29,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     ),
     pinnedContent: allResources.filter(
       (item) =>
-        item.pinned && // Filter for pinned items
+        item.pinned === true && // Just check the boolean pinned flag
         (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.category.toLowerCase().includes(searchQuery.toLowerCase()))
     ),
@@ -104,6 +103,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 category={content.category}
                 description={content.description}
                 url={content.url}
+                pinned={content.pinned}
+                showCopyButton={content.showCopyButton}
+                showExternalLink={content.showExternalLink}
               />
             ))}
           </div>
