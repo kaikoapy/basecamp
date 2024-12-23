@@ -9,7 +9,6 @@ import {
   Settings2,
   Bookmark,
   Wrench,
-  FileText,
   Tag,
   GraduationCap,
   Home,
@@ -39,6 +38,11 @@ const navigationItems: NavProject[] = [
     section: "dashboard",
   },
   {
+    name: "Announcements",
+    icon: MessageSquare,
+    section: "announcements",
+  },
+  {
     name: "Quick Access",
     icon: Bookmark,
     section: "quick-access",
@@ -62,11 +66,6 @@ const navigationItems: NavProject[] = [
     name: "Communication",
     icon: MessageSquare,
     section: "communication",
-  },
-  {
-    name: "Resources",
-    icon: FileText,
-    section: "resources",
   },
 ];
 

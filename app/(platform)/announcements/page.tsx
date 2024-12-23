@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
 
+const DEFAULT_COVER_IMAGE =
+  "https://utfs.io/f/WTe1MV8FTP1yx3tWeG50m3fOZqTYSyoQcrgMelRFbzW79pIu";
+
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
   if (typeof window === "undefined") {
@@ -151,6 +154,7 @@ export default function AnnouncementsPage() {
               isAnnouncement={true}
               isEmail={announcement.isEmailGenerated}
               files={announcement.files}
+              image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
             />
           ))}
         </div>

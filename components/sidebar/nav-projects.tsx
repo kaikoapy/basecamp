@@ -17,6 +17,7 @@ export interface NavProject {
   icon: LucideIcon;
   section?:
     | "dashboard"
+    | "announcements"
     | "quick-access"
     | "incentives"
     | "tools"
@@ -49,17 +50,21 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
   const handleClick = async (e: React.MouseEvent, section?: string) => {
     e.preventDefault();
 
-    if (section === "dashboard" || !isDashboard) {
-      // Always navigate to dashboard if dashboard is clicked or if we're not on dashboard
+    if (section === "dashboard" || section === "announcements") {
+      // Navigate directly to dashboard or announcements
+      await router.push(
+        section === "dashboard" ? "/dashboard" : "/announcements"
+      );
+    } else if (!isDashboard) {
+      // If not on dashboard and not announcements, navigate to dashboard first
       await router.push("/dashboard");
-      // Only scroll if it's not the dashboard button
-      if (section && section !== "dashboard") {
+      if (section) {
         setTimeout(() => {
           scrollToSection(section, isMobile);
         }, 100);
       }
     } else if (section) {
-      // If we're already on dashboard and it's not the dashboard button, just scroll
+      // If we're already on dashboard and it's not dashboard or announcements, just scroll
       scrollToSection(section, isMobile);
     }
   };
