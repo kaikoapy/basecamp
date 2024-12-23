@@ -12,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { usePin } from "@/app/providers/pin-provider";
 import { CopyButton } from "@/components/copy-button";
 import { AffinityMenu } from "@/components/affinity-menu";
 import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
@@ -23,6 +22,8 @@ import { NewAnnouncementDialog } from "@/app/(platform)/announcements/(component
 import { useDialog } from "@/hooks/use-dialog";
 import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface DashboardCardProps {
   id: Id<"announcements"> | string;
@@ -84,8 +85,8 @@ export function DashboardCard(props: DashboardCardProps) {
   } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { pinnedItems, togglePin } = usePin();
-  const isPinned = defaultPinned || pinnedItems.has(id);
+  const togglePinnedMutation = useMutation(api.resources.togglePinned);
+  const isPinned = defaultPinned;
   const isNew = postedAt
     ? (new Date().getTime() - new Date(postedAt).getTime()) /
         (1000 * 60 * 60) <=
@@ -99,11 +100,15 @@ export function DashboardCard(props: DashboardCardProps) {
 
   const dialog = useDialog();
 
-  const handlePinToggle = (e: React.MouseEvent, itemId?: string) => {
+  const handlePinToggle = async (e: React.MouseEvent, itemId?: string) => {
     e.preventDefault();
     e.stopPropagation();
     if (itemId) {
-      togglePin(itemId);
+      // Update database with optimistic update handled by Convex
+      await togglePinnedMutation({
+        id: itemId as Id<"resources">,
+        pinned: !isPinned,
+      });
     }
   };
 

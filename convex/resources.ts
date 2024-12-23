@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 // Query to get resources by type
@@ -22,5 +22,18 @@ export const getResourcesByType = query({
 export const getAllResources = query({
   handler: async (ctx) => {
     return await ctx.db.query("resources").collect();
+  },
+});
+
+// Mutation to toggle the pinned state of a resource
+export const togglePinned = mutation({
+  args: {
+    id: v.id("resources"),
+    pinned: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.id, {
+      pinned: args.pinned,
+    });
   },
 });

@@ -3,7 +3,6 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
-import { usePin } from "@/app/providers/pin-provider";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -48,8 +47,6 @@ function extractTextFromHtml(html: string): string {
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
-  usePin();
-
   // Fetch all resources from Convex
   const announcements = useQuery(api.announcements.list);
   const allResources = useQuery(api.resources.getAllResources);
