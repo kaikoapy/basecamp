@@ -61,35 +61,39 @@ const htmlContentStyles = `
     color: var(--foreground);
   }
   .email-content div[dir="ltr"] {
-    white-space: pre-line;
+    white-space: pre-wrap;
   }
   .email-content [style*="background-color"] {
     padding: 0.125rem 0.25rem;
     border-radius: 0.125rem;
-    display: inline-block;
+    display: inline;
   }
-  .email-content font[color] {
-    color: var(--custom-color, inherit);
+  .email-content font[color="#cc0000"] {
+    color: rgb(220, 38, 38) !important;
   }
-  .email-content font[face] {
-    font-family: var(--custom-font, inherit);
+  .email-content font[face*="arial black"] {
+    font-family: Arial Black, Arial, sans-serif !important;
+    font-weight: 900 !important;
   }
   .email-content font[size="4"] {
-    font-size: 1.125rem;
+    font-size: 1.125rem !important;
+    font-weight: 500 !important;
   }
   .email-content b, .email-content strong {
-    font-weight: 600;
+    font-weight: 600 !important;
     color: var(--foreground);
   }
   .email-content u {
-    text-decoration: underline;
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
   }
   .email-content i, .email-content em {
-    font-style: italic;
+    font-style: italic !important;
   }
   .email-content br {
     display: block;
-    margin: 0.25rem 0;
+    content: "";
+    margin: 0.5rem 0;
   }
   .email-content p {
     margin-bottom: 1rem;
@@ -104,6 +108,15 @@ const htmlContentStyles = `
   .email-content a {
     color: hsl(var(--primary));
     text-decoration: underline;
+  }
+  .email-content div {
+    margin: 0;
+    padding: 0;
+  }
+  .email-content span[style*="background-color"] {
+    background-color: rgb(255, 217, 102) !important;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.125rem;
   }
 `;
 
@@ -135,7 +148,7 @@ export function AnnouncementDialog({
       await updateAnnouncement({
         id: announcement._id,
         title: editedTitle,
-        description: editedDescription,
+        description: editedDescription.replace(/<[^>]*>/g, ""), // Strip HTML for plain text
         htmlDescription: editedDescription,
         images: announcement.images,
         expiresAt: announcement.expiresAt,
@@ -297,130 +310,125 @@ export function AnnouncementDialog({
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
               className="min-h-[600px] text-base mb-8 resize-none font-mono"
+              spellCheck={false}
             />
           ) : (
-            <div className="text-base space-y-4">
-              {announcement.htmlDescription ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: announcement.htmlDescription,
-                  }}
-                  className="email-content prose prose-sm max-w-none dark:prose-invert [&_a]:text-primary [&_a:hover]:text-primary/90"
-                />
-              ) : (
-                <div className="whitespace-pre-wrap">
-                  {announcement.description}
-                </div>
-              )}
+            <div className="email-content">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    announcement.htmlDescription || announcement.description,
+                }}
+              />
+            </div>
+          )}
 
-              {announcement.files && announcement.files.length > 0 && (
-                <div className="mt-6 bg-muted/30 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3 text-muted-foreground">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+          {announcement.files && announcement.files.length > 0 && (
+            <div className="mt-6 bg-muted/30 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3 text-muted-foreground">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  />
+                </svg>
+                <h3 className="font-medium">
+                  Attachments ({announcement.files.length})
+                </h3>
+              </div>
+              <div className="space-y-2">
+                {announcement.files.map((file, index) => {
+                  const isPDF = file.type === "application/pdf";
+                  const isImage = file.type.startsWith("image/");
+
+                  return (
+                    <a
+                      key={index}
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors group"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                      />
-                    </svg>
-                    <h3 className="font-medium">
-                      Attachments ({announcement.files.length})
-                    </h3>
-                  </div>
-                  <div className="space-y-2">
-                    {announcement.files.map((file, index) => {
-                      const isPDF = file.type === "application/pdf";
-                      const isImage = file.type.startsWith("image/");
-
-                      return (
-                        <a
-                          key={index}
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors group"
+                      {/* File type icon */}
+                      {isPDF ? (
+                        <svg
+                          className="w-8 h-8 text-red-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          {/* File type icon */}
-                          {isPDF ? (
-                            <svg
-                              className="w-8 h-8 text-red-500"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z M15 2v5a2 2 0 002 2h5"
-                              />
-                            </svg>
-                          ) : isImage ? (
-                            <svg
-                              className="w-8 h-8 text-blue-500"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="w-8 h-8 text-gray-500"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                              />
-                            </svg>
-                          )}
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z M15 2v5a2 2 0 002 2h5"
+                          />
+                        </svg>
+                      ) : isImage ? (
+                        <svg
+                          className="w-8 h-8 text-blue-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-8 h-8 text-gray-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                          />
+                        </svg>
+                      )}
 
-                          {/* File info */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">
-                              {file.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {file.type.split("/")[1].toUpperCase()}
-                            </p>
-                          </div>
+                      {/* File info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {file.type.split("/")[1].toUpperCase()}
+                        </p>
+                      </div>
 
-                          {/* Download icon */}
-                          <svg
-                            className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={1.5}
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                            />
-                          </svg>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                      {/* Download icon */}
+                      <svg
+                        className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
