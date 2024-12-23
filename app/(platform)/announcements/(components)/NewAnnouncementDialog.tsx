@@ -184,10 +184,7 @@ export function NewAnnouncementDialog({
       await markAsRead({
         id: announcement._id,
         userId: user.id,
-        userName:
-          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-          user.username ||
-          user.id,
+        userName: `${user.firstName} ${user.lastName}`.trim(),
       });
       toast({
         title: "Success",
