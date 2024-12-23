@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X, Check, Users } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 // Custom Dialog components for test
 const DialogContent = React.forwardRef<
@@ -289,17 +290,43 @@ export function NewAnnouncementDialog({
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span>{readCount} read</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {readStatus?.slice(0, 4).map((reader) => (
+                      <Avatar
+                        key={reader.userId}
+                        className="h-6 w-6 border-2 border-background"
+                      >
+                        <AvatarFallback className="bg-primary/10 text-xs">
+                          {reader.userName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                    {readStatus && readStatus.length > 4 && (
+                      <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
+                        +{readStatus.length - 4}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Read by {readCount}
+                  </span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
                 <div className="space-y-1">
                   {readStatus?.map((reader) => (
-                    <div key={reader.userId} className="text-sm">
-                      {reader.userName}
-                      <span className="text-xs text-muted-foreground ml-1">
+                    <div
+                      key={reader.userId}
+                      className="text-sm flex items-center gap-2"
+                    >
+                      <Avatar className="h-5 w-5">
+                        <AvatarFallback className="text-xs">
+                          {reader.userName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{reader.userName}</span>
+                      <span className="text-xs text-muted-foreground">
                         ({new Date(reader.readAt).toLocaleDateString()})
                       </span>
                     </div>
