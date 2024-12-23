@@ -7,18 +7,40 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Function to decode quoted-printable text with better UTF-8 handling
 function decodeQuotedPrintable(str: string): string {
-  // Replace soft line breaks (=\r\n or =\n) with empty string
-  str = str.replace(/=(?:\r\n?|\n)/g, "");
+  // Common UTF-8 sequences in emails
+  const utf8Replacements: Record<string, string> = {
+    "=C2=A0": "\u00A0", // Non-breaking space
+    "=E2=80=98": "\u2018", // Left single quote
+    "=E2=80=99": "\u2019", // Right single quote
+    "=E2=80=9C": "\u201C", // Left double quote
+    "=E2=80=9D": "\u201D", // Right double quote
+    "=E2=80=93": "\u2013", // En dash
+    "=E2=80=94": "\u2014", // Em dash
+    "=E2=80=A6": "\u2026", // Ellipsis
+    "=C3=A9": "\u00E9", // é
+    "=C3=A8": "\u00E8", // è
+  };
 
-  // Replace encoded characters with their decoded values
-  return str.replace(/=([0-9A-F]{2})/gi, (_, p1) => {
+  // First replace known UTF-8 sequences
+  let decoded = str;
+  for (const [encoded, char] of Object.entries(utf8Replacements)) {
+    decoded = decoded.replace(new RegExp(encoded, "g"), char);
+  }
+
+  // Remove soft line breaks
+  decoded = decoded.replace(/=(?:\r\n?|\n)/g, "");
+
+  // Handle remaining quoted-printable encodings
+  decoded = decoded.replace(/=([0-9A-F]{2})/gi, (_, p1) => {
     try {
       return String.fromCharCode(parseInt(p1, 16));
-    } catch (e) {
-      console.error("Error decoding hex:", p1, e);
+    } catch (error) {
+      console.error("Error decoding hex:", p1, error);
       return "";
     }
   });
+
+  return decoded;
 }
 
 // Improved attachment processing
@@ -82,89 +104,97 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
   let text = "";
 
   try {
-    // Find all boundaries in the email
-    const mainBoundaryMatch = rawEmail.match(/boundary="([^"]+)"/);
-    if (!mainBoundaryMatch) {
-      console.log("No boundary found");
-      return { html, text };
+    // First try to find HTML content directly
+    const htmlMatch = rawEmail.match(
+      /Content-Type: text\/html[^]*?\r?\n\r?\n([^]*?)(?:\r?\n--[^\r\n]*|$)/i
+    );
+    if (htmlMatch) {
+      const rawHtml = htmlMatch[1].trim();
+      // Check if content is quoted-printable
+      if (rawEmail.match(/Content-Transfer-Encoding: quoted-printable/i)) {
+        html = decodeQuotedPrintable(rawHtml);
+      } else {
+        html = rawHtml;
+      }
+      console.log("Found HTML content directly");
     }
 
-    const mainBoundary = mainBoundaryMatch[1];
-    console.log("Main boundary:", mainBoundary);
+    // If no HTML found, try multipart parsing
+    if (!html) {
+      const mainBoundaryMatch = rawEmail.match(/boundary="([^"]+)"/);
+      if (mainBoundaryMatch) {
+        const mainBoundary = mainBoundaryMatch[1];
+        console.log("Main boundary:", mainBoundary);
 
-    // Split by main boundary and keep the boundary markers
-    const parts = rawEmail.split(new RegExp(`--${mainBoundary}(?:--)?`));
+        // Split by main boundary
+        const parts = rawEmail.split(new RegExp(`--${mainBoundary}(?:--)?`));
 
-    for (const part of parts) {
-      // Look for nested multipart
-      if (part.includes("multipart/alternative")) {
-        const nestedBoundaryMatch = part.match(/boundary="([^"]+)"/);
-        if (nestedBoundaryMatch) {
-          const nestedBoundary = nestedBoundaryMatch[1];
-          console.log("Found nested boundary:", nestedBoundary);
-
-          // Split by nested boundary and keep the boundary markers
-          const nestedParts = part.split(
-            new RegExp(`--${nestedBoundary}(?:--)?`)
-          );
-
-          for (const nestedPart of nestedParts) {
-            if (nestedPart.includes("Content-Type: text/html")) {
-              // Extract content after the double newline, handling both \r\n and \n
-              const contentMatch = nestedPart.match(
-                /(?:\r\n|\n){2}([\s\S]*?)(?:\r\n|\n)*$/
-              );
-              if (contentMatch) {
-                const rawHtml = contentMatch[1].trim();
-                // Check if content is quoted-printable
-                if (
-                  nestedPart.includes(
-                    "Content-Transfer-Encoding: quoted-printable"
-                  )
-                ) {
-                  html = decodeQuotedPrintable(rawHtml);
-                } else {
-                  html = rawHtml;
-                }
-                console.log("Found HTML content length:", html.length);
+        for (const part of parts) {
+          if (part.includes("Content-Type: text/html")) {
+            const contentMatch = part.match(
+              /(?:\r\n|\n){2}([^]*?)(?:\r\n|\n)*$/
+            );
+            if (contentMatch) {
+              const rawHtml = contentMatch[1].trim();
+              if (
+                part.includes("Content-Transfer-Encoding: quoted-printable")
+              ) {
+                html = decodeQuotedPrintable(rawHtml);
+              } else {
+                html = rawHtml;
               }
-            } else if (nestedPart.includes("Content-Type: text/plain")) {
-              const contentMatch = nestedPart.match(
-                /(?:\r\n|\n){2}([\s\S]*?)(?:\r\n|\n)*$/
-              );
-              if (contentMatch) {
-                const rawText = contentMatch[1].trim();
-                if (
-                  nestedPart.includes(
-                    "Content-Transfer-Encoding: quoted-printable"
-                  )
-                ) {
-                  text = decodeQuotedPrintable(rawText);
-                } else {
-                  text = rawText;
-                }
-                console.log("Found text content length:", text.length);
+              console.log("Found HTML in multipart");
+            }
+          } else if (part.includes("Content-Type: text/plain")) {
+            const contentMatch = part.match(
+              /(?:\r\n|\n){2}([^]*?)(?:\r\n|\n)*$/
+            );
+            if (contentMatch) {
+              const rawText = contentMatch[1].trim();
+              if (
+                part.includes("Content-Transfer-Encoding: quoted-printable")
+              ) {
+                text = decodeQuotedPrintable(rawText);
+              } else {
+                text = rawText;
               }
+              console.log("Found plain text in multipart");
             }
           }
         }
       }
     }
 
-    // Log the extracted content for debugging
+    // Clean up HTML content
     if (html) {
-      console.log("HTML content preview:", html.substring(0, 100) + "...");
+      // Preserve line breaks
+      html = html.replace(/\r?\n/g, "<br>");
+
+      // Fix common formatting issues
+      html = html
+        .replace(/=20/g, " ") // Fix spaces in quoted-printable
+        .replace(/=\r?\n/g, "") // Remove soft line breaks
+        .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
+        .replace(/<br\s*\/?>\s*<br\s*\/?>/g, "</p><p>"); // Convert double breaks to paragraphs
+
+      // Wrap in paragraphs if not already wrapped
+      if (!html.includes("<p>")) {
+        html = `<p>${html}</p>`;
+      }
+
+      console.log("Cleaned HTML preview:", html.substring(0, 100) + "...");
     }
-    if (text) {
-      console.log("Text content preview:", text.substring(0, 100) + "...");
-    }
+
+    // Log the extracted content for debugging
+    if (html) console.log("Final HTML length:", html.length);
+    if (text) console.log("Final text length:", text.length);
   } catch (error) {
     console.error("Error parsing email content:", error);
   }
 
   return {
     html: html || text,
-    text: text || html.replace(/<[^>]*>/g, ""),
+    text: text || (html ? html.replace(/<[^>]*>/g, "") : ""),
   };
 }
 
@@ -308,7 +338,7 @@ export async function POST(request: Request) {
     console.log("✅ Successfully created announcement:", result);
     return NextResponse.json({ success: true, id: result });
   } catch (error) {
-    console.error("❌ Error processing email:", error);
+    console.error("��� Error processing email:", error);
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

@@ -54,6 +54,34 @@ interface AnnouncementDialogProps {
   };
 }
 
+const htmlContentStyles = `
+  .announcement-content {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+  .announcement-content p {
+    margin-bottom: 1rem;
+  }
+  .announcement-content b, .announcement-content strong {
+    font-weight: 600;
+  }
+  .announcement-content [style*="background-color"] {
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.125rem;
+  }
+  .announcement-content a {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+  .announcement-content ul, .announcement-content ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+  .announcement-content li {
+    margin: 0.5rem 0;
+  }
+`;
+
 export function AnnouncementDialog({
   open,
   onOpenChange,
@@ -121,6 +149,8 @@ export function AnnouncementDialog({
           isEditing ? "sm:max-w-4xl w-[95vw]" : "sm:max-w-2xl w-[90vw]"
         )}
       >
+        <style>{htmlContentStyles}</style>
+
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="sr-only">{announcement.title}</DialogTitle>
           {isEditing ? (
@@ -250,7 +280,7 @@ export function AnnouncementDialog({
                   dangerouslySetInnerHTML={{
                     __html: announcement.htmlDescription,
                   }}
-                  className="prose prose-sm max-w-none dark:prose-invert [&_a]:text-blue-600 dark:[&_a]:text-blue-400"
+                  className="announcement-content prose prose-sm max-w-none dark:prose-invert"
                 />
               ) : (
                 <div className="whitespace-pre-wrap">
