@@ -39,6 +39,7 @@ export default defineSchema({
   announcements: defineTable({
     title: v.string(),
     description: v.string(),
+    htmlDescription: v.optional(v.string()),
     images: v.array(v.string()),
     files: v.optional(
       v.array(

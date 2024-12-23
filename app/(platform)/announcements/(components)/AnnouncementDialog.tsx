@@ -40,6 +40,7 @@ interface AnnouncementDialogProps {
     _id: Id<"announcements">;
     title: string;
     description: string;
+    htmlDescription?: string;
     images: string[];
     createdBy: string;
     postedAt: string;
@@ -235,8 +236,19 @@ export function AnnouncementDialog({
               className="min-h-[600px] text-base mb-8 resize-none"
             />
           ) : (
-            <div className="text-base whitespace-pre-wrap">
-              {announcement.description}
+            <div className="text-base">
+              {announcement.htmlDescription ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: announcement.htmlDescription,
+                  }}
+                  className="prose prose-sm max-w-none dark:prose-invert"
+                />
+              ) : (
+                <div className="whitespace-pre-wrap">
+                  {announcement.description}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -6,24 +6,30 @@ import { NextResponse } from "next/server";
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Function to extract email body from raw email content
-function extractEmailBody(rawEmail: string): string {
-  // Look for text/plain content
-  const textMatch = rawEmail.match(
-    /Content-Type: text\/plain;.*?\r\n\r\n([\s\S]*?)\r\n--/i
-  );
-  if (textMatch && textMatch[1]) {
-    return textMatch[1].trim();
-  }
+function extractEmailBody(rawEmail: string): { html: string; text: string } {
+  let html = "";
+  let text = "";
 
-  // Fallback to HTML content
+  // Look for HTML content first
   const htmlMatch = rawEmail.match(
     /Content-Type: text\/html;.*?\r\n\r\n([\s\S]*?)\r\n--/i
   );
   if (htmlMatch && htmlMatch[1]) {
-    return htmlMatch[1].replace(/<[^>]*>/g, "").trim();
+    html = htmlMatch[1].trim();
   }
 
-  return "No content available";
+  // Also get plain text as fallback
+  const textMatch = rawEmail.match(
+    /Content-Type: text\/plain;.*?\r\n\r\n([\s\S]*?)\r\n--/i
+  );
+  if (textMatch && textMatch[1]) {
+    text = textMatch[1].trim();
+  }
+
+  return {
+    html: html || text,
+    text: text || html.replace(/<[^>]*>/g, ""),
+  };
 }
 
 export async function POST(request: Request) {
@@ -44,8 +50,8 @@ export async function POST(request: Request) {
     }
 
     // Extract and validate body
-    const body = extractEmailBody(emailRaw);
-    if (!body) {
+    const { html, text } = extractEmailBody(emailRaw);
+    if (!html && !text) {
       console.error("❌ No email body extracted");
       return NextResponse.json(
         { error: "No email body found" },
@@ -77,7 +83,8 @@ export async function POST(request: Request) {
     const payload = {
       from,
       subject,
-      body,
+      body: text,
+      htmlBody: html,
       attachments,
       emailId: `email_${Date.now()}`,
     };
