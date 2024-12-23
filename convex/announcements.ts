@@ -42,12 +42,12 @@ export const processEmailToAnnouncement = mutation({
       const announcement = {
         title: args.subject,
         description: args.body,
-        images: [], // Empty array since we're not handling images yet
+        images: [], // Empty array - not handling images
         postedAt: new Date().toISOString(),
-        category: "email", // Default category for email announcements
+        category: "email",
         createdBy: senderName,
         isEmailGenerated: true,
-        files: [], // Empty array as per schema
+        files: [], // Empty array - not handling files
         emailMetadata: {
           from: args.from,
           originalEmailId: args.emailId,

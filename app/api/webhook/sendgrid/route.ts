@@ -53,12 +53,32 @@ export async function POST(request: Request) {
       );
     }
 
+    // Process attachments
+    const attachments = [];
+    for (let i = 1; ; i++) {
+      const attachment = formData.get(`attachment${i}`);
+      if (!attachment) break;
+
+      const filename = formData.get(`attachment${i}-filename`);
+      const type = formData.get(`attachment${i}-type`);
+
+      // Here you would upload the attachment to your file storage
+      // and get back a URL. For example:
+      // const url = await uploadToStorage(attachment);
+
+      attachments.push({
+        url: "url_from_storage",
+        name: filename as string,
+        type: type as string,
+      });
+    }
+
     // Prepare payload for Convex
     const payload = {
       from,
       subject,
       body,
-      attachments: [], // No attachments for now
+      attachments,
       emailId: `email_${Date.now()}`,
     };
 

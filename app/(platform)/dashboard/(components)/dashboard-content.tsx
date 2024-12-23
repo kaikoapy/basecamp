@@ -5,6 +5,9 @@ import { api } from "@/convex/_generated/api";
 import { MarketingCard } from "@/app/(platform)/(resources)/(FAQS)/(components)/marketing-card";
 import { usePin } from "@/app/providers/pin-provider";
 
+const DEFAULT_COVER_IMAGE =
+  "https://utfs.io/f/WTe1MV8FTP1yx3tWeG50m3fOZqTYSyoQcrgMelRFbzW79pIu";
+
 interface DashboardContentProps {
   searchQuery?: string;
 }
@@ -20,7 +23,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     return <div>Loading...</div>;
   }
 
-  // Filter content based on search query and type/pinned status
+  // Filter content based on search query and categories
   const filteredContent = {
     announcements: announcements.filter(
       (item) =>
@@ -29,35 +32,36 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     ),
     pinnedContent: allResources.filter(
       (item) =>
-        item.pinned === true && // Just check the boolean pinned flag
+        item.pinned === true &&
         (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.category.toLowerCase().includes(searchQuery.toLowerCase()))
     ),
-    tools: allResources.filter(
-      (item) =>
-        item.type === "tool" &&
-        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase()))
-    ),
+    // Filter all resources by category instead of type
     resources: allResources.filter(
       (item) =>
-        item.type === "resource" &&
-        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase()))
+        (!item.pinned &&
+          item.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
     ),
   };
 
-  // Group tools by category
-  const toolsByCategory = {
-    incentives: filteredContent.tools.filter(
-      (tool) => tool.category === "Incentives"
+  // Group resources by category
+  const resourcesByCategory = {
+    incentives: filteredContent.resources.filter(
+      (resource) => resource.category === "Incentives"
     ),
-    tools: filteredContent.tools.filter((tool) => tool.category === "Tools"),
-    volvoSites: filteredContent.tools.filter(
-      (tool) => tool.category === "Volvo Sites"
+    tools: filteredContent.resources.filter(
+      (resource) => resource.category === "Tools"
     ),
-    communication: filteredContent.tools.filter(
-      (tool) => tool.category === "Communication"
+    volvoSites: filteredContent.resources.filter(
+      (resource) => resource.category === "Volvo Sites"
+    ),
+    communication: filteredContent.resources.filter(
+      (resource) => resource.category === "Communication"
+    ),
+    salesAndFinance: filteredContent.resources.filter(
+      (resource) =>
+        resource.category === "Sales" || resource.category === "Finance"
     ),
   };
 
@@ -81,6 +85,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 createdBy={announcement.createdBy}
                 isAnnouncement={true}
                 isEmail={announcement.isEmailGenerated}
+                image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
               />
             ))}
           </div>
@@ -112,85 +117,85 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
         </section>
       )}
 
-      {toolsByCategory.incentives.length > 0 && (
+      {resourcesByCategory.incentives.length > 0 && (
         <section id="incentives" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
             Incentives <span className="apple-emoji">🏷️</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {toolsByCategory.incentives.map((tool) => (
+            {resourcesByCategory.incentives.map((resource) => (
               <MarketingCard
-                key={tool._id}
-                id={tool._id}
-                {...tool}
-                image={tool.image ?? ""}
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
               />
             ))}
           </div>
         </section>
       )}
 
-      {toolsByCategory.tools.length > 0 && (
+      {resourcesByCategory.tools.length > 0 && (
         <section id="tools" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
             Tools <span className="apple-emoji">🛠️</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {toolsByCategory.tools.map((tool) => (
+            {resourcesByCategory.tools.map((resource) => (
               <MarketingCard
-                key={tool._id}
-                id={tool._id}
-                {...tool}
-                image={tool.image ?? ""}
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
               />
             ))}
           </div>
         </section>
       )}
 
-      {toolsByCategory.volvoSites.length > 0 && (
+      {resourcesByCategory.volvoSites.length > 0 && (
         <section id="volvo-sites" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
             Volvo Sites <span className="apple-emoji">🌐</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {toolsByCategory.volvoSites.map((tool) => (
+            {resourcesByCategory.volvoSites.map((resource) => (
               <MarketingCard
-                key={tool._id}
-                id={tool._id}
-                {...tool}
-                image={tool.image ?? ""}
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
               />
             ))}
           </div>
         </section>
       )}
 
-      {toolsByCategory.communication.length > 0 && (
+      {resourcesByCategory.communication.length > 0 && (
         <section id="communication" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
             Communication <span className="apple-emoji">💬</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {toolsByCategory.communication.map((tool) => (
+            {resourcesByCategory.communication.map((resource) => (
               <MarketingCard
-                key={tool._id}
-                id={tool._id}
-                {...tool}
-                image={tool.image ?? ""}
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
               />
             ))}
           </div>
         </section>
       )}
 
-      {filteredContent.resources.length > 0 && (
-        <section id="resources" className="mb-6">
+      {resourcesByCategory.salesAndFinance.length > 0 && (
+        <section id="sales-and-finance" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
-            Resources <span className="apple-emoji">📚</span>
+            Sales & Finance Resources <span className="apple-emoji">💼</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {filteredContent.resources.map((resource) => (
+            {resourcesByCategory.salesAndFinance.map((resource) => (
               <MarketingCard
                 key={resource._id}
                 id={resource._id}

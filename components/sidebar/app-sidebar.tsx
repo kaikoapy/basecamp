@@ -136,15 +136,23 @@ const data = {
       items: [
         {
           title: "New Inventory",
-          url: "#",
+          url: "https://www.volvocarsnorthmiami.com/inventory/new",
         },
         {
           title: "Used Inventory",
-          url: "#",
+          url: "https://www.volvocarsnorthmiami.com/inventory/used",
         },
         {
-          title: "Deal Manager",
-          url: "#",
+          title: "EX90",
+          url: "/product-knowledge/ex90",
+        },
+        {
+          title: "EV FAQs",
+          url: "/ev-faqs",
+        },
+        {
+          title: "Plug-In Hybrid FAQs",
+          url: "/phev-faqs",
         },
       ],
     },
