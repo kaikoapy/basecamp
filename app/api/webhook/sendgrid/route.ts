@@ -33,7 +33,18 @@ const sanitizeConfig = {
     "href",
     "background-color",
   ],
-  ALLOWED_STYLES: ["background-color", "color", "font-family", "font-size"],
+  ALLOWED_STYLES: [
+    "background-color",
+    "color",
+    "font-family",
+    "font-size",
+    "line-height",
+    "font-weight",
+    "text-decoration",
+    "font-style",
+  ],
+  ADD_ATTR: ["target"],
+  ADD_TAGS: ["style"],
 };
 
 // Function to decode quoted-printable text with better UTF-8 handling
@@ -213,9 +224,9 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
           .join("");
       }
 
-      // Wrap in email-content div if not already wrapped
+      // Wrap in email-content div with styles if not already wrapped
       if (!html.includes('class="email-content"')) {
-        html = `<div class="email-content">${html}</div>`;
+        html = `<div class="email-content" style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;">${html}</div>`;
       }
 
       // Sanitize the HTML while preserving formatting

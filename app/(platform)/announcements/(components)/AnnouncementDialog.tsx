@@ -54,72 +54,6 @@ interface AnnouncementDialogProps {
   };
 }
 
-const htmlContentStyles = `
-  .email-content {
-    font-family: system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
-    color: var(--foreground);
-  }
-  .email-content div[dir="ltr"] {
-    white-space: pre-wrap;
-  }
-  .email-content [style*="background-color"] {
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.125rem;
-    display: inline;
-  }
-  .email-content font[color="#cc0000"] {
-    color: rgb(220, 38, 38) !important;
-  }
-  .email-content font[face*="arial black"] {
-    font-family: Arial Black, Arial, sans-serif !important;
-    font-weight: 900 !important;
-  }
-  .email-content font[size="4"] {
-    font-size: 1.125rem !important;
-    font-weight: 500 !important;
-  }
-  .email-content b, .email-content strong {
-    font-weight: 600 !important;
-    color: var(--foreground);
-  }
-  .email-content u {
-    text-decoration: underline !important;
-    text-underline-offset: 2px;
-  }
-  .email-content i, .email-content em {
-    font-style: italic !important;
-  }
-  .email-content br {
-    display: block;
-    content: "";
-    margin: 0.5rem 0;
-  }
-  .email-content p {
-    margin-bottom: 1rem;
-  }
-  .email-content ul, .email-content ol {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-  }
-  .email-content li {
-    margin: 0.5rem 0;
-  }
-  .email-content a {
-    color: hsl(var(--primary));
-    text-decoration: underline;
-  }
-  .email-content div {
-    margin: 0;
-    padding: 0;
-  }
-  .email-content span[style*="background-color"] {
-    background-color: rgb(255, 217, 102) !important;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.125rem;
-  }
-`;
-
 export function AnnouncementDialog({
   open,
   onOpenChange,
@@ -187,8 +121,6 @@ export function AnnouncementDialog({
           isEditing ? "sm:max-w-4xl w-[95vw]" : "sm:max-w-2xl w-[90vw]"
         )}
       >
-        <style>{htmlContentStyles}</style>
-
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="sr-only">{announcement.title}</DialogTitle>
           {isEditing ? (
@@ -313,14 +245,18 @@ export function AnnouncementDialog({
               spellCheck={false}
             />
           ) : (
-            <div className="email-content">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html:
-                    announcement.htmlDescription || announcement.description,
-                }}
-              />
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html:
+                  announcement.htmlDescription || announcement.description,
+              }}
+              style={{
+                maxWidth: "100%",
+                overflowX: "auto",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                lineHeight: 1.6,
+              }}
+            />
           )}
 
           {announcement.files && announcement.files.length > 0 && (
