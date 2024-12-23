@@ -1,61 +1,79 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+"use client";
 
-function DashboardCardSkeleton() {
-  return (
-    <Card className="group relative overflow-hidden">
-      <div className="p-0">
-        <div className="relative aspect-video">
-          <Skeleton className="absolute inset-0" />
-        </div>
-        <div className="p-3">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-5 w-3/4" />
-              <div className="flex items-center gap-1 shrink-0">
-                <Skeleton className="h-6 w-6" />
-              </div>
-            </div>
-            <Skeleton className="h-4 w-1/2" />
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardLoading() {
   return (
-    <main className="p-6">
-      {/* Quick Access Section */}
-      <section className="mb-6">
-        <Skeleton className="h-8 w-48 mb-3" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {[...Array(5)].map((_, i) => (
-            <DashboardCardSkeleton key={i} />
-          ))}
-        </div>
-      </section>
+    <div className="flex-1 overflow-auto">
+      <main className="flex-1 p-6 max-w-[1600px] mx-auto animate-in fade-in-50">
+        {/* Announcements Section */}
+        <section className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Skeleton className="h-8 w-32" />
+            <div className="h-4 w-[1px] bg-border mx-2" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-video w-full rounded-lg" />
+                <div className="space-y-2 p-3">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Tools Section */}
-      <section className="mb-6">
-        <Skeleton className="h-8 w-32 mb-3" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {[...Array(5)].map((_, i) => (
-            <DashboardCardSkeleton key={i} />
-          ))}
-        </div>
-      </section>
+        {/* Quick Access Section */}
+        <section className="mb-6">
+          <Skeleton className="h-8 w-32 mb-3" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-video w-full rounded-lg" />
+                <div className="space-y-2 p-3">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Volvo Sites Section */}
-      <section className="mb-6">
-        <Skeleton className="h-8 w-40 mb-3" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {[...Array(5)].map((_, i) => (
-            <DashboardCardSkeleton key={i} />
-          ))}
-        </div>
-      </section>
-    </main>
+        {/* Tools Section */}
+        <section className="mb-6">
+          <Skeleton className="h-8 w-32 mb-3" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-video w-full rounded-lg" />
+                <div className="space-y-2 p-3">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Volvo Sites Section */}
+        <section className="mb-6">
+          <Skeleton className="h-8 w-32 mb-3" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="aspect-video w-full rounded-lg" />
+                <div className="space-y-2 p-3">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
