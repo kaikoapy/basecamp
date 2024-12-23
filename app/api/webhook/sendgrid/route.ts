@@ -25,70 +25,77 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
   let text = "";
 
   try {
-    console.log("Raw email content:", rawEmail);
+    // Find all boundaries in the email
+    const boundaries: string[] = [];
+    const boundaryMatches = rawEmail.matchAll(/boundary="([^"]+)"/g);
+    for (const match of boundaryMatches) {
+      boundaries.push(match[1]);
+    }
 
-    // First try multipart/mixed format
-    const boundaryMatch = rawEmail.match(/boundary="([^"]+)"/);
-    if (boundaryMatch) {
-      console.log("Found boundary:", boundaryMatch[1]);
-      const mainBoundary = boundaryMatch[1];
-      const parts = rawEmail.split(`--${mainBoundary}`);
+    console.log("Found boundaries:", boundaries);
 
-      // Try to find the content parts
+    // Process each boundary
+    for (const boundary of boundaries) {
+      const parts = rawEmail.split(`--${boundary}`);
+
       for (const part of parts) {
-        if (part.includes("text/html")) {
-          console.log("Found HTML part");
-          const content = part.split("\n\n").slice(1).join("\n\n");
-          html = decodeQuotedPrintable(content.trim());
-        } else if (part.includes("text/plain")) {
-          console.log("Found plain text part");
-          const content = part.split("\n\n").slice(1).join("\n\n");
-          text = decodeQuotedPrintable(content.trim());
-        } else if (part.includes("multipart/alternative")) {
-          console.log("Found multipart/alternative");
-          // Handle nested multipart/alternative
-          const innerBoundaryMatch = part.match(/boundary="([^"]+)"/);
-          if (innerBoundaryMatch) {
-            const innerBoundary = innerBoundaryMatch[1];
-            const innerParts = part.split(`--${innerBoundary}`);
-
-            for (const innerPart of innerParts) {
-              if (innerPart.includes("text/html")) {
-                console.log("Found HTML in multipart/alternative");
-                const content = innerPart.split("\n\n").slice(1).join("\n\n");
-                html = decodeQuotedPrintable(content.trim());
-              } else if (innerPart.includes("text/plain")) {
-                console.log("Found plain text in multipart/alternative");
-                const content = innerPart.split("\n\n").slice(1).join("\n\n");
-                text = decodeQuotedPrintable(content.trim());
-              }
+        // Extract content based on type
+        if (part.includes("Content-Type: text/html")) {
+          console.log("Processing HTML part");
+          // Find the actual content after headers
+          const contentMatch = part.match(
+            /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+          );
+          if (contentMatch) {
+            const content = contentMatch[1].trim();
+            // Handle quoted-printable encoding
+            if (part.includes("Content-Transfer-Encoding: quoted-printable")) {
+              html = decodeQuotedPrintable(content);
+            } else {
+              html = content;
             }
+            console.log("Found HTML content:", html.substring(0, 100) + "...");
           }
-        }
-      }
-    } else {
-      // Fallback to simple content type check
-      console.log("No boundary found, trying direct content extraction");
-      if (rawEmail.includes("text/html")) {
-        const htmlMatch = rawEmail.match(
-          /Content-Type: text\/html[^]*?\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/i
-        );
-        if (htmlMatch) {
-          html = decodeQuotedPrintable(htmlMatch[1].trim());
-        }
-      }
-      if (rawEmail.includes("text/plain")) {
-        const textMatch = rawEmail.match(
-          /Content-Type: text\/plain[^]*?\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/i
-        );
-        if (textMatch) {
-          text = decodeQuotedPrintable(textMatch[1].trim());
+        } else if (part.includes("Content-Type: text/plain")) {
+          console.log("Processing plain text part");
+          // Find the actual content after headers
+          const contentMatch = part.match(
+            /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+          );
+          if (contentMatch) {
+            const content = contentMatch[1].trim();
+            // Handle quoted-printable encoding
+            if (part.includes("Content-Transfer-Encoding: quoted-printable")) {
+              text = decodeQuotedPrintable(content);
+            } else {
+              text = content;
+            }
+            console.log("Found text content:", text.substring(0, 100) + "...");
+          }
         }
       }
     }
 
-    console.log("Extracted HTML:", html ? "Yes" : "No");
-    console.log("Extracted Text:", text ? "Yes" : "No");
+    // If we still don't have content, try direct extraction
+    if (!html && !text) {
+      console.log("Trying direct content extraction");
+      const htmlMatch = rawEmail.match(
+        /Content-Type: text\/html[^]*?\r?\n\r?\n([\s\S]*?)(?=--)/i
+      );
+      if (htmlMatch) {
+        html = decodeQuotedPrintable(htmlMatch[1].trim());
+      }
+      const textMatch = rawEmail.match(
+        /Content-Type: text\/plain[^]*?\r?\n\r?\n([\s\S]*?)(?=--)/i
+      );
+      if (textMatch) {
+        text = decodeQuotedPrintable(textMatch[1].trim());
+      }
+    }
+
+    console.log("Final extraction results:");
+    console.log("- HTML content:", html ? "Yes" : "No");
+    console.log("- Text content:", text ? "Yes" : "No");
   } catch (error) {
     console.error("Error parsing email content:", error);
   }
