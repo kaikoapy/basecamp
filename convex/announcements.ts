@@ -25,6 +25,7 @@ export const processEmailToAnnouncement = mutation({
     from: v.string(),
     subject: v.string(),
     body: v.string(),
+    htmlBody: v.string(),
     attachments: v.array(
       v.object({
         url: v.string(),
@@ -42,6 +43,7 @@ export const processEmailToAnnouncement = mutation({
       const announcement = {
         title: args.subject,
         description: args.body,
+        htmlDescription: args.htmlBody,
         images: [], // Empty array - not handling images
         postedAt: new Date().toISOString(),
         category: "email",
