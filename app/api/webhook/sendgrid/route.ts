@@ -7,35 +7,18 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Function to decode quoted-printable text with better UTF-8 handling
 function decodeQuotedPrintable(str: string): string {
-  // Common UTF-8 sequences in emails
-  const utf8Replacements: Record<string, string> = {
-    "=C2=A0": "\u00A0", // Non-breaking space
-    "=E2=80=98": "\u2018", // Left single quote
-    "=E2=80=99": "\u2019", // Right single quote
-    "=E2=80=9C": "\u201C", // Left double quote
-    "=E2=80=9D": "\u201D", // Right double quote
-    "=E2=80=93": "\u2013", // En dash
-    "=E2=80=94": "\u2014", // Em dash
-    "=E2=80=A6": "\u2026", // Ellipsis
-    "=C3=A9": "\u00E9", // é
-    "=C3=A8": "\u00E8", // è
-  };
+  // Replace soft line breaks (=\r\n or =\n) with empty string
+  str = str.replace(/=(?:\r\n?|\n)/g, "");
 
-  // First replace known UTF-8 sequences
-  let decoded = str;
-  for (const [encoded, char] of Object.entries(utf8Replacements)) {
-    decoded = decoded.replace(new RegExp(encoded, "g"), char);
-  }
-
-  // Then handle remaining quoted-printable encodings
-  decoded = decoded
-    .replace(/=\r\n/g, "") // Remove soft line breaks
-    .replace(/=\n/g, "") // Remove soft line breaks (Unix style)
-    .replace(/=([0-9A-F]{2})/gi, (_, p1) =>
-      String.fromCharCode(parseInt(p1, 16))
-    );
-
-  return decoded.trim();
+  // Replace encoded characters with their decoded values
+  return str.replace(/=([0-9A-F]{2})/gi, (_, p1) => {
+    try {
+      return String.fromCharCode(parseInt(p1, 16));
+    } catch (e) {
+      console.error("Error decoding hex:", p1, e);
+      return "";
+    }
+  });
 }
 
 // Improved attachment processing
@@ -109,8 +92,8 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
     const mainBoundary = mainBoundaryMatch[1];
     console.log("Main boundary:", mainBoundary);
 
-    // Split by main boundary
-    const parts = rawEmail.split(`--${mainBoundary}`);
+    // Split by main boundary and keep the boundary markers
+    const parts = rawEmail.split(new RegExp(`--${mainBoundary}(?:--)?`));
 
     for (const part of parts) {
       // Look for nested multipart
@@ -120,23 +103,47 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
           const nestedBoundary = nestedBoundaryMatch[1];
           console.log("Found nested boundary:", nestedBoundary);
 
-          const nestedParts = part.split(`--${nestedBoundary}`);
+          // Split by nested boundary and keep the boundary markers
+          const nestedParts = part.split(
+            new RegExp(`--${nestedBoundary}(?:--)?`)
+          );
+
           for (const nestedPart of nestedParts) {
             if (nestedPart.includes("Content-Type: text/html")) {
+              // Extract content after the double newline, handling both \r\n and \n
               const contentMatch = nestedPart.match(
-                /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+                /(?:\r\n|\n){2}([\s\S]*?)(?:\r\n|\n)*$/
               );
               if (contentMatch) {
-                html = decodeQuotedPrintable(contentMatch[1].trim());
-                console.log("Found HTML content (nested)");
+                const rawHtml = contentMatch[1].trim();
+                // Check if content is quoted-printable
+                if (
+                  nestedPart.includes(
+                    "Content-Transfer-Encoding: quoted-printable"
+                  )
+                ) {
+                  html = decodeQuotedPrintable(rawHtml);
+                } else {
+                  html = rawHtml;
+                }
+                console.log("Found HTML content length:", html.length);
               }
             } else if (nestedPart.includes("Content-Type: text/plain")) {
               const contentMatch = nestedPart.match(
-                /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+                /(?:\r\n|\n){2}([\s\S]*?)(?:\r\n|\n)*$/
               );
               if (contentMatch) {
-                text = decodeQuotedPrintable(contentMatch[1].trim());
-                console.log("Found text content (nested)");
+                const rawText = contentMatch[1].trim();
+                if (
+                  nestedPart.includes(
+                    "Content-Transfer-Encoding: quoted-printable"
+                  )
+                ) {
+                  text = decodeQuotedPrintable(rawText);
+                } else {
+                  text = rawText;
+                }
+                console.log("Found text content length:", text.length);
               }
             }
           }
@@ -144,9 +151,13 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
       }
     }
 
-    console.log("Final extraction results:");
-    console.log("- HTML content length:", html.length);
-    console.log("- Text content length:", text.length);
+    // Log the extracted content for debugging
+    if (html) {
+      console.log("HTML content preview:", html.substring(0, 100) + "...");
+    }
+    if (text) {
+      console.log("Text content preview:", text.substring(0, 100) + "...");
+    }
   } catch (error) {
     console.error("Error parsing email content:", error);
   }
