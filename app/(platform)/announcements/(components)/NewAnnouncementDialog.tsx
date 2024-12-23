@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X, Check, Trash2, Upload, Download } from "lucide-react";
+import { X, Trash2, Upload, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ShimmerButton from "@/components/ui/shimmer-button";
 
 // Custom Dialog components for test
 const DialogContent = React.forwardRef<
@@ -92,6 +93,10 @@ export function NewAnnouncementDialog({
   }) as Reader[] | undefined;
   const { user } = useUser();
   const { toast } = useToast();
+
+  const getClerkUserImageUrl = (userId: string) => {
+    return userId === user?.id ? user?.imageUrl : undefined;
+  };
 
   const formatDate = (dateString: string | number | Date) => {
     const date = new Date(dateString);
@@ -180,11 +185,21 @@ export function NewAnnouncementDialog({
 
   const handleMarkAsRead = async () => {
     if (!user) return;
+    console.log("Clerk user:", {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      fullName: user.fullName,
+      username: user.username,
+      imageUrl: user.imageUrl,
+    });
     try {
+      const userName = `${user.firstName} ${user.lastName}`.trim();
+      console.log("Using name:", userName);
       await markAsRead({
         id: announcement._id,
         userId: user.id,
-        userName: `${user.firstName} ${user.lastName}`.trim(),
+        userName,
       });
       toast({
         title: "Success",
@@ -452,69 +467,79 @@ export function NewAnnouncementDialog({
         {/* Footer with edit buttons and read status */}
         <div className="border-t pt-4 mt-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    {readStatus?.slice(0, 4).map((reader) => (
-                      <Avatar
-                        key={reader.userId}
-                        className="h-6 w-6 border-2 border-background"
-                      >
-                        <AvatarFallback className="bg-primary/10 text-xs">
-                          {reader.userName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
-                    {readStatus && readStatus.length > 4 && (
-                      <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
-                        +{readStatus.length - 4}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Read by {readCount}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="space-y-1">
-                  {readStatus?.map((reader) => (
-                    <div
-                      key={reader.userId}
-                      className="text-sm flex items-center gap-2"
-                    >
-                      <Avatar className="h-5 w-5">
-                        <AvatarFallback className="text-xs">
-                          {reader.userName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{reader.userName}</span>
-                      <span className="text-xs text-muted-foreground">
-                        ({new Date(reader.readAt).toLocaleDateString()})
-                      </span>
+            {readCount > 0 ? (
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-2">
+                      {readStatus?.slice(0, 4).map((reader) => (
+                        <Avatar
+                          key={reader.userId}
+                          className="h-6 w-6 border-2 border-background"
+                        >
+                          <AvatarImage
+                            src={getClerkUserImageUrl(reader.userId)}
+                            alt={reader.userName}
+                          />
+                          <AvatarFallback className="bg-primary/10 text-xs">
+                            {reader.userName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      ))}
+                      {readStatus && readStatus.length > 4 && (
+                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-xs border-2 border-background">
+                          +{readStatus.length - 4}
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-            {!hasUserRead && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleMarkAsRead}
-                className="gap-1"
-              >
-                <Check className="h-4 w-4" />
-                Mark as read
-              </Button>
+                    <span className="text-sm text-muted-foreground">
+                      Read by {readCount}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="space-y-1">
+                    {readStatus?.map((reader) => (
+                      <div
+                        key={reader.userId}
+                        className="text-sm flex items-center gap-2"
+                      >
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage
+                            src={getClerkUserImageUrl(reader.userId)}
+                            alt={reader.userName}
+                          />
+                          <AvatarFallback className="text-xs">
+                            {reader.userName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{reader.userName}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ({new Date(reader.readAt).toLocaleDateString()})
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span className="text-sm text-muted-foreground">
+                Read by {readCount}
+              </span>
             )}
+            {!hasUserRead && <ShimmerButton onClick={handleMarkAsRead} />}
           </div>
 
           <div className="flex items-center gap-2">
             {!isEditing ? (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setIsEditing(true)}
               >
