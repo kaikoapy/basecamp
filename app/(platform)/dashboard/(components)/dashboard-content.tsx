@@ -27,6 +27,16 @@ function formatDate(date: Date | string) {
   }).format(d);
 }
 
+// Add a helper function to extract text from HTML
+function extractTextFromHtml(html: string): string {
+  // Create a temporary div to parse HTML
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  // Get text content and truncate it
+  const text = tempDiv.textContent || tempDiv.innerText || "";
+  return text.length > 150 ? text.substring(0, 150) + "..." : text;
+}
+
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   usePin();
 
@@ -43,6 +53,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     announcements: announcements.filter(
       (item) =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.htmlDescription || item.description)
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         item.category.toLowerCase().includes(searchQuery.toLowerCase())
     ),
     pinnedContent: allResources.filter(
@@ -110,7 +123,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 key={announcement._id}
                 id={announcement._id}
                 title={announcement.title}
-                description={announcement.description}
+                description={
+                  announcement.htmlDescription
+                    ? extractTextFromHtml(announcement.htmlDescription)
+                    : announcement.description
+                }
                 images={announcement.images}
                 category="announcement"
                 postedAt={announcement.postedAt}

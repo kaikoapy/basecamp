@@ -67,7 +67,7 @@ export function AnnouncementDialog({
   const [isEditing, setIsEditing] = React.useState(false);
   const [editedTitle, setEditedTitle] = React.useState(announcement.title);
   const [editedDescription, setEditedDescription] = React.useState(
-    announcement.description
+    announcement.htmlDescription || announcement.description
   );
 
   const hasExpired =
@@ -83,6 +83,7 @@ export function AnnouncementDialog({
         id: announcement._id,
         title: editedTitle,
         description: editedDescription,
+        htmlDescription: editedDescription,
         images: announcement.images,
         expiresAt: announcement.expiresAt,
       });
@@ -94,7 +95,9 @@ export function AnnouncementDialog({
 
   const handleCancel = () => {
     setEditedTitle(announcement.title);
-    setEditedDescription(announcement.description);
+    setEditedDescription(
+      announcement.htmlDescription || announcement.description
+    );
     setIsEditing(false);
   };
 
@@ -207,7 +210,7 @@ export function AnnouncementDialog({
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto space-y-4">
           {announcement.images?.length > 0 && (
             <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-4">
               <Image
@@ -238,7 +241,7 @@ export function AnnouncementDialog({
             <Textarea
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
-              className="min-h-[600px] text-base mb-8 resize-none"
+              className="min-h-[600px] text-base mb-8 resize-none font-mono"
             />
           ) : (
             <div className="text-base space-y-4">
@@ -247,7 +250,7 @@ export function AnnouncementDialog({
                   dangerouslySetInnerHTML={{
                     __html: announcement.htmlDescription,
                   }}
-                  className="prose prose-sm max-w-none dark:prose-invert"
+                  className="prose prose-sm max-w-none dark:prose-invert [&_a]:text-blue-600 dark:[&_a]:text-blue-400"
                 />
               ) : (
                 <div className="whitespace-pre-wrap">

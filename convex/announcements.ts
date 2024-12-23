@@ -82,6 +82,7 @@ export const update = mutation({
     id: v.id("announcements"),
     title: v.string(),
     description: v.string(),
+    htmlDescription: v.optional(v.string()),
     images: v.array(v.string()),
     expiresAt: v.optional(v.string()),
   },
@@ -89,6 +90,7 @@ export const update = mutation({
     return await ctx.db.patch(args.id, {
       title: args.title,
       description: args.description,
+      htmlDescription: args.htmlDescription,
       images: args.images,
       expiresAt: args.expiresAt,
     });
