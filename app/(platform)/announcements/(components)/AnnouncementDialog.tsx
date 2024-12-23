@@ -58,23 +58,35 @@ const htmlContentStyles = `
   .email-content {
     font-family: system-ui, -apple-system, sans-serif;
     line-height: 1.6;
-    color: var(--foreground);
-  }
-  .email-content p {
-    margin-bottom: 1rem;
-  }
-  .email-content strong, .email-content b {
-    font-weight: 600;
-    color: var(--foreground);
   }
   .email-content [style*="background-color"] {
     padding: 0.125rem 0.25rem;
     border-radius: 0.125rem;
-    display: inline-block;
   }
-  .email-content a {
-    color: hsl(var(--primary));
+  .email-content font[color] {
+    color: var(--custom-color, inherit);
+  }
+  .email-content font[face] {
+    font-family: var(--custom-font, inherit);
+  }
+  .email-content font[size="4"] {
+    font-size: 1.125rem;
+  }
+  .email-content b, .email-content strong {
+    font-weight: 600;
+  }
+  .email-content u {
     text-decoration: underline;
+  }
+  .email-content i, .email-content em {
+    font-style: italic;
+  }
+  .email-content br {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  .email-content p {
+    margin-bottom: 1rem;
   }
   .email-content ul, .email-content ol {
     margin: 1rem 0;
@@ -83,10 +95,9 @@ const htmlContentStyles = `
   .email-content li {
     margin: 0.5rem 0;
   }
-  .email-content br {
-    display: block;
-    content: "";
-    margin: 0.5rem 0;
+  .email-content a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
   }
 `;
 

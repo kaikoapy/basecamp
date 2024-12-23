@@ -2,8 +2,39 @@
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { NextResponse } from "next/server";
+import DOMPurify from "isomorphic-dompurify";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
+const sanitizeConfig = {
+  ALLOWED_TAGS: [
+    "div",
+    "span",
+    "p",
+    "br",
+    "b",
+    "strong",
+    "i",
+    "em",
+    "u",
+    "font",
+    "a",
+    "ul",
+    "ol",
+    "li",
+  ],
+  ALLOWED_ATTR: [
+    "style",
+    "class",
+    "dir",
+    "face",
+    "color",
+    "size",
+    "href",
+    "background-color",
+  ],
+  ALLOWED_STYLES: ["background-color", "color", "font-family", "font-size"],
+};
 
 // Function to decode quoted-printable text with better UTF-8 handling
 function decodeQuotedPrintable(str: string): string {
@@ -167,6 +198,13 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
 
     // Clean up HTML content
     if (html) {
+      // Ensure we preserve all HTML attributes and styling
+      html = html
+        .replace(/=3D/g, "=") // Fix equals signs first
+        .replace(/=([0-9A-F]{2})/gi, (_, p1) =>
+          String.fromCharCode(parseInt(p1, 16))
+        );
+
       // Convert plain text to HTML if no HTML tags found
       if (!html.includes("<")) {
         html = html
@@ -175,21 +213,13 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
           .join("");
       }
 
-      // Ensure proper formatting for bold text and background colors
-      html = html
-        .replace(/\*([^*]+)\*/g, "<strong>$1</strong>") // Convert *text* to <strong>
-        .replace(
-          /\[background-color:([^\]]+)\]/g,
-          '<span style="background-color:$1">'
-        ) // Convert background color tags
-        .replace(/\[\/background-color\]/g, "</span>")
-        .replace(/=20/g, " ") // Fix spaces in quoted-printable
-        .replace(/=\r?\n/g, ""); // Remove soft line breaks
-
-      // Ensure the content is wrapped in a div with proper styling
+      // Wrap in email-content div if not already wrapped
       if (!html.includes('class="email-content"')) {
-        html = `<div class="email-content" style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;">${html}</div>`;
+        html = `<div class="email-content">${html}</div>`;
       }
+
+      // Sanitize the HTML while preserving formatting
+      html = DOMPurify.sanitize(html, sanitizeConfig);
 
       console.log("Cleaned HTML preview:", html.substring(0, 100) + "...");
     }
@@ -347,7 +377,7 @@ export async function POST(request: Request) {
     console.log("✅ Successfully created announcement:", result);
     return NextResponse.json({ success: true, id: result });
   } catch (error) {
-    console.error("��� Error processing email:", error);
+    console.error(" Error processing email:", error);
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
