@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="180" fill="#f3f4f6" />
+  
+  <!-- 404 text -->
+  <text x="200" y="180" font-size="120" font-weight="bold" text-anchor="middle" fill="#6b7280">
+    404
+  </text>
+  
+  <!-- Coffee cup -->
+  <g transform="translate(160, 220) scale(0.8)">
+    <!-- Cup body -->
+    <path d="M20 40 C20 80, 100 80, 100 40 L90 20 L30 20 L20 40" fill="#d1d5db"/>
+    <path d="M30 20 L90 20 L85 10 L35 10 L30 20" fill="#9ca3af"/>
+    
+    <!-- Steam -->
+    <path d="M45 0 Q55 -10 65 0 Q75 10 85 0" stroke="#9ca3af" stroke-width="3" fill="none">
+      <animate attributeName="d" 
+        values="M45 0 Q55 -10 65 0 Q75 10 85 0;
+                M45 0 Q55 -5 65 -5 Q75 -5 85 0;
+                M45 0 Q55 -10 65 0 Q75 10 85 0"
+        dur="3s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Handle -->
+    <path d="M100 50 C120 50, 120 30, 100 30" stroke="#9ca3af" stroke-width="6" fill="none"/>
+  </g>
+  
+  <!-- Question marks -->
+  <g transform="translate(200, 200)">
+    <text x="60" y="-40" font-size="40" fill="#9ca3af" text-anchor="middle">?</text>
+    <text x="-40" y="60" font-size="30" fill="#9ca3af" text-anchor="middle">?</text>
+    <text x="80" y="40" font-size="35" fill="#9ca3af" text-anchor="middle">?</text>
+  </g>
+</svg> 
