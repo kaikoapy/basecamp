@@ -104,7 +104,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   };
 
   return (
-    <main className="flex-1 p-6 max-w-[1600px] mx-auto">
+    <main className="flex-1 p-6  mx-auto">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
           <div className="flex items-center gap-2 mb-3">
