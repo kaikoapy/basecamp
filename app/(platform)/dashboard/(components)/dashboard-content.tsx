@@ -138,6 +138,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                     ? extractTextFromHtml(announcement.htmlDescription)
                     : announcement.description
                 }
+                content={
+                  announcement.htmlDescription || announcement.description
+                }
                 images={announcement.images}
                 category="announcement"
                 postedAt={announcement.postedAt}
@@ -146,6 +149,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 isAnnouncement={true}
                 isEmail={announcement.isEmailGenerated}
                 image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
+                files={announcement.files}
               />
             ))}
           </div>

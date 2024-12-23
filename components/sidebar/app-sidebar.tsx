@@ -163,7 +163,7 @@ const data = {
         },
         {
           title: "EX30",
-          url: "/product-knowledge/ex90",
+          url: "/product-knowledge/ex30",
         },
         {
           title: "EX90",

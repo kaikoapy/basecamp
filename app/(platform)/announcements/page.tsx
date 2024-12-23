@@ -16,6 +16,26 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
 
+// Add a helper function to extract text from HTML
+function extractTextFromHtml(html: string): string {
+  if (typeof window === "undefined") {
+    // Server-side: Use basic regex to extract text
+    return (
+      html
+        .replace(/<[^>]*>/g, "") // Remove HTML tags
+        .replace(/&nbsp;/g, " ") // Replace &nbsp; with space
+        .replace(/\s+/g, " ") // Normalize whitespace
+        .trim()
+        .substring(0, 150) + (html.length > 150 ? "..." : "")
+    );
+  }
+
+  // Client-side: Use DOM parser
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = doc.body.textContent || "";
+  return text.trim().substring(0, 150) + (text.length > 150 ? "..." : "");
+}
+
 export default function AnnouncementsPage() {
   const announcements = useQuery(api.announcements.list);
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,7 +116,7 @@ export default function AnnouncementsPage() {
             />
           ))}
         </div>
-      ) : filteredAnnouncements.length === 0 ? (
+      ) : filteredAnnouncements.length === 0 && !searchQuery ? (
         // Empty state
         <div className="text-center py-12">
           <h3 className="text-lg font-semibold mb-2">No announcements yet</h3>
@@ -113,18 +133,24 @@ export default function AnnouncementsPage() {
       ) : (
         // Announcements grid
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {filteredAnnouncements?.map((announcement) => (
+          {filteredAnnouncements.map((announcement) => (
             <DashboardCard
               key={announcement._id}
               id={announcement._id}
               title={announcement.title}
-              description={announcement.description}
+              description={
+                announcement.htmlDescription
+                  ? extractTextFromHtml(announcement.htmlDescription)
+                  : announcement.description
+              }
+              content={announcement.htmlDescription || announcement.description}
               images={announcement.images}
               postedAt={announcement.postedAt}
               category="announcement"
               createdBy={announcement.createdBy}
               isAnnouncement={true}
               isEmail={announcement.isEmailGenerated}
+              files={announcement.files}
             />
           ))}
         </div>

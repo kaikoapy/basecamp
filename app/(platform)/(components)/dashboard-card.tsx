@@ -19,7 +19,7 @@ import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructio
 import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
 import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
-import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
+import { NewAnnouncementDialog } from "@/app/(platform)/announcements/(components)/NewAnnouncementDialog";
 import { useDialog } from "@/hooks/use-dialog";
 import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
@@ -49,6 +49,11 @@ interface DashboardCardProps {
   type?: string;
   showCopyButton?: boolean;
   showExternalLink?: boolean;
+  files?: Array<{
+    url: string;
+    name: string;
+    type: string;
+  }>;
 }
 
 export function DashboardCard(props: DashboardCardProps) {
@@ -74,6 +79,8 @@ export function DashboardCard(props: DashboardCardProps) {
     type,
     showCopyButton,
     showExternalLink,
+    files,
+    content,
   } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -284,17 +291,18 @@ export function DashboardCard(props: DashboardCardProps) {
         />
       )}
       {isAnnouncement && (
-        <AnnouncementDialog
+        <NewAnnouncementDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           announcement={{
             _id: id as Id<"announcements">,
-            title,
+            title: title || "",
             description: description || "",
-            images: images || [],
+            htmlDescription: content || description || "",
             createdBy: createdBy || "",
             postedAt: postedAt || new Date().toISOString(),
-            isEmail,
+            files,
+            isEmailGenerated: isEmail,
           }}
         />
       )}
