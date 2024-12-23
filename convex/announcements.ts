@@ -70,3 +70,37 @@ export const list = query({
     return await ctx.db.query("announcements").order("desc").collect();
   },
 });
+
+export const update = mutation({
+  args: {
+    id: v.id("announcements"),
+    title: v.string(),
+    description: v.string(),
+    images: v.array(v.string()),
+    expiresAt: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.id, {
+      title: args.title,
+      description: args.description,
+      images: args.images,
+      expiresAt: args.expiresAt,
+    });
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("announcements") },
+  handler: async (ctx, args) => {
+    return await ctx.db.delete(args.id);
+  },
+});
+
+export const archive = mutation({
+  args: { id: v.id("announcements") },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.id, {
+      isArchived: true,
+    });
+  },
+});

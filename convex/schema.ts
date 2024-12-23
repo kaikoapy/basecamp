@@ -50,6 +50,8 @@ export default defineSchema({
       )
     ),
     postedAt: v.string(),
+    expiresAt: v.optional(v.string()),
+    isArchived: v.optional(v.boolean()),
     category: v.string(),
     createdBy: v.string(),
     isEmailGenerated: v.boolean(),
@@ -60,5 +62,5 @@ export default defineSchema({
         receivedAt: v.string(),
       })
     ),
-  }),
+  }).index("by_status", ["isArchived"]),
 });

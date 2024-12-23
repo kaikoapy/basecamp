@@ -22,9 +22,10 @@ import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-pa
 import { AnnouncementDialog } from "@/app/(platform)/announcements/(components)/AnnouncementDialog";
 import { useDialog } from "@/hooks/use-dialog";
 import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
+import { Id } from "@/convex/_generated/dataModel";
 
-export interface DashboardCardProps {
-  id: string;
+interface DashboardCardProps {
+  id: Id<"announcements"> | string;
   title: string;
   description?: string;
   images?: string[];
@@ -287,6 +288,7 @@ export function DashboardCard(props: DashboardCardProps) {
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           announcement={{
+            _id: id as Id<"announcements">,
             title,
             description: description || "",
             images: images || [],
