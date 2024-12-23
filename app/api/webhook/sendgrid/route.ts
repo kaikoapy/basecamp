@@ -10,20 +10,31 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
   let html = "";
   let text = "";
 
-  // Look for HTML content first
+  // Look for HTML content first with better regex
   const htmlMatch = rawEmail.match(
-    /Content-Type: text\/html;.*?\r\n\r\n([\s\S]*?)\r\n--/i
+    /Content-Type: text\/html;[\s\S]*?\r\n\r\n([\s\S]*?)(?=\r\n--)/i
   );
   if (htmlMatch && htmlMatch[1]) {
-    html = htmlMatch[1].trim();
+    // Decode HTML entities and clean up
+    html = htmlMatch[1]
+      .trim()
+      .replace(/=\r\n/g, "") // Remove soft line breaks
+      .replace(/=([0-9A-F]{2})/gi, (_, code) =>
+        String.fromCharCode(parseInt(code, 16))
+      ); // Decode quoted-printable
   }
 
-  // Also get plain text as fallback
+  // Get plain text with better regex
   const textMatch = rawEmail.match(
-    /Content-Type: text\/plain;.*?\r\n\r\n([\s\S]*?)\r\n--/i
+    /Content-Type: text\/plain;[\s\S]*?\r\n\r\n([\s\S]*?)(?=\r\n--)/i
   );
   if (textMatch && textMatch[1]) {
-    text = textMatch[1].trim();
+    text = textMatch[1]
+      .trim()
+      .replace(/=\r\n/g, "")
+      .replace(/=([0-9A-F]{2})/gi, (_, code) =>
+        String.fromCharCode(parseInt(code, 16))
+      );
   }
 
   return {
@@ -65,18 +76,45 @@ export async function POST(request: Request) {
       const attachment = formData.get(`attachment${i}`);
       if (!attachment) break;
 
-      const filename = formData.get(`attachment${i}-filename`);
-      const type = formData.get(`attachment${i}-type`);
+      const filename = formData.get(`attachment${i}-filename`) as string;
+      const type = formData.get(`attachment${i}-type`) as string;
+      const content = formData.get(`attachment${i}-content`) as string;
 
-      // Here you would upload the attachment to your file storage
-      // and get back a URL. For example:
-      // const url = await uploadToStorage(attachment);
+      if (filename && type && content) {
+        try {
+          // Get upload URL from Convex
+          const uploadUrl = await convex.mutation(
+            api.announcements.generateUploadUrl,
+            {
+              type,
+            }
+          );
 
-      attachments.push({
-        url: "url_from_storage",
-        name: filename as string,
-        type: type as string,
-      });
+          // Upload file to Convex storage
+          const response = await fetch(uploadUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": type,
+            },
+            body: Buffer.from(content, "base64"),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to upload file: ${response.statusText}`);
+          }
+
+          // Get the stored URL
+          const storedUrl = uploadUrl.split("?")[0];
+
+          attachments.push({
+            url: storedUrl,
+            name: filename,
+            type: type,
+          });
+        } catch (error) {
+          console.error(`Failed to upload attachment ${filename}:`, error);
+        }
+      }
     }
 
     // Prepare payload for Convex

@@ -44,12 +44,16 @@ export const processEmailToAnnouncement = mutation({
         title: args.subject,
         description: args.body,
         htmlDescription: args.htmlBody,
-        images: [], // Empty array - not handling images
+        images: [], // Empty array - not handling images yet
         postedAt: new Date().toISOString(),
         category: "email",
         createdBy: senderName,
         isEmailGenerated: true,
-        files: [], // Empty array - not handling files
+        files: args.attachments.map((attachment) => ({
+          url: attachment.url,
+          name: attachment.name,
+          type: attachment.type,
+        })),
         emailMetadata: {
           from: args.from,
           originalEmailId: args.emailId,
@@ -104,5 +108,14 @@ export const archive = mutation({
     return await ctx.db.patch(args.id, {
       isArchived: true,
     });
+  },
+});
+
+export const generateUploadUrl = mutation({
+  args: {
+    type: v.string(),
+  },
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
   },
 });

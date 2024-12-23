@@ -46,6 +46,11 @@ interface AnnouncementDialogProps {
     postedAt: string;
     expiresAt?: string;
     isEmail?: boolean;
+    files?: Array<{
+      url: string;
+      name: string;
+      type: string;
+    }>;
   };
 }
 
@@ -236,7 +241,7 @@ export function AnnouncementDialog({
               className="min-h-[600px] text-base mb-8 resize-none"
             />
           ) : (
-            <div className="text-base">
+            <div className="text-base space-y-4">
               {announcement.htmlDescription ? (
                 <div
                   dangerouslySetInnerHTML={{
@@ -247,6 +252,38 @@ export function AnnouncementDialog({
               ) : (
                 <div className="whitespace-pre-wrap">
                   {announcement.description}
+                </div>
+              )}
+
+              {announcement.files && announcement.files.length > 0 && (
+                <div className="border-t pt-4">
+                  <h3 className="font-medium mb-2">Attachments:</h3>
+                  <div className="space-y-2">
+                    {announcement.files.map((file, index) => (
+                      <a
+                        key={index}
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        {file.name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
