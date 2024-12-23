@@ -9,8 +9,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { type VariantProps } from "class-variance-authority";
+import { buttonVariants } from "@/components/ui/button";
 
-interface CopyButtonProps {
+interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   value: string;
   className?: string;
   iconSize?: number;
@@ -22,6 +24,9 @@ export function CopyButton({
   className,
   iconSize = 12,
   tooltipText = "link",
+  variant = "outline",
+  size = "icon",
+  ...props
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
 
@@ -41,12 +46,13 @@ export function CopyButton({
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
         <Button
-          variant="outline"
-          size="icon"
+          variant={variant}
+          size={size}
           className={cn("h-6 w-6 disabled:opacity-100", className)}
           onClick={handleCopy}
           aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
           disabled={copied}
+          {...props}
         >
           <div
             className={cn(

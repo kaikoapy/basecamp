@@ -55,7 +55,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const allResources = useQuery(api.resources.getAllResources);
 
   if (!allResources || !announcements) {
-    return <div>Loading...</div>;
+    return null; // Let the loading.tsx handle the loading state
   }
 
   // Filter content based on search query and categories

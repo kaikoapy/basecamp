@@ -1,23 +1,28 @@
-import { AppSidebar } from "../../components/sidebar/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { PinProvider } from "../providers/pin-provider";
+import { Suspense } from "react";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { PinProvider } from "@/app/providers/pin-provider";
 import { MountProvider } from "@/components/providers/mount-provider";
 
-interface DashboardLayoutProps {
+export default function PlatformLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+}) {
   return (
     <PinProvider>
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <MountProvider>{children}</MountProvider>
-        </SidebarInset>
+        <div className="flex h-screen">
+          <Suspense fallback={<div className="w-64 bg-muted animate-pulse" />}>
+            <AppSidebar />
+          </Suspense>
+          <div className="flex-1 overflow-auto">
+            <MountProvider>
+              <Suspense>{children}</Suspense>
+            </MountProvider>
+          </div>
+        </div>
       </SidebarProvider>
     </PinProvider>
   );
-};
-
-export default DashboardLayout;
+}
