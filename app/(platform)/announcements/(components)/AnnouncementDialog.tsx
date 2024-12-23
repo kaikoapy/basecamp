@@ -55,29 +55,37 @@ interface AnnouncementDialogProps {
 }
 
 const htmlContentStyles = `
-  .announcement-content {
+  .email-content {
     font-family: system-ui, -apple-system, sans-serif;
     line-height: 1.6;
+    color: var(--foreground);
   }
-  .announcement-content p {
+  .email-content p {
     margin-bottom: 1rem;
   }
-  .announcement-content b, .announcement-content strong {
+  .email-content strong, .email-content b {
     font-weight: 600;
+    color: var(--foreground);
   }
-  .announcement-content [style*="background-color"] {
+  .email-content [style*="background-color"] {
     padding: 0.125rem 0.25rem;
     border-radius: 0.125rem;
+    display: inline-block;
   }
-  .announcement-content a {
-    color: #2563eb;
+  .email-content a {
+    color: hsl(var(--primary));
     text-decoration: underline;
   }
-  .announcement-content ul, .announcement-content ol {
+  .email-content ul, .email-content ol {
     margin: 1rem 0;
     padding-left: 1.5rem;
   }
-  .announcement-content li {
+  .email-content li {
+    margin: 0.5rem 0;
+  }
+  .email-content br {
+    display: block;
+    content: "";
     margin: 0.5rem 0;
   }
 `;
@@ -280,7 +288,7 @@ export function AnnouncementDialog({
                   dangerouslySetInnerHTML={{
                     __html: announcement.htmlDescription,
                   }}
-                  className="announcement-content prose prose-sm max-w-none dark:prose-invert"
+                  className="email-content prose prose-sm max-w-none dark:prose-invert"
                 />
               ) : (
                 <div className="whitespace-pre-wrap">

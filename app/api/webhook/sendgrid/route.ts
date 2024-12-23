@@ -167,19 +167,28 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
 
     // Clean up HTML content
     if (html) {
-      // Preserve line breaks
-      html = html.replace(/\r?\n/g, "<br>");
+      // Convert plain text to HTML if no HTML tags found
+      if (!html.includes("<")) {
+        html = html
+          .split(/\r?\n\r?\n/)
+          .map((paragraph) => `<p>${paragraph.replace(/\r?\n/g, "<br>")}</p>`)
+          .join("");
+      }
 
-      // Fix common formatting issues
+      // Ensure proper formatting for bold text and background colors
       html = html
+        .replace(/\*([^*]+)\*/g, "<strong>$1</strong>") // Convert *text* to <strong>
+        .replace(
+          /\[background-color:([^\]]+)\]/g,
+          '<span style="background-color:$1">'
+        ) // Convert background color tags
+        .replace(/\[\/background-color\]/g, "</span>")
         .replace(/=20/g, " ") // Fix spaces in quoted-printable
-        .replace(/=\r?\n/g, "") // Remove soft line breaks
-        .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
-        .replace(/<br\s*\/?>\s*<br\s*\/?>/g, "</p><p>"); // Convert double breaks to paragraphs
+        .replace(/=\r?\n/g, ""); // Remove soft line breaks
 
-      // Wrap in paragraphs if not already wrapped
-      if (!html.includes("<p>")) {
-        html = `<p>${html}</p>`;
+      // Ensure the content is wrapped in a div with proper styling
+      if (!html.includes('class="email-content"')) {
+        html = `<div class="email-content" style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;">${html}</div>`;
       }
 
       console.log("Cleaned HTML preview:", html.substring(0, 100) + "...");
