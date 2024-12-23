@@ -4,7 +4,7 @@ import { v } from "convex/values";
 // Query to get resources by type
 export const getResourcesByType = query({
   args: {
-    type: v.union(
+    category: v.union(
       v.literal("tool"),
       v.literal("resource"),
       v.literal("pinned")
@@ -13,7 +13,7 @@ export const getResourcesByType = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("resources")
-      .filter((q) => q.eq(q.field("type"), args.type))
+      .filter((q) => q.eq(q.field("category"), args.category))
       .collect();
   },
 });

@@ -31,7 +31,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import type { NavProject } from "./nav-projects";
-
+import { DOCUMENT_URLS } from "@/app/config/constants";
 const navigationItems: NavProject[] = [
   {
     name: "Dashboard",
@@ -97,15 +97,15 @@ const data = {
       items: [
         {
           title: "Credit Application",
-          url: "#",
+          url: DOCUMENT_URLS.CREDIT_APPLICATION,
         },
         {
           title: "Business Application",
-          url: "#",
+          url: DOCUMENT_URLS.BUSINESS_APPLICATION,
         },
         {
           title: "Wire Instructions",
-          url: "#",
+          url: DOCUMENT_URLS.WIRE_INSTRUCTIONS,
         },
       ],
     },
@@ -114,6 +114,29 @@ const data = {
       url: "#",
       icon: BookOpen,
       items: [
+        // Sales Resources
+        {
+          title: "Business Applications",
+          component: "BusinessFAQDialog",
+          isModal: true,
+        },
+        {
+          title: "Out of State Deals",
+          component: "OutOfStateFAQDialog",
+          isModal: true,
+        },
+        // Finance Resources
+        {
+          title: "Wire Instructions",
+          component: "WireInstructionsDialog",
+          isModal: true,
+        },
+        {
+          title: "3rd Party Payoffs",
+          component: "ThirdPartyPayoffsDialog",
+          isModal: true,
+        },
+        // Other Resources
         {
           title: "Contact Directory",
           url: "/directory",
@@ -153,6 +176,10 @@ const data = {
         {
           title: "Plug-In Hybrid FAQs",
           url: "/phev-faqs",
+        },
+        {
+          title: "Thrive - Volvo Training",
+          url: "https://ssovolvocars.learn.link/content/",
         },
       ],
     },

@@ -62,15 +62,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
       .filter((resource) => resource.category === "Volvo Sites")
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
 
-    communication: filteredContent.resources
-      .filter((resource) => resource.category === "Communication")
+    dealerSites: filteredContent.resources
+      .filter((resource) => resource.category === "Dealer Site")
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
 
-    salesAndFinance: filteredContent.resources
-      .filter(
-        (resource) =>
-          resource.category === "Sales" || resource.category === "Finance"
-      )
+    communication: filteredContent.resources
+      .filter((resource) => resource.category === "Communication")
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   };
 
@@ -78,14 +75,20 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     <main className="flex-1 p-6 max-w-[1600px] mx-auto">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 mb-3">
             <h2 className="text-xl font-bold">
               Announcements <span className="apple-emoji">📰</span>
             </h2>
-            <Button variant="outline" size="sm" className="text-sm" asChild>
-              <Link href="/announcements">
-                See All Announcements
-                <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="h-4 w-[1px] bg-border mx-2" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm text-muted-foreground hover:text-foreground"
+              asChild
+            >
+              <Link href="/announcements" className="flex items-center">
+                See All
+                <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
             </Button>
           </div>
@@ -121,7 +124,6 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 id={content._id}
                 title={content.title}
                 image={content.image ?? ""}
-                duration={content.duration}
                 category={content.category}
                 description={content.description}
                 url={content.url}
@@ -188,13 +190,13 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
         </section>
       )}
 
-      {resourcesByCategory.communication.length > 0 && (
-        <section id="communication" className="mb-6">
+      {resourcesByCategory.dealerSites.length > 0 && (
+        <section id="dealer-sites" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
-            Communication <span className="apple-emoji">💬</span>
+            Dealer Sites <span className="apple-emoji">🏢</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {resourcesByCategory.communication.map((resource) => (
+            {resourcesByCategory.dealerSites.map((resource) => (
               <MarketingCard
                 key={resource._id}
                 id={resource._id}
@@ -206,13 +208,13 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
         </section>
       )}
 
-      {resourcesByCategory.salesAndFinance.length > 0 && (
-        <section id="sales-and-finance" className="mb-6">
+      {resourcesByCategory.communication.length > 0 && (
+        <section id="communication" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
-            Sales & Finance Resources <span className="apple-emoji">💼</span>
+            Communication <span className="apple-emoji">💬</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {resourcesByCategory.salesAndFinance.map((resource) => (
+            {resourcesByCategory.communication.map((resource) => (
               <MarketingCard
                 key={resource._id}
                 id={resource._id}
