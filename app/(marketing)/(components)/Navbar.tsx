@@ -3,6 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function Navbar() {
   const { signOut } = useClerk();
@@ -34,6 +35,9 @@ export default function Navbar() {
               </SignInButton>
             </SignedOut>
             <SignedIn>
+              <Button variant="default" className="text-sm font-medium" asChild>
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
               <Button
                 variant="ghost"
                 className="text-sm font-medium"
