@@ -5,97 +5,148 @@ import { NextResponse } from "next/server";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-// Function to decode quoted-printable text
+// Function to decode quoted-printable text with better UTF-8 handling
 function decodeQuotedPrintable(str: string): string {
-  return str
+  // Common UTF-8 sequences in emails
+  const utf8Replacements: Record<string, string> = {
+    "=C2=A0": "\u00A0", // Non-breaking space
+    "=E2=80=98": "\u2018", // Left single quote
+    "=E2=80=99": "\u2019", // Right single quote
+    "=E2=80=9C": "\u201C", // Left double quote
+    "=E2=80=9D": "\u201D", // Right double quote
+    "=E2=80=93": "\u2013", // En dash
+    "=E2=80=94": "\u2014", // Em dash
+    "=E2=80=A6": "\u2026", // Ellipsis
+    "=C3=A9": "\u00E9", // é
+    "=C3=A8": "\u00E8", // è
+  };
+
+  // First replace known UTF-8 sequences
+  let decoded = str;
+  for (const [encoded, char] of Object.entries(utf8Replacements)) {
+    decoded = decoded.replace(new RegExp(encoded, "g"), char);
+  }
+
+  // Then handle remaining quoted-printable encodings
+  decoded = decoded
     .replace(/=\r\n/g, "") // Remove soft line breaks
+    .replace(/=\n/g, "") // Remove soft line breaks (Unix style)
     .replace(/=([0-9A-F]{2})/gi, (_, p1) =>
       String.fromCharCode(parseInt(p1, 16))
-    )
-    .replace(/=3D/gi, "=") // Handle equals sign
-    .replace(/=20/g, " ") // Handle spaces
-    .replace(/=2E/g, ".") // Handle periods
-    .replace(/=22/g, '"') // Handle quotes
-    .replace(/=27/g, "'"); // Handle apostrophes
+    );
+
+  return decoded.trim();
 }
 
-// Function to extract email body from raw email content
+// Improved attachment processing
+interface Attachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+  size: number;
+}
+
+function sanitizeFilename(filename: string): string {
+  return filename
+    .replace(/[^a-zA-Z0-9.-]/g, "_") // Replace unsafe chars
+    .replace(/\.{2,}/g, ".") // Prevent directory traversal
+    .substring(0, 255); // Limit length
+}
+
+async function processAttachment(
+  content: string,
+  contentType: string,
+  filename: string
+): Promise<Attachment | null> {
+  try {
+    // Validate content type
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    if (!allowedTypes.includes(contentType)) {
+      console.warn(`Unsupported attachment type: ${contentType}`);
+      return null;
+    }
+
+    // Clean up base64 content
+    const cleanContent = content
+      .replace(/\s/g, "") // Remove whitespace
+      .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove invalid chars
+
+    // Decode content
+    const buffer = Buffer.from(cleanContent, "base64");
+
+    // Check size (5MB limit)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (buffer.length > MAX_SIZE) {
+      console.warn(`Attachment too large: ${buffer.length} bytes`);
+      return null;
+    }
+
+    return {
+      filename: sanitizeFilename(filename),
+      content: buffer,
+      contentType,
+      size: buffer.length,
+    };
+  } catch (error) {
+    console.error("Failed to process attachment:", error);
+    return null;
+  }
+}
+
+// Main email processing function
 function extractEmailBody(rawEmail: string): { html: string; text: string } {
   let html = "";
   let text = "";
 
   try {
     // Find all boundaries in the email
-    const boundaries: string[] = [];
-    const boundaryMatches = rawEmail.matchAll(/boundary="([^"]+)"/g);
-    for (const match of boundaryMatches) {
-      boundaries.push(match[1]);
+    const mainBoundaryMatch = rawEmail.match(/boundary="([^"]+)"/);
+    if (!mainBoundaryMatch) {
+      console.log("No boundary found");
+      return { html, text };
     }
 
-    console.log("Found boundaries:", boundaries);
+    const mainBoundary = mainBoundaryMatch[1];
+    console.log("Main boundary:", mainBoundary);
 
-    // Process each boundary
-    for (const boundary of boundaries) {
-      const parts = rawEmail.split(`--${boundary}`);
+    // Split by main boundary
+    const parts = rawEmail.split(`--${mainBoundary}`);
 
-      for (const part of parts) {
-        // Extract content based on type
-        if (part.includes("Content-Type: text/html")) {
-          console.log("Processing HTML part");
-          // Find the actual content after headers
-          const contentMatch = part.match(
-            /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
-          );
-          if (contentMatch) {
-            const content = contentMatch[1].trim();
-            // Handle quoted-printable encoding
-            if (part.includes("Content-Transfer-Encoding: quoted-printable")) {
-              html = decodeQuotedPrintable(content);
-            } else {
-              html = content;
+    for (const part of parts) {
+      // Look for nested multipart
+      if (part.includes("multipart/alternative")) {
+        const nestedBoundaryMatch = part.match(/boundary="([^"]+)"/);
+        if (nestedBoundaryMatch) {
+          const nestedBoundary = nestedBoundaryMatch[1];
+          console.log("Found nested boundary:", nestedBoundary);
+
+          const nestedParts = part.split(`--${nestedBoundary}`);
+          for (const nestedPart of nestedParts) {
+            if (nestedPart.includes("Content-Type: text/html")) {
+              const contentMatch = nestedPart.match(
+                /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+              );
+              if (contentMatch) {
+                html = decodeQuotedPrintable(contentMatch[1].trim());
+                console.log("Found HTML content (nested)");
+              }
+            } else if (nestedPart.includes("Content-Type: text/plain")) {
+              const contentMatch = nestedPart.match(
+                /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
+              );
+              if (contentMatch) {
+                text = decodeQuotedPrintable(contentMatch[1].trim());
+                console.log("Found text content (nested)");
+              }
             }
-            console.log("Found HTML content:", html.substring(0, 100) + "...");
-          }
-        } else if (part.includes("Content-Type: text/plain")) {
-          console.log("Processing plain text part");
-          // Find the actual content after headers
-          const contentMatch = part.match(
-            /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
-          );
-          if (contentMatch) {
-            const content = contentMatch[1].trim();
-            // Handle quoted-printable encoding
-            if (part.includes("Content-Transfer-Encoding: quoted-printable")) {
-              text = decodeQuotedPrintable(content);
-            } else {
-              text = content;
-            }
-            console.log("Found text content:", text.substring(0, 100) + "...");
           }
         }
       }
     }
 
-    // If we still don't have content, try direct extraction
-    if (!html && !text) {
-      console.log("Trying direct content extraction");
-      const htmlMatch = rawEmail.match(
-        /Content-Type: text\/html[^]*?\r?\n\r?\n([\s\S]*?)(?=--)/i
-      );
-      if (htmlMatch) {
-        html = decodeQuotedPrintable(htmlMatch[1].trim());
-      }
-      const textMatch = rawEmail.match(
-        /Content-Type: text\/plain[^]*?\r?\n\r?\n([\s\S]*?)(?=--)/i
-      );
-      if (textMatch) {
-        text = decodeQuotedPrintable(textMatch[1].trim());
-      }
-    }
-
     console.log("Final extraction results:");
-    console.log("- HTML content:", html ? "Yes" : "No");
-    console.log("- Text content:", text ? "Yes" : "No");
+    console.log("- HTML content length:", html.length);
+    console.log("- Text content length:", text.length);
   } catch (error) {
     console.error("Error parsing email content:", error);
   }
@@ -156,88 +207,70 @@ export async function POST(request: Request) {
     // Process attachments
     const attachments = [];
 
-    // Try both formats for attachments
-    const attachmentCount = formData.get("attachment-count");
-    const hasNumberedAttachments = formData.has("attachment1");
+    // Look for attachments in the raw email
+    if (emailRaw) {
+      const mainBoundaryMatch = emailRaw.match(/boundary="([^"]+)"/);
+      if (mainBoundaryMatch) {
+        const mainBoundary = mainBoundaryMatch[1];
+        const parts = emailRaw.split(`--${mainBoundary}`);
 
-    if (attachmentCount) {
-      // Handle parsed format
-      const count = parseInt(attachmentCount as string, 10);
-      for (let i = 1; i <= count; i++) {
-        const attachment = formData.get(`attachment${i}`);
-        const filename = formData.get(`attachment-info`) as string;
-        if (attachment && filename) {
-          try {
-            const info = JSON.parse(filename);
-            const uploadUrl = await convex.mutation(
-              api.announcements.generateUploadUrl,
-              {
-                type: info.type || "application/octet-stream",
-              }
+        for (const part of parts) {
+          if (part.includes("Content-Type: application/pdf")) {
+            console.log("Processing PDF attachment");
+            const filenameMatch = part.match(/filename="([^"]+)"/);
+            const contentMatch = part.match(
+              /\r?\n\r?\n([\s\S]*?)(?:\r?\n\r?\n|$)/
             );
 
-            const response = await fetch(uploadUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": info.type || "application/octet-stream",
-              },
-              body: attachment,
-            });
+            if (filenameMatch && contentMatch) {
+              const filename = filenameMatch[1];
+              const content = contentMatch[1].trim();
 
-            if (!response.ok) {
-              throw new Error(`Failed to upload file: ${response.statusText}`);
-            }
+              const attachment = await processAttachment(
+                content,
+                "application/pdf",
+                filename
+              );
 
-            const storedUrl = uploadUrl.split("?")[0];
-            attachments.push({
-              url: storedUrl,
-              name: info.filename || `attachment${i}`,
-              type: info.type || "application/octet-stream",
-            });
-          } catch (error) {
-            console.error(`Failed to process attachment ${i}:`, error);
-          }
-        }
-      }
-    } else if (hasNumberedAttachments) {
-      // Handle raw format
-      for (let i = 1; ; i++) {
-        const attachment = formData.get(`attachment${i}`);
-        if (!attachment) break;
+              if (attachment) {
+                try {
+                  const uploadUrl = await convex.mutation(
+                    api.announcements.generateUploadUrl,
+                    { type: "application/pdf" }
+                  );
 
-        const filename = formData.get(`attachment${i}-filename`) as string;
-        const type = formData.get(`attachment${i}-type`) as string;
-        const content = formData.get(`attachment${i}-content`) as string;
+                  const response = await fetch(uploadUrl, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/pdf",
+                    },
+                    body: attachment.content,
+                  });
 
-        if (filename && type && content) {
-          try {
-            const uploadUrl = await convex.mutation(
-              api.announcements.generateUploadUrl,
-              {
-                type,
+                  if (!response.ok) {
+                    throw new Error(
+                      `Failed to upload file: ${response.statusText}`
+                    );
+                  }
+
+                  const storedUrl = uploadUrl.split("?")[0];
+                  attachments.push({
+                    url: storedUrl,
+                    name: attachment.filename,
+                    type: attachment.contentType,
+                  });
+                  console.log(
+                    "Successfully processed PDF attachment:",
+                    attachment.filename
+                  );
+                } catch (error) {
+                  console.error(
+                    `Failed to process PDF attachment ${attachment.filename}:`,
+                    error
+                  );
+                }
               }
-            );
-
-            const response = await fetch(uploadUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": type,
-              },
-              body: Buffer.from(content, "base64"),
-            });
-
-            if (!response.ok) {
-              throw new Error(`Failed to upload file: ${response.statusText}`);
             }
-
-            const storedUrl = uploadUrl.split("?")[0];
-            attachments.push({
-              url: storedUrl,
-              name: filename,
-              type: type,
-            });
-          } catch (error) {
-            console.error(`Failed to upload attachment ${filename}:`, error);
           }
         }
       }
@@ -265,22 +298,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, id: result });
   } catch (error) {
     console.error("❌ Error processing email:", error);
-
-    // Error handling with type checking
     if (error instanceof Error) {
-      const message = error.message;
-      // Determine if it's a validation error
-      const isValidationError = message.includes("ArgumentValidationError");
-
-      return NextResponse.json(
-        {
-          error: isValidationError ? "Invalid email format" : "Server error",
-          details: message,
-        },
-        { status: isValidationError ? 400 : 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
     return NextResponse.json(
       { error: "Unknown error occurred" },
       { status: 500 }
