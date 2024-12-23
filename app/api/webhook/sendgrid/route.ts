@@ -2,50 +2,8 @@
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { NextResponse } from "next/server";
-import DOMPurify from "isomorphic-dompurify";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
-const sanitizeConfig = {
-  ALLOWED_TAGS: [
-    "div",
-    "span",
-    "p",
-    "br",
-    "b",
-    "strong",
-    "i",
-    "em",
-    "u",
-    "font",
-    "a",
-    "ul",
-    "ol",
-    "li",
-  ],
-  ALLOWED_ATTR: [
-    "style",
-    "class",
-    "dir",
-    "face",
-    "color",
-    "size",
-    "href",
-    "background-color",
-  ],
-  ALLOWED_STYLES: [
-    "background-color",
-    "color",
-    "font-family",
-    "font-size",
-    "line-height",
-    "font-weight",
-    "text-decoration",
-    "font-style",
-  ],
-  ADD_ATTR: ["target"],
-  ADD_TAGS: ["style"],
-};
 
 // Function to decode quoted-printable text with better UTF-8 handling
 function decodeQuotedPrintable(str: string): string {
@@ -83,61 +41,6 @@ function decodeQuotedPrintable(str: string): string {
   });
 
   return decoded;
-}
-
-// Improved attachment processing
-interface Attachment {
-  filename: string;
-  content: Buffer;
-  contentType: string;
-  size: number;
-}
-
-function sanitizeFilename(filename: string): string {
-  return filename
-    .replace(/[^a-zA-Z0-9.-]/g, "_") // Replace unsafe chars
-    .replace(/\.{2,}/g, ".") // Prevent directory traversal
-    .substring(0, 255); // Limit length
-}
-
-async function processAttachment(
-  content: string,
-  contentType: string,
-  filename: string
-): Promise<Attachment | null> {
-  try {
-    // Validate content type
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    if (!allowedTypes.includes(contentType)) {
-      console.warn(`Unsupported attachment type: ${contentType}`);
-      return null;
-    }
-
-    // Clean up base64 content
-    const cleanContent = content
-      .replace(/\s/g, "") // Remove whitespace
-      .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove invalid chars
-
-    // Decode content
-    const buffer = Buffer.from(cleanContent, "base64");
-
-    // Check size (5MB limit)
-    const MAX_SIZE = 5 * 1024 * 1024;
-    if (buffer.length > MAX_SIZE) {
-      console.warn(`Attachment too large: ${buffer.length} bytes`);
-      return null;
-    }
-
-    return {
-      filename: sanitizeFilename(filename),
-      content: buffer,
-      contentType,
-      size: buffer.length,
-    };
-  } catch (error) {
-    console.error("Failed to process attachment:", error);
-    return null;
-  }
 }
 
 // Main email processing function
@@ -229,9 +132,6 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
         html = `<div class="email-content" style="font-family: system-ui, -apple-system, sans-serif; line-height: 1.6;">${html}</div>`;
       }
 
-      // Sanitize the HTML while preserving formatting
-      html = DOMPurify.sanitize(html, sanitizeConfig);
-
       console.log("Cleaned HTML preview:", html.substring(0, 100) + "...");
     }
 
@@ -246,6 +146,54 @@ function extractEmailBody(rawEmail: string): { html: string; text: string } {
     html: html || text,
     text: text || (html ? html.replace(/<[^>]*>/g, "") : ""),
   };
+}
+
+// Attachment processing
+interface Attachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+  size: number;
+}
+
+async function processAttachment(
+  content: string,
+  contentType: string,
+  filename: string
+): Promise<Attachment | null> {
+  try {
+    // Validate content type
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+    if (!allowedTypes.includes(contentType)) {
+      console.warn(`Unsupported attachment type: ${contentType}`);
+      return null;
+    }
+
+    // Clean up base64 content
+    const cleanContent = content
+      .replace(/\s/g, "") // Remove whitespace
+      .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove invalid chars
+
+    // Decode content
+    const buffer = Buffer.from(cleanContent, "base64");
+
+    // Check size (5MB limit)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (buffer.length > MAX_SIZE) {
+      console.warn(`Attachment too large: ${buffer.length} bytes`);
+      return null;
+    }
+
+    return {
+      filename: filename.replace(/[^a-zA-Z0-9.-]/g, "_").substring(0, 255),
+      content: buffer,
+      contentType,
+      size: buffer.length,
+    };
+  } catch (error) {
+    console.error("Failed to process attachment:", error);
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
