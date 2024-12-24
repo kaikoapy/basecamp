@@ -16,6 +16,11 @@ interface SearchResults {
   directory: DirectoryEntry[];
 }
 
+// Add OS detection at the top
+const isMacOS =
+  typeof window !== "undefined" &&
+  window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+
 export function SearchBar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -111,7 +116,7 @@ export function SearchBar() {
       displayResults.directory.length > 0);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-[600px] mx-auto">
       {/* Search Input */}
       <div className="relative">
         <input
@@ -127,8 +132,8 @@ export function SearchBar() {
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
           aria-hidden="true"
         />
-        <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-          <span className="text-xs">⌘</span>K
+        <kbd className="absolute hidden md:inline-flex right-3 top-1/2 transform -translate-y-1/2 pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs">{isMacOS ? "⌘" : "Ctrl"}</span>K
         </kbd>
       </div>
 
@@ -142,7 +147,7 @@ export function SearchBar() {
       >
         <div
           ref={resultsRef}
-          className="bg-white rounded-md shadow-lg border overflow-hidden"
+          className="bg-white rounded-md shadow-lg border overflow-hidden max-h-[80vh] overflow-y-auto"
         >
           <div className="py-2">
             {/* Resources Section */}
@@ -161,7 +166,7 @@ export function SearchBar() {
                     <span className="flex-grow">
                       <span className="font-medium">{resource.title}</span>
                       {resource.description && (
-                        <span className="ml-2 text-gray-500">
+                        <span className="ml-2 text-gray-500 hidden md:inline">
                           — {resource.description}
                         </span>
                       )}
