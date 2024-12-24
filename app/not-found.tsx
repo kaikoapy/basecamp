@@ -5,6 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function NotFoundContent() {
+  return (
+    <Suspense>
+      <NotFoundInner />
+    </Suspense>
+  );
+}
+
+function NotFoundInner() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
 
@@ -24,9 +32,5 @@ function NotFoundContent() {
 }
 
 export default function NotFound() {
-  return (
-    <Suspense>
-      <NotFoundContent />
-    </Suspense>
-  );
+  return <NotFoundContent />;
 }

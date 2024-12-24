@@ -8,7 +8,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const DEFAULT_COVER_IMAGE =
-  "https://utfs.io/f/WTe1MV8FTP1yx3tWeG50m3fOZqTYSyoQcrgMelRFbzW79pIu";
+  "https://utfs.io/f/WTe1MV8FTP1y0T471UIKolB5RNMY7WFDQuvLrVwhPkTfyAab";
 
 interface DashboardContentProps {
   searchQuery?: string;
