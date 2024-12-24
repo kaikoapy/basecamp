@@ -44,7 +44,7 @@ const scrollToSection = (sectionId: string, isMobile: boolean) => {
 };
 
 export function NavProjects({ projects }: { projects: NavProject[] }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
   const isDashboard = pathname === "/dashboard";
@@ -72,9 +72,7 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
   };
 
   return (
-    <SidebarGroup
-      className={isMobile ? "pb-4" : "group-data-[collapsible=icon]:hidden"}
-    >
+    <SidebarGroup className={isMobile ? "pb-4" : undefined}>
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
@@ -82,10 +80,11 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
             <SidebarMenuButton
               asChild
               onClick={(e) => handleClick(e, item.section)}
+              tooltip={item.name}
             >
               <button>
                 <item.icon />
-                <span>{item.name}</span>
+                {state === "expanded" && <span>{item.name}</span>}
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>

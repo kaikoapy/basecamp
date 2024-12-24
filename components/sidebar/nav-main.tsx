@@ -56,6 +56,10 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
     return url.startsWith("http") || url.startsWith("https");
   };
 
+  if (state === "collapsed") {
+    return null;
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Resources</SidebarGroupLabel>
