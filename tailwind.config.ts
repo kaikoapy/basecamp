@@ -11,11 +11,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-manrope)"],
+        sans: ["var(--font-heebo)"],
         mono: ["var(--font-geist-mono)"],
-        heading: ["var(--font-poppins)"],
+        heading: ["var(--font-heebo)"],
       },
       colors: {
+        RoadeoPurple: "#8B6DFF",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

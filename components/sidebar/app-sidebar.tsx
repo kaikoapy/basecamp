@@ -21,7 +21,7 @@ import { useClerk } from "@clerk/nextjs";
 import { useDialog } from "@/components/providers/dialog-provider";
 
 import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
+import { NavProjects, type NavProject } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
 import {
@@ -31,7 +31,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import type { NavProject } from "./nav-projects";
 import { DOCUMENT_URLS } from "@/app/config/constants";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -43,41 +42,57 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       name: "Dashboard",
       icon: Home,
       section: "dashboard",
+      iconColor: "#8B6DFF", // RoadeoPurple
+      iconBgColor: "white",
     },
     {
       name: "Announcements",
       icon: MessageSquare,
       section: "announcements",
+      iconColor: "#FF6B6B", // Coral Red
+      iconBgColor: "white",
     },
     {
       name: "Quick Access",
       icon: Bookmark,
       section: "quick-access",
+      iconColor: "#4CAF50", // Green
+      iconBgColor: "white",
     },
     {
       name: "Dealer Sites",
       icon: Globe,
       section: "dealer-sites",
+      iconColor: "#2196F3", // Blue
+      iconBgColor: "white",
     },
     {
       name: "Communication",
       icon: MessageSquare,
       section: "communication",
+      iconColor: "#9C27B0", // Purple
+      iconBgColor: "white",
     },
     {
       name: "Incentives",
       icon: Tag,
       section: "incentives",
+      iconColor: "#FF9800", // Orange
+      iconBgColor: "white",
     },
     {
       name: "Tools",
       icon: Wrench,
       section: "tools",
+      iconColor: "#607D8B", // Blue Gray
+      iconBgColor: "white",
     },
     {
       name: "Volvo Sites",
       icon: Globe,
       section: "volvo-sites",
+      iconColor: "#00BCD4", // Cyan
+      iconBgColor: "white",
     },
   ];
 

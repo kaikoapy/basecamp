@@ -1,7 +1,7 @@
 "use client";
 
 import { type LucideIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
   SidebarGroup,
@@ -15,64 +15,29 @@ import {
 export interface NavProject {
   name: string;
   icon: LucideIcon;
-  section?:
-    | "dashboard"
-    | "announcements"
-    | "quick-access"
-    | "incentives"
-    | "tools"
-    | "volvo-sites"
-    | "dealer-sites"
-    | "communication"
-    | "dealer-trade-stores"
-    | "resources";
+  section: string;
+  iconColor?: string;
+  iconBgColor?: string;
 }
 
-const scrollToSection = (sectionId: string, isMobile: boolean) => {
-  const section = document.getElementById(sectionId);
-  if (section) {
-    const header = document.querySelector("header");
-    const headerHeight = header?.offsetHeight || 0;
-    // Add extra offset for mobile to account for any mobile-specific UI elements
-    const mobileOffset = isMobile ? 8 : 16;
-    const top = section.offsetTop - headerHeight - mobileOffset;
-    window.scrollTo({
-      top,
-      behavior: "smooth",
-    });
-  }
-};
-
 export function NavProjects({ projects }: { projects: NavProject[] }) {
-  const { isMobile, state } = useSidebar();
-  const pathname = usePathname();
+  const { state } = useSidebar();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const isDashboard = pathname === "/dashboard";
+  const pathname = usePathname();
 
-  const handleClick = async (e: React.MouseEvent, section?: string) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    section: string
+  ) => {
     e.preventDefault();
-
-    if (section === "dashboard" || section === "announcements") {
-      // Navigate directly to dashboard or announcements
-      await router.push(
-        section === "dashboard" ? "/dashboard" : "/announcements"
-      );
-    } else if (!isDashboard) {
-      // If not on dashboard and not announcements, navigate to dashboard first
-      await router.push("/dashboard");
-      if (section) {
-        setTimeout(() => {
-          scrollToSection(section, isMobile);
-        }, 100);
-      }
-    } else if (section) {
-      // If we're already on dashboard and it's not dashboard or announcements, just scroll
-      scrollToSection(section, isMobile);
-    }
+    const params = new URLSearchParams(searchParams);
+    params.set("section", section);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <SidebarGroup className={isMobile ? "pb-4" : undefined}>
+    <SidebarGroup>
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
@@ -82,9 +47,35 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
               onClick={(e) => handleClick(e, item.section)}
               tooltip={item.name}
             >
-              <button>
-                <item.icon />
-                {state === "expanded" && <span>{item.name}</span>}
+              <button
+                className={`flex items-center text-sm ${
+                  state === "expanded" ? "justify-start" : "justify-center"
+                }`}
+              >
+                <div
+                  className={`flex items-center justify-center ${
+                    state === "expanded"
+                      ? "w-5 h-5 rounded-md bg-white shadow-sm hover:shadow-md"
+                      : "w-8 h-8 rounded-md hover:bg-white/10"
+                  }`}
+                  style={
+                    state === "expanded"
+                      ? {
+                          boxShadow: `0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)`,
+                        }
+                      : undefined
+                  }
+                >
+                  <item.icon
+                    className={`transition-transform duration-200 ${
+                      state === "expanded" ? "h-3.5 w-3.5" : "h-4 w-4"
+                    }`}
+                    style={{ color: item.iconColor }}
+                  />
+                </div>
+                {state === "expanded" && (
+                  <span className="ml-2">{item.name}</span>
+                )}
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>

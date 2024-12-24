@@ -21,7 +21,7 @@ export function NavHeader({}: NavHeaderProps) {
     {
       id: "dealer-info",
       component: (
-        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-medium">
+        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
           <Building className="h-4 w-4 mr-2" />
           <span>Dealer Info</span>
           <div className="absolute inset-0">
@@ -33,7 +33,7 @@ export function NavHeader({}: NavHeaderProps) {
     {
       id: "speed-dial",
       component: (
-        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-medium">
+        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
           <Users className="h-4 w-4 mr-2" />
           <span>Speed Dial</span>
           <div className="absolute inset-0">
@@ -46,7 +46,7 @@ export function NavHeader({}: NavHeaderProps) {
       id: "schedule",
       href: "/schedule",
       component: (
-        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-medium">
+        <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
           <CalendarDays className="h-4 w-4 mr-2" />
           <span>Schedule</span>
         </div>
@@ -70,10 +70,10 @@ export function NavHeader({}: NavHeaderProps) {
 
         <Link href="/dashboard">
           <h1
-            className="text-xl font-semibold tracking-tight"
-            style={{ fontFamily: "var(--font-poppins)" }}
+            className="text-2xl font-semibold tracking-tight"
+            style={{ fontFamily: "var(--font-heebo)" }}
           >
-            <span className="text-primary font-bold">DealerHub</span>
+            <span className="text-RoadeoPurple font-[900]">DealerHub</span>
           </h1>
         </Link>
         <div className="w-[400px]">

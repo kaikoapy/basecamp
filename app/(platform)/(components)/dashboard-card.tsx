@@ -205,8 +205,8 @@ export function DashboardCard(props: DashboardCardProps) {
     >
       <div className="absolute top-2 right-2 flex gap-2 z-20">
         {isNew && (
-          <div className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-            New
+          <div className="inline-flex items-center rounded-lg bg-green-300 px-2 py-1 text-xs font-medium text-green-800 ring-1 ring-inset ring-green-600/20">
+            New!
           </div>
         )}
       </div>

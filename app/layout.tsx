@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Geist_Mono, Poppins } from "next/font/google";
+import { Heebo, Geist_Mono, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
@@ -17,15 +17,15 @@ import {
 import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
 import { Suspense } from "react";
 
-const manrope = Manrope({
+const heebo = Heebo({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-heebo",
 });
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["600"],
-  variable: "--font-poppins",
+  variable: "--font-inter",
 });
 
 const geistMono = Geist_Mono({
@@ -47,7 +47,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${manrope.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
+        className={`${heebo.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <TooltipProvider>
           <ClerkProvider>

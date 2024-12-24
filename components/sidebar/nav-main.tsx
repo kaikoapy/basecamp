@@ -32,28 +32,33 @@ interface NavMainItem {
   }[];
 }
 
+function isExternalUrl(url: string) {
+  return url.startsWith("http") || url.startsWith("https");
+}
+
 export function NavMain({ items }: { items: NavMainItem[] }) {
   const { state } = useSidebar();
-  const [openStates, setOpenStates] = useState<{ [key: string]: boolean }>({});
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    if (state === "collapsed") {
-      setOpenStates({});
-    } else {
-      // Restore default open states when sidebar expands
-      const defaultStates = items.reduce(
-        (acc, item) => ({
-          ...acc,
-          [item.title]: item.isActive || false,
-        }),
-        {}
-      );
-      setOpenStates(defaultStates);
-    }
-  }, [state, items]);
+    // Initialize open state for items with isActive=true
+    const initialOpenState = items.reduce(
+      (acc, item) => {
+        if (item.isActive) {
+          acc[item.title] = true;
+        }
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+    setOpenItems(initialOpenState);
+  }, [items]);
 
-  const isExternalUrl = (url: string) => {
-    return url.startsWith("http") || url.startsWith("https");
+  const toggleItem = (title: string) => {
+    setOpenItems((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
   };
 
   if (state === "collapsed") {
@@ -64,21 +69,47 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
     <SidebarGroup>
       <SidebarGroupLabel>Resources</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
+        {items.map((item) => {
+          if (!item.items?.length) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild tooltip={item.title}>
+                  <Link
+                    href={item.url || "#"}
+                    {...(isExternalUrl(item.url || "")
+                      ? {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        }
+                      : {})}
+                    className="text-sm text-left"
+                  >
+                    <item.icon className="size-4" />
+                    <span className="flex-1">{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
+
+          return (
             <Collapsible
-              open={openStates[item.title]}
-              onOpenChange={(open) =>
-                setOpenStates((prev) => ({ ...prev, [item.title]: open }))
-              }
-              className="group/collapsible"
+              key={item.title}
+              open={openItems[item.title]}
+              onOpenChange={() => toggleItem(item.title)}
             >
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
+                <SidebarMenuItem>
+                  <SidebarMenuButton tooltip={item.title} className="text-left">
+                    <item.icon className="size-4" />
+                    <span className="flex-1 text-sm">{item.title}</span>
+                    <ChevronRight
+                      className={`size-4 transition-transform ${
+                        openItems[item.title] ? "rotate-90" : ""
+                      }`}
+                    />
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenu className="ml-4 border-l border-border pl-2">
@@ -88,12 +119,16 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <SidebarMenuButton
                           onClick={subItem.action}
                           tooltip={subItem.title}
+                          className="text-sm text-left"
                         >
                           <span>{subItem.title}</span>
                         </SidebarMenuButton>
                       ) : subItem.isModal ? (
                         <DynamicModal component={subItem.component}>
-                          <SidebarMenuButton tooltip={subItem.title}>
+                          <SidebarMenuButton
+                            tooltip={subItem.title}
+                            className="text-sm text-left"
+                          >
                             <span>{subItem.title}</span>
                           </SidebarMenuButton>
                         </DynamicModal>
@@ -107,6 +142,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                                   rel: "noopener noreferrer",
                                 }
                               : {})}
+                            className="text-sm text-left"
                           >
                             <span>{subItem.title}</span>
                           </Link>
@@ -117,8 +153,8 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 </SidebarMenu>
               </CollapsibleContent>
             </Collapsible>
-          </SidebarMenuItem>
-        ))}
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

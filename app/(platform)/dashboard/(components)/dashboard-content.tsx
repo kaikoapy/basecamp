@@ -112,8 +112,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <h2 className="text-xl font-bold">
-              Announcements <span className="apple-emoji">📰</span>
+            <h2
+              className="text-xl font-bold"
+              style={{ fontFamily: "var(--font-inter)" }}
+            >
+              Announcements
             </h2>
             <div className="h-4 w-[1px] bg-border mx-2" />
             <Button
@@ -122,7 +125,10 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
               className="text-sm text-muted-foreground hover:text-foreground"
               asChild
             >
-              <Link href="/announcements" className="flex items-center">
+              <Link
+                href="/announcements"
+                className="flex items-center text-[#3b82f6]"
+              >
                 See All
                 <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
@@ -160,8 +166,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {filteredContent.pinnedContent.length > 0 && (
         <section id="quick-access" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Quick Access <span className="apple-emoji">📌</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Quick Access
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {filteredContent.pinnedContent.map((content) => (
@@ -184,8 +193,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.dealerSites.length > 0 && (
         <section id="dealer-sites" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Dealer Sites <span className="apple-emoji">🏢</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Dealer Sites
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.dealerSites.map((resource) => (
@@ -202,8 +214,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.communication.length > 0 && (
         <section id="communication" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Communication <span className="apple-emoji">💬</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Communication
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.communication.map((resource) => (
@@ -220,8 +235,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.incentives.length > 0 && (
         <section id="incentives" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Incentives <span className="apple-emoji">🏷️</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Incentives
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.incentives.map((resource) => (
@@ -238,8 +256,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.tools.length > 0 && (
         <section id="tools" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Tools <span className="apple-emoji">🛠️</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Tools
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.tools.map((resource) => (
@@ -256,8 +277,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.volvoSites.length > 0 && (
         <section id="volvo-sites" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Volvo Sites <span className="apple-emoji">🌐</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Volvo Sites
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.volvoSites.map((resource) => (
@@ -274,8 +298,11 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
       {resourcesByCategory.dealerTradeStores.length > 0 && (
         <section id="dealer-trade-stores" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Dealer Trade Stores <span className="apple-emoji">🏪</span>
+          <h2
+            className="text-xl font-bold mb-3"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Dealer Trade Stores
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {resourcesByCategory.dealerTradeStores.map((resource) => (
