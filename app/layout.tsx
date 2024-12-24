@@ -49,10 +49,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${manrope.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        <TooltipProvider>
-          <ClerkProvider>
-            <ConvexClientProvider>
-              <NuqsAdapter>
+        <NuqsAdapter>
+          <TooltipProvider>
+            <ClerkProvider>
+              <ConvexClientProvider>
                 <Providers>
                   <Suspense fallback={null}>
                     {children}
@@ -73,11 +73,12 @@ export default function RootLayout({
                     </DialogWrapper>
                   </Suspense>
                 </Providers>
-              </NuqsAdapter>
-              <Toaster />
-            </ConvexClientProvider>
-          </ClerkProvider>
-        </TooltipProvider>
+
+                <Toaster />
+              </ConvexClientProvider>
+            </ClerkProvider>
+          </TooltipProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );
