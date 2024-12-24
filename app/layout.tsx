@@ -15,6 +15,7 @@ import {
   EX90SheetDialog,
 } from "@/app/(platform)/dialogs";
 import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
+import { Suspense } from "react";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -54,21 +55,23 @@ export default function RootLayout({
               <NuqsAdapter>
                 <Providers>
                   {children}
-                  <DialogWrapper name="business-applications">
-                    {BusinessApplicationsDialog}
-                  </DialogWrapper>
-                  <DialogWrapper name="out-of-state">
-                    {OutOfStateDialog}
-                  </DialogWrapper>
-                  <DialogWrapper name="wire-instructions">
-                    {WireInstructionsDialog}
-                  </DialogWrapper>
-                  <DialogWrapper name="third-party-payoffs">
-                    {ThirdPartyPayoffsDialog}
-                  </DialogWrapper>
-                  <DialogWrapper name="ex90-sheet">
-                    {EX90SheetDialog}
-                  </DialogWrapper>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <DialogWrapper name="business-applications">
+                      {BusinessApplicationsDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="out-of-state">
+                      {OutOfStateDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="wire-instructions">
+                      {WireInstructionsDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="third-party-payoffs">
+                      {ThirdPartyPayoffsDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="ex90-sheet">
+                      {EX90SheetDialog}
+                    </DialogWrapper>
+                  </Suspense>
                 </Providers>
               </NuqsAdapter>
               <Toaster />
