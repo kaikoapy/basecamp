@@ -11,6 +11,7 @@ import { api } from "@/convex/_generated/api";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@clerk/nextjs";
+import { createParser } from "nuqs/server";
 import {
   Tooltip,
   TooltipContent,
@@ -18,18 +19,45 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShimmerButton from "@/components/ui/shimmer-button";
+import { useQueryState } from "nuqs";
+
+// Base64 encoding/decoding functions
+function encodeId(id: string): string {
+  if (typeof window === "undefined") return id;
+  return btoa(id).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+}
+
+const announcementParser = createParser({
+  parse: (value: string) => value || "",
+  serialize: (value: string) => value || "",
+}).withDefault("");
 
 // Custom Dialog components for test
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    {...props}
+  />
+));
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Portal>
-    <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
+    <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] bg-background pt-10 px-6 pb-6 shadow-lg duration-200 sm:rounded-lg flex flex-col max-h-[85vh]",
+        "fixed left-[50%] top-[50%] z-50 w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] bg-background pt-10 px-6 pb-6 shadow-lg duration-200 sm:rounded-lg flex flex-col max-h-[85vh] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
         className
       )}
       {...props}
@@ -38,7 +66,7 @@ const DialogContent = React.forwardRef<
         Email Content
       </DialogPrimitive.Title>
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -48,8 +76,6 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = "DialogContent";
 
 interface NewAnnouncementDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   announcement: {
     _id: Id<"announcements">;
     title: string;
@@ -74,10 +100,18 @@ interface Reader {
 }
 
 export function NewAnnouncementDialog({
-  open,
-  onOpenChange,
   announcement,
 }: NewAnnouncementDialogProps) {
+  const [encodedId, setEncodedId] = useQueryState(
+    "announcement",
+    announcementParser
+  );
+
+  const open = encodedId === encodeId(announcement._id);
+  const onOpenChange = (isOpen: boolean) => {
+    setEncodedId(isOpen ? encodeId(announcement._id) : "");
+  };
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(announcement.title);
   const [editedDescription, setEditedDescription] = useState(

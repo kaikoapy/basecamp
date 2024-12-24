@@ -25,6 +25,12 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
+// Base64 encoding function
+function encodeId(id: string): string {
+  if (typeof window === "undefined") return id;
+  return btoa(id).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+}
+
 interface DashboardCardProps {
   id: Id<"announcements"> | string;
   title: string;
@@ -124,7 +130,11 @@ export function DashboardCard(props: DashboardCardProps) {
     if (isModal && component) {
       setDialogOpen(true);
     } else if (isAnnouncement) {
-      setDialogOpen(true);
+      // Update URL with encoded announcement ID
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("announcement", encodeId(id as string));
+      const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
     } else if (type === "business-application") {
       dialog.onOpen();
     }
@@ -297,8 +307,6 @@ export function DashboardCard(props: DashboardCardProps) {
       )}
       {isAnnouncement && (
         <NewAnnouncementDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
           announcement={{
             _id: id as Id<"announcements">,
             title: title || "",
