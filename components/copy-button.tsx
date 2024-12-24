@@ -17,6 +17,7 @@ interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string;
   iconSize?: number;
   tooltipText?: string;
+  disableTooltip?: boolean;
 }
 
 export function CopyButton({
@@ -26,6 +27,7 @@ export function CopyButton({
   tooltipText = "link",
   variant = "outline",
   size = "icon",
+  disableTooltip = false,
   ...props
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
@@ -42,41 +44,45 @@ export function CopyButton({
     }
   };
 
+  const button = (
+    <Button
+      variant={variant}
+      size={size}
+      className={cn("h-6 w-6 disabled:opacity-100", className)}
+      onClick={handleCopy}
+      aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
+      disabled={copied}
+      {...props}
+    >
+      <div
+        className={cn(
+          "transition-all",
+          copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
+        )}
+      >
+        <Check
+          className="stroke-emerald-500"
+          size={iconSize}
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+      </div>
+      <div
+        className={cn(
+          "absolute transition-all",
+          copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
+        )}
+      >
+        <Copy size={iconSize} strokeWidth={2} aria-hidden="true" />
+      </div>
+    </Button>
+  );
+
+  if (disableTooltip) return button;
+
   return (
     <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>
-        <Button
-          variant={variant}
-          size={size}
-          className={cn("h-6 w-6 disabled:opacity-100", className)}
-          onClick={handleCopy}
-          aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
-          disabled={copied}
-          {...props}
-        >
-          <div
-            className={cn(
-              "transition-all",
-              copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
-            )}
-          >
-            <Check
-              className="stroke-emerald-500"
-              size={iconSize}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </div>
-          <div
-            className={cn(
-              "absolute transition-all",
-              copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
-            )}
-          >
-            <Copy size={iconSize} strokeWidth={2} aria-hidden="true" />
-          </div>
-        </Button>
-      </TooltipTrigger>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent className="px-2 py-1 text-xs">
         {copied ? "Copied!" : `Copy ${tooltipText} to clipboard`}
       </TooltipContent>

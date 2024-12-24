@@ -56,33 +56,30 @@ export const search = query({
     const limit = args.limit ?? 5;
 
     if (!searchQuery) {
-      return [];
+      return {
+        resources: [],
+        directory: [],
+      };
     }
 
+    const normalizedQuery = normalizeText(searchQuery);
+
+    // Search resources
     const resources = await ctx.db
       .query("resources")
       .withIndex("by_category")
       .collect();
 
-    // Normalize the search query
-    const normalizedQuery = normalizeText(searchQuery);
-
-    // Filter with flexible matching
-    return resources
+    const matchedResources = resources
       .filter((resource) => {
-        // Normalize the title
         const normalizedTitle = normalizeText(resource.title);
-
-        // Normalize the description if it exists
         const normalizedDescription = resource.description
           ? normalizeText(resource.description)
           : "";
 
-        // Check if the normalized query is included in the normalized title or description
         return (
           normalizedTitle.includes(normalizedQuery) ||
           normalizedDescription.includes(normalizedQuery) ||
-          // Also check the original strings with spaces for more natural matching
           resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (resource.description?.toLowerCase() ?? "").includes(
             searchQuery.toLowerCase()
@@ -90,5 +87,35 @@ export const search = query({
         );
       })
       .slice(0, limit);
+
+    // Search directory
+    const directoryEntries = await ctx.db
+      .query("directory")
+      .withIndex("by_department")
+      .collect();
+
+    const matchedDirectory = directoryEntries
+      .filter((entry) => {
+        const searchableFields = [
+          entry.name,
+          entry.position,
+          entry.department,
+          entry.extension,
+          entry.email,
+          entry.number,
+        ];
+
+        return searchableFields.some(
+          (field) =>
+            normalizeText(field).includes(normalizedQuery) ||
+            field.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      })
+      .slice(0, limit);
+
+    return {
+      resources: matchedResources,
+      directory: matchedDirectory,
+    };
   },
 });

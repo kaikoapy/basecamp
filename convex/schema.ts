@@ -29,6 +29,16 @@ export default defineSchema({
     updatedAt: v.number(),
   }),
 
+  // New directory table
+  directory: defineTable({
+    name: v.string(),
+    position: v.string(),
+    department: v.string(),
+    extension: v.string(),
+    email: v.string(),
+    number: v.string(),
+  }).index("by_department", ["department"]),
+
   users: defineTable({
     email: v.string(),
     isManager: v.boolean(),
