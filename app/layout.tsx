@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono, Poppins } from "next/font/google";
+import { Manrope, Geist_Mono, Poppins } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
 });
 
 const poppins = Poppins({
@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
+        className={`${manrope.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <TooltipProvider>
           <ClerkProvider>
