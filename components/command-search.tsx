@@ -103,7 +103,7 @@ export function SearchBar() {
           value={search}
           onChange={handleSearchChange}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search resources..."
+          placeholder="Search resources and directory..."
           className="w-full h-10 px-4 py-2 pl-10 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-700/30"
         />
         <Search
@@ -187,7 +187,7 @@ export function SearchBar() {
                             <CopyButton
                               value={entry.number}
                               variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100"
+                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
                               iconSize={10}
                               disableTooltip
                             />
@@ -200,7 +200,7 @@ export function SearchBar() {
                             <CopyButton
                               value={entry.extension}
                               variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100"
+                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
                               iconSize={10}
                               disableTooltip
                             />
@@ -213,7 +213,7 @@ export function SearchBar() {
                             <CopyButton
                               value={entry.email}
                               variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100"
+                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-600 ease-in-out text-zinc-400"
                               iconSize={10}
                               disableTooltip
                             />

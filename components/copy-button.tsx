@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, ClipboardIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -48,7 +48,10 @@ export function CopyButton({
     <Button
       variant={variant}
       size={size}
-      className={cn("h-6 w-6 disabled:opacity-100", className)}
+      className={cn(
+        "relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-100 hover:text-zinc-50",
+        className
+      )}
       onClick={handleCopy}
       aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
       disabled={copied}
@@ -70,10 +73,15 @@ export function CopyButton({
       <div
         className={cn(
           "absolute transition-all",
-          copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
+          copied ? "scale-0 opacity-0 " : "scale-100 opacity-100"
         )}
       >
-        <Copy size={iconSize} strokeWidth={2} aria-hidden="true" />
+        <ClipboardIcon
+          className="stroke-gray-700"
+          size={iconSize}
+          strokeWidth={2}
+          aria-hidden="true"
+        />
       </div>
     </Button>
   );
@@ -81,7 +89,7 @@ export function CopyButton({
   if (disableTooltip) return button;
 
   return (
-    <Tooltip delayDuration={0}>
+    <Tooltip delayDuration={0} defaultOpen={false}>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent className="px-2 py-1 text-xs">
         {copied ? "Copied!" : `Copy ${tooltipText} to clipboard`}

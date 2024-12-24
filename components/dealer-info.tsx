@@ -36,6 +36,7 @@ export function DealerInfo() {
                 variant="ghost"
                 className="hover:bg-transparent"
                 tooltipText="address"
+                disableTooltip
               />
             </div>
           </div>
@@ -55,6 +56,7 @@ export function DealerInfo() {
                       variant="ghost"
                       className="hover:bg-transparent"
                       tooltipText="phone number"
+                      disableTooltip
                     />
                   </div>
                 </div>
