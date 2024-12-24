@@ -151,6 +151,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 isEmail={announcement.isEmailGenerated}
                 image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
                 files={announcement.files}
+                readBy={announcement.readBy}
               />
             ))}
           </div>

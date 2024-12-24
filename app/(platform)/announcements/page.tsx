@@ -155,6 +155,7 @@ export default function AnnouncementsPage() {
               isEmail={announcement.isEmailGenerated}
               files={announcement.files}
               image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
+              readBy={announcement.readBy}
             />
           ))}
         </div>

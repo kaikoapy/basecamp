@@ -24,6 +24,7 @@ import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
 
 // Base64 encoding function
 function encodeId(id: string): string {
@@ -65,6 +66,11 @@ interface DashboardCardProps {
   type?: string;
   showCopyButton?: boolean;
   showExternalLink?: boolean;
+  readBy?: Array<{
+    userId: string;
+    userName: string;
+    readAt: string;
+  }>;
   files?: Array<{
     url: string;
     name: string;
@@ -95,23 +101,60 @@ export function DashboardCard(props: DashboardCardProps) {
     type,
     showCopyButton,
     showExternalLink,
+    readBy = [],
     files,
     content,
   } = props;
 
+  const { user } = useUser();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const togglePinnedMutation = useMutation(api.resources.togglePinned);
   const isPinned = defaultPinned;
-  const isNew = postedAt
-    ? (new Date().getTime() - new Date(postedAt).getTime()) /
-        (1000 * 60 * 60) <=
-      48
-    : false;
   const isAnnouncement = category.toLowerCase() === "announcement";
   const isResource =
     category === "Product Info" ||
     category === "Finance" ||
     category === "Sales";
+
+  // Check if the announcement is new (not read by current user and within 30 days)
+  const isNew = React.useMemo(() => {
+    if (!postedAt || !user) {
+      console.log("No postedAt or user:", { postedAt, userId: user?.id });
+      return false;
+    }
+
+    const now = new Date();
+    const postDate = new Date(postedAt);
+
+    // Ignore future dates
+    if (postDate > now) {
+      console.log("Future date:", { postDate, now });
+      return false;
+    }
+
+    // Check if posted within last 30 days
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const isRecent = postDate > thirtyDaysAgo;
+
+    // Check if current user has read it
+    const hasRead = readBy.some((read) => read.userId === user.id);
+
+    console.log("Announcement check:", {
+      title,
+      postDate,
+      now,
+      thirtyDaysAgo,
+      isRecent,
+      hasRead,
+      isAnnouncement,
+      userId: user.id,
+      readBy,
+    });
+
+    // Return true only if it's recent AND hasn't been read AND is an announcement
+    return isRecent && !hasRead && isAnnouncement;
+  }, [postedAt, user, readBy, isAnnouncement, title]);
 
   const dialog = useDialog();
 
