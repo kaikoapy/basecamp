@@ -6,15 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-  DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FullscreenImage } from "@/components/fullscreen-image";
-import { PrintBusinessApplication } from "@/app/(platform)/(components)/print-business-application";
+import { Printer, ScrollText, FileCheck } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { DOCUMENT_URLS } from "@/app/config/constants";
-import { Separator } from "@/components/ui/separator";
 
 interface BusinessApplicationsDialogProps {
   open: boolean;
@@ -31,13 +30,17 @@ export function BusinessApplicationsDialog({
   open,
   onOpenChange,
 }: BusinessApplicationsDialogProps) {
+  const handlePrint = () => {
+    window.open(DOCUMENT_URLS.BUSINESS_APPLICATION, "_blank");
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         {/* Your existing trigger button */}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[825px] max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="mb-4">
           <DialogTitle>Business Applications</DialogTitle>
           <DialogDescription>
             Review guidelines and access the business application form.
@@ -45,63 +48,82 @@ export function BusinessApplicationsDialog({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-6 py-6">
-            {/* Guidelines Section */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">
+          <Tabs defaultValue="guidelines" className="w-full">
+            <ScrollArea>
+              <TabsList className="mb-3 h-[52px]">
+                <TabsTrigger value="guidelines" className="py-3">
+                  <ScrollText
+                    className="-ms-0.5 me-1.5 opacity-60"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
                   Guidelines & Requirements
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Review these guidelines carefully before submitting your
-                  application. Click the image to view in full size.
-                </p>
-              </div>
-              <div className="h-[300px] border rounded-lg overflow-hidden">
-                <FullscreenImage
-                  src={GUIDELINES_IMAGE}
-                  alt="Business Applications Guidelines"
-                />
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Application Form Section */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">
+                </TabsTrigger>
+                <TabsTrigger value="application" className="py-3">
+                  <FileCheck
+                    className="-ms-0.5 me-1.5 opacity-60"
+                    size={16}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
                   Business Application Form
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Once you&apos;ve reviewed the guidelines, click below to open
-                  and print the official business application form.
-                </p>
-              </div>
-              <div className="h-[300px] border rounded-lg overflow-hidden">
-                <FullscreenImage
-                  src={BUSINESS_APP_PREVIEW}
-                  alt="Business Application Form Preview"
-                />
-              </div>
-              <div className="border rounded-lg p-4 bg-muted/50">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Click the button below to open and print the business
-                  application form:
-                </p>
-                <PrintBusinessApplication
-                  pdfUrl={DOCUMENT_URLS.BUSINESS_APPLICATION}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+                </TabsTrigger>
+              </TabsList>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Close</Button>
-          </DialogClose>
-        </DialogFooter>
+            <TabsContent value="guidelines">
+              <div className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">
+                    Important guidelines for processing business applications.
+                  </p>
+                  <p className="text-sm text-foreground/80">
+                    When processing deals, ensure there is an authorized
+                    guarantor listed in the business articles. All business
+                    applications must include a guarantor who is officially
+                    documented in the company&apos;s articles of incorporation.
+                  </p>
+                </div>
+                <div className="h-[600px] border rounded-lg overflow-hidden bg-muted/50">
+                  <div className="w-full h-full flex items-center justify-center p-2">
+                    <FullscreenImage
+                      src={GUIDELINES_IMAGE}
+                      alt="Business Applications Guidelines"
+                    />
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="application">
+              <div className="space-y-4 mt-4">
+                <p className="text-sm font-medium text-foreground">
+                  Print the business application form for your client to
+                  complete.
+                </p>
+                <div className="relative h-[600px] border rounded-lg overflow-hidden bg-muted/50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="absolute top-3 right-3 z-10"
+                    onClick={handlePrint}
+                  >
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print
+                  </Button>
+                  <div className="w-full h-full flex items-center justify-center p-2">
+                    <FullscreenImage
+                      src={BUSINESS_APP_PREVIEW}
+                      alt="Business Application Form Preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </DialogContent>
     </Dialog>
   );

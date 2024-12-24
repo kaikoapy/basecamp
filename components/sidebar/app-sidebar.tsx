@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         plan: "Volvo Cars North Miami",
       },
       {
-        name: "Service",
+        name: "Finance",
         logo: AudioWaveform,
         plan: "Volvo Cars North Miami",
       },
@@ -248,7 +248,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      collapsible="icon"
+      className="text-foreground/90 font-medium"
+      {...props}
+    >
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
