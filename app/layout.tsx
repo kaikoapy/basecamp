@@ -15,7 +15,6 @@ import {
   EX90SheetDialog,
 } from "@/app/(platform)/dialogs";
 import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
-import { Suspense } from "react";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -49,36 +48,33 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${manrope.variable} ${poppins.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        <NuqsAdapter>
-          <TooltipProvider>
-            <ClerkProvider>
-              <ConvexClientProvider>
+        <TooltipProvider>
+          <ClerkProvider>
+            <ConvexClientProvider>
+              <NuqsAdapter>
                 <Providers>
-                  <Suspense fallback={null}>
-                    {children}
-                    <DialogWrapper name="business-applications">
-                      {BusinessApplicationsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="out-of-state">
-                      {OutOfStateDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="wire-instructions">
-                      {WireInstructionsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="third-party-payoffs">
-                      {ThirdPartyPayoffsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="ex90-sheet">
-                      {EX90SheetDialog}
-                    </DialogWrapper>
-                  </Suspense>
+                  {children}
+                  <DialogWrapper name="business-applications">
+                    {BusinessApplicationsDialog}
+                  </DialogWrapper>
+                  <DialogWrapper name="out-of-state">
+                    {OutOfStateDialog}
+                  </DialogWrapper>
+                  <DialogWrapper name="wire-instructions">
+                    {WireInstructionsDialog}
+                  </DialogWrapper>
+                  <DialogWrapper name="third-party-payoffs">
+                    {ThirdPartyPayoffsDialog}
+                  </DialogWrapper>
+                  <DialogWrapper name="ex90-sheet">
+                    {EX90SheetDialog}
+                  </DialogWrapper>
                 </Providers>
-
-                <Toaster />
-              </ConvexClientProvider>
-            </ClerkProvider>
-          </TooltipProvider>
-        </NuqsAdapter>
+              </NuqsAdapter>
+              <Toaster />
+            </ConvexClientProvider>
+          </ClerkProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
