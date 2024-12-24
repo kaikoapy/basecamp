@@ -1,39 +1,32 @@
 "use client";
 
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
   DialogClose,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FullscreenImage } from "@/components/fullscreen-image";
 import { Separator } from "@/components/ui/separator";
+import { FullscreenImage } from "@/components/fullscreen-image";
+
+const EX90_SHEET_IMAGE =
+  "https://utfs.io/f/WTe1MV8FTP1yIDOOqYvkUzZSeqajA682byYFBfWmhDPKXOQE";
 
 interface EX90SheetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const EX90_SHEET_IMAGE =
-  "https://utfs.io/f/WTe1MV8FTP1yIDOOqYvkUzZSeqajA682byYFBfWmhDPKXOQE";
-
 export function EX90SheetDialog({ open, onOpenChange }: EX90SheetDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        {/* Your existing trigger button */}
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[825px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>EX90 Sheet</DialogTitle>
-          <DialogDescription>
-            View and print the EX90 form sheet for vehicle transactions.
-          </DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">

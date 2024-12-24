@@ -18,6 +18,7 @@ import {
   Brain,
 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
+import { useDialog } from "@/components/providers/dialog-provider";
 
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
@@ -35,6 +36,7 @@ import { DOCUMENT_URLS } from "@/app/config/constants";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { openOrganizationProfile } = useClerk();
+  const { showDialog } = useDialog();
 
   const navigationItems: NavProject[] = [
     {
@@ -122,29 +124,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "#",
         icon: BookOpen,
         items: [
-          // Sales Resources
           {
             title: "Business Applications",
-            component: "BusinessFAQDialog",
+            action: () => showDialog("business-applications"),
             isModal: true,
           },
           {
             title: "Out of State Deals",
-            component: "OutOfStateFAQDialog",
+            action: () => showDialog("out-of-state"),
             isModal: true,
           },
-          // Finance Resources
           {
             title: "Wire Instructions",
-            component: "WireInstructionsDialog",
+            action: () => showDialog("wire-instructions"),
             isModal: true,
           },
           {
             title: "3rd Party Payoffs",
-            component: "ThirdPartyPayoffsDialog",
+            action: () => showDialog("third-party-payoffs"),
             isModal: true,
           },
-          // Other Resources
           {
             title: "Contact Directory",
             url: "/directory",

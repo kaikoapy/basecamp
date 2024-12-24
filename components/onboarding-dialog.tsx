@@ -16,8 +16,17 @@ import { ArrowRight, Info } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-export function OnboardingDialog() {
+interface OnboardingDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function OnboardingDialog({
+  open = false,
+  onOpenChange,
+}: OnboardingDialogProps) {
   const [step, setStep] = useState(1);
+  const [isOpen, setIsOpen] = useState(open);
 
   const stepContent = [
     {
@@ -54,12 +63,14 @@ export function OnboardingDialog() {
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setIsOpen(newOpen);
+    if (newOpen) setStep(1);
+    onOpenChange?.(newOpen);
+  };
+
   return (
-    <Dialog
-      onOpenChange={(open) => {
-        if (open) setStep(1);
-      }}
-    >
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
