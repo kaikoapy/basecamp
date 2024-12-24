@@ -1,3 +1,6 @@
+"use client";
+
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,10 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Info } from "lucide-react";
+import { useDialog } from "@/components/providers/dialog-provider";
 
 export function ScheduleInfoDialog() {
+  const { dialog } = useDialog();
+  const open = dialog === "schedule-info";
+
   return (
-    <Dialog>
+    <Dialog open={open} name="schedule-info">
       <DialogTrigger>
         <Info className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
       </DialogTrigger>

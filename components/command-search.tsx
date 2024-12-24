@@ -5,9 +5,10 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Search, ArrowUpRight, User, Mail, Phone } from "lucide-react";
 import { CopyButton } from "@/components/copy-button";
+import { useDialog } from "@/components/providers/dialog-provider";
 import type { Doc } from "@/convex/_generated/dataModel";
+import type { Resource } from "@/types/resources";
 
-type Resource = Doc<"resources">;
 type DirectoryEntry = Doc<"directory">;
 
 interface SearchResults {
@@ -20,6 +21,7 @@ export function SearchBar() {
   const [search, setSearch] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
   const resultsRef = React.useRef<HTMLDivElement>(null);
+  const { showDialog } = useDialog();
 
   const [previousResults, setPreviousResults] = React.useState<SearchResults>({
     resources: [],
@@ -87,6 +89,21 @@ export function SearchBar() {
     if (!isOpen) setIsOpen(true);
   };
 
+  const handleResourceClick = (resource: Resource) => {
+    setIsOpen(false);
+    if (resource.isModal && resource.component) {
+      // Convert component name to dialog name (e.g., "BusinessFAQDialog" -> "business-faq")
+      const dialogName = resource.component
+        .replace(/Dialog$/, "")
+        .replace(/([A-Z])/g, "-$1")
+        .toLowerCase()
+        .replace(/^-/, "");
+      showDialog(dialogName);
+    } else if (resource.url) {
+      window.open(resource.url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   const showDropdown =
     isOpen &&
     (search.length >= 3 ||
@@ -135,13 +152,11 @@ export function SearchBar() {
                   Resources
                 </div>
                 {displayResults.resources.map((resource) => (
-                  <a
+                  <button
                     key={resource._id}
-                    href={resource.url ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer group"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => handleResourceClick(resource)}
+                    className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer group text-left"
+                    type="button"
                   >
                     <span className="flex-grow">
                       <span className="font-medium">{resource.title}</span>
@@ -155,7 +170,7 @@ export function SearchBar() {
                       className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
                       aria-hidden="true"
                     />
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
