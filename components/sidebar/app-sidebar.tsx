@@ -265,7 +265,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="text-foreground/90 font-medium"
+      className="text-gray-800 font-semibold"
       {...props}
     >
       <SidebarHeader>
