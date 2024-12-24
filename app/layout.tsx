@@ -52,10 +52,11 @@ export default function RootLayout({
         <TooltipProvider>
           <ClerkProvider>
             <ConvexClientProvider>
-              <NuqsAdapter>
-                <Providers>
-                  {children}
-                  <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <NuqsAdapter>
+                  <Providers>
+                    {children}
+
                     <DialogWrapper name="business-applications">
                       {BusinessApplicationsDialog}
                     </DialogWrapper>
@@ -71,10 +72,10 @@ export default function RootLayout({
                     <DialogWrapper name="ex90-sheet">
                       {EX90SheetDialog}
                     </DialogWrapper>
-                  </Suspense>
-                </Providers>
-              </NuqsAdapter>
-              <Toaster />
+                  </Providers>
+                </NuqsAdapter>
+                <Toaster />
+              </Suspense>
             </ConvexClientProvider>
           </ClerkProvider>
         </TooltipProvider>
