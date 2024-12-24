@@ -31,6 +31,15 @@ function encodeId(id: string): string {
   return btoa(id).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }
 
+// Format date to MM-DD-YY
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const year = date.getFullYear().toString().slice(-2);
+  return `${month}-${day}-${year}`;
+}
+
 interface DashboardCardProps {
   id: Id<"announcements"> | string;
   title: string;
@@ -105,6 +114,9 @@ export function DashboardCard(props: DashboardCardProps) {
     category === "Sales";
 
   const dialog = useDialog();
+
+  // Format the date if postedAt is available, otherwise use formattedDate
+  const displayDate = postedAt ? formatDate(postedAt) : formattedDate;
 
   const handlePinToggle = async (e: React.MouseEvent, itemId?: string) => {
     e.preventDefault();
@@ -240,10 +252,10 @@ export function DashboardCard(props: DashboardCardProps) {
                       </Tooltip>
                     )}
                   </div>
-                ) : isAnnouncement && formattedDate ? (
+                ) : isAnnouncement && displayDate ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="w-3 h-3" />
-                    <span>{formattedDate}</span>
+                    <span>{displayDate}</span>
                   </div>
                 ) : !isResource && duration ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">

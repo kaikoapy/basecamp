@@ -17,7 +17,7 @@ import {
 import { Plus, Search, Filter } from "lucide-react";
 
 const DEFAULT_COVER_IMAGE =
-  "https://utfs.io/f/WTe1MV8FTP1yx3tWeG50m3fOZqTYSyoQcrgMelRFbzW79pIu";
+  "https://utfs.io/f/WTe1MV8FTP1yxrDyXuG50m3fOZqTYSyoQcrgMelRFbzW79pI";
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
