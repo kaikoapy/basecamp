@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import Link from "next/link";
 import {
   Popover,
   PopoverContent,
@@ -22,7 +22,6 @@ import {
   TooltipArrow,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { speedDialContacts } from "@/app/data/speed-dial";
 
 export function SpeedDial() {
@@ -83,10 +82,9 @@ export function SpeedDial() {
     <TooltipProvider delayDuration={0}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="lg" className="h-8 px-3">
-            <Users className="h-4 w-4 mr-2" />
-            <span>Speed Dial</span>
-          </Button>
+          <button className="absolute inset-0 w-full h-full cursor-pointer">
+            <span className="sr-only">Open speed dial</span>
+          </button>
         </PopoverTrigger>
         <PopoverContent className="w-80" align="end">
           <div className="mb-4 text-lg font-semibold">Speed Dial</div>

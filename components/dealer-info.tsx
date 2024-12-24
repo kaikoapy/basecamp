@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Building, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -17,10 +16,9 @@ export function DealerInfo() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="lg" className="h-8 px-3">
-          <Building className="h-4 w-4 mr-2" />
-          <span>Dealer Info</span>
-        </Button>
+        <button className="absolute inset-0 w-full h-full cursor-pointer">
+          <span className="sr-only">Open dealer info</span>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-[350px]" align="end">
         <div className="mb-4 text-lg font-semibold">Dealer Information</div>
