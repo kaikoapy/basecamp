@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CommandSearch } from "@/components/command-search";
+import { SearchBar } from "@/components/command-search";
 import { cn } from "@/lib/utils";
 
 export function SearchWidgetCard() {
@@ -18,7 +18,7 @@ export function SearchWidgetCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="search-widget-dark">
-        <CommandSearch />
+        <SearchBar />
       </CardContent>
     </Card>
   );

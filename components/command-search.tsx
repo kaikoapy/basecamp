@@ -1,103 +1,67 @@
 "use client";
 
-import {
-  ArrowUpRight,
-  Search,
-  Car,
-  FileText,
-  Receipt,
-  CircleFadingPlus,
-  FolderPlus,
-  FileInput,
-  CalendarDays,
-  Mail,
-  Phone,
-} from "lucide-react";
 import * as React from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Search, ArrowUpRight } from "lucide-react";
+import type { Doc } from "@/convex/_generated/dataModel";
 
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
+type Resource = Doc<"resources">;
 
-interface SearchAction {
-  title: string;
-  url: string;
-  icon: React.ReactNode;
-  shortcut?: string;
-}
+export function SearchBar() {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const resultsRef = React.useRef<HTMLDivElement>(null);
 
-const searchActions: Record<string, (query: string) => SearchAction[]> = {
-  vin: (query: string) => [
-    {
-      title: "Search Volvo Inventory",
-      url: `https://www.volvocarsnorthmiami.com/inventory/search-results?vin=${query}`,
-      icon: (
-        <Car
-          size={16}
-          strokeWidth={2}
-          className="opacity-60"
-          aria-hidden="true"
-        />
-      ),
-    },
-    {
-      title: "Get Carfax Report",
-      url: `https://www.carfaxonline.com/vhrs/report?vin=${query}`,
-      icon: (
-        <FileText
-          size={16}
-          strokeWidth={2}
-          className="opacity-60"
-          aria-hidden="true"
-        />
-      ),
-    },
-    {
-      title: "View Window Sticker",
-      url: `https://www.windowsticker.com/sticker?vin=${query}`,
-      icon: (
-        <Receipt
-          size={16}
-          strokeWidth={2}
-          className="opacity-60"
-          aria-hidden="true"
-        />
-      ),
-    },
-  ],
-  stock: (query: string) => [
-    {
-      title: "Search Stock Number",
-      url: `https://www.volvocarsnorthmiami.com/inventory/search-results?stock=${query}`,
-      icon: (
-        <Car
-          size={16}
-          strokeWidth={2}
-          className="opacity-60"
-          aria-hidden="true"
-        />
-      ),
-    },
-  ],
-};
+  // Store previous results to prevent UI flashing
+  const [previousResults, setPreviousResults] = React.useState<Resource[]>([]);
 
-export function CommandSearch() {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [type, setType] = React.useState<"vin" | "stock" | null>(null);
+  // Query Convex
+  const searchResults = useQuery(
+    api.resources.search,
+    search.length >= 2
+      ? {
+          query: search,
+          limit: 5,
+        }
+      : "skip"
+  );
 
+  React.useEffect(() => {
+    if (searchResults) {
+      setPreviousResults(searchResults);
+    }
+  }, [searchResults]);
+
+  const displayResults = searchResults || previousResults;
+
+  // Handle clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(event.target as Node) &&
+        !inputRef.current?.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle keyboard shortcuts
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setIsOpen(true);
+        inputRef.current?.focus();
+      }
+      if (e.key === "Escape") {
+        setIsOpen(false);
       }
     };
 
@@ -105,157 +69,82 @@ export function CommandSearch() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  React.useEffect(() => {
-    if (value.length === 17) {
-      setType("vin");
-    } else if (value.length > 0) {
-      setType("stock");
-    } else {
-      setType(null);
-    }
-  }, [value]);
-
-  const handleSelect = (url: string) => {
-    window.open(url, "_blank");
-    setOpen(false);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    if (!isOpen) setIsOpen(true);
   };
 
+  // Show dropdown if searching or have results
+  const showDropdown =
+    isOpen && (search.length >= 2 || displayResults?.length > 0);
+
   return (
-    <>
-      <button
-        className="inline-flex h-9 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={() => setOpen(true)}
-      >
-        <span className="flex grow items-center">
-          <Search
-            className="-ms-1 me-3 text-muted-foreground"
-            size={16}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-          <span className="font-normal text-muted-foreground">
-            Search by VIN or Stock #
-          </span>
-        </span>
-        <kbd className="-me-1 ms-12 inline-flex h-5 max-h-full items-center rounded border border-border px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground">
-          ⌘K
-        </kbd>
-      </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput
-          placeholder="Type a command or search..."
-          value={value}
-          onValueChange={setValue}
+    <div className="relative w-full">
+      {/* Search Input */}
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={search}
+          onChange={handleSearchChange}
+          onFocus={() => setIsOpen(true)}
+          placeholder="Search resources..."
+          className="w-full h-10 px-4 py-2 pl-10 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {type && value && (
-            <CommandGroup
-              heading={type === "vin" ? "VIN Search" : "Stock Search"}
-            >
-              {searchActions[type](value).map((action) => (
-                <CommandItem
-                  key={action.title}
-                  onSelect={() => handleSelect(action.url)}
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+          aria-hidden="true"
+        />
+        <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs">⌘</span>K
+        </kbd>
+      </div>
+
+      {/* Results Dropdown with transitions */}
+      <div
+        className={`absolute z-50 w-full mt-2 transform transition-all duration-200 ease-in-out ${
+          showDropdown
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-1 pointer-events-none"
+        }`}
+      >
+        <div
+          ref={resultsRef}
+          className="bg-white rounded-md shadow-lg border overflow-hidden"
+        >
+          <div className="py-2 min-h-[60px]">
+            {displayResults?.length === 0 && search.length >= 2 ? (
+              <div className="px-4 py-2 text-sm text-gray-500">
+                No results found
+              </div>
+            ) : (
+              displayResults?.map((result) => (
+                <a
+                  key={result._id}
+                  href={result.url ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer group transition-colors duration-150"
+                  onClick={() => setIsOpen(false)}
                 >
-                  {action.icon}
-                  <span className="ml-2">{action.title}</span>
+                  <span className="flex-grow">
+                    <span className="font-medium">{result.title}</span>
+                    {result.description && (
+                      <span className="ml-2 text-gray-500">
+                        — {result.description}
+                      </span>
+                    )}
+                  </span>
                   <ArrowUpRight
-                    className="ml-auto h-4 w-4 text-muted-foreground"
+                    className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
                     aria-hidden="true"
                   />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-          {!value && (
-            <>
-              <CommandGroup heading="Quick start">
-                <CommandItem
-                  onSelect={() =>
-                    handleSelect("https://www.reliablepdf.com/checklist")
-                  }
-                >
-                  <FolderPlus
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>New Deal Checklist</span>
-                  <CommandShortcut>⌘N</CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => handleSelect("https://www.docuseal.com/")}
-                >
-                  <FileInput
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>Import Documents</span>
-                  <CommandShortcut>⌘I</CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() =>
-                    handleSelect(
-                      "https://www.volvocarsnorthmiami.com/inventory/new"
-                    )
-                  }
-                >
-                  <CircleFadingPlus
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>Add New Vehicle</span>
-                  <CommandShortcut>⌘B</CommandShortcut>
-                </CommandItem>
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup heading="Quick Links">
-                <CommandItem
-                  onSelect={() =>
-                    handleSelect("https://calendar.google.com/calendar/")
-                  }
-                >
-                  <CalendarDays
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>Schedule Delivery</span>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => handleSelect("https://mail.google.com/mail/")}
-                >
-                  <Mail
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>Open Email</span>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => handleSelect("https://app.goto.com/voice")}
-                >
-                  <Phone
-                    size={16}
-                    strokeWidth={2}
-                    className="opacity-60"
-                    aria-hidden="true"
-                  />
-                  <span>Voice Calls</span>
-                </CommandItem>
-              </CommandGroup>
-            </>
-          )}
-        </CommandList>
-      </CommandDialog>
-    </>
+                </a>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

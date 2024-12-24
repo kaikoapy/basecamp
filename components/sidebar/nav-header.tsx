@@ -6,7 +6,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Link from "next/link";
 import { OnboardingDialog } from "../onboarding-dialog";
-import { CommandSearch } from "../command-search";
+import { SearchBar } from "../command-search";
 import { DealerInfo } from "../dealer-info";
 import { SpeedDial } from "../speed-dial";
 import { AnimatedBackground } from "@/components/core/animated-background";
@@ -77,7 +77,7 @@ export function NavHeader({}: NavHeaderProps) {
           </h1>
         </Link>
         <div className="w-[400px]">
-          <CommandSearch />
+          <SearchBar />
         </div>
       </div>
       <div className="flex items-center space-x-2">
