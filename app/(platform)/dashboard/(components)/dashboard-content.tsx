@@ -101,10 +101,14 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     communication: filteredContent.resources
       .filter((resource) => resource.category === "Communication")
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+
+    dealerTradeStores: filteredContent.resources
+      .filter((resource) => resource.category === "Dealer Trade Store")
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   };
 
   return (
-    <main className="flex-1 p-6  mx-auto">
+    <main className="flex-1 p-6 max-w-[1600px] mx-auto">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -177,6 +181,42 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
         </section>
       )}
 
+      {resourcesByCategory.dealerSites.length > 0 && (
+        <section id="dealer-sites" className="mb-6">
+          <h2 className="text-xl font-bold mb-3">
+            Dealer Sites <span className="apple-emoji">🏢</span>
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {resourcesByCategory.dealerSites.map((resource) => (
+              <DashboardCard
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {resourcesByCategory.communication.length > 0 && (
+        <section id="communication" className="mb-6">
+          <h2 className="text-xl font-bold mb-3">
+            Communication <span className="apple-emoji">💬</span>
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {resourcesByCategory.communication.map((resource) => (
+              <DashboardCard
+                key={resource._id}
+                id={resource._id}
+                {...resource}
+                image={resource.image ?? ""}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {resourcesByCategory.incentives.length > 0 && (
         <section id="incentives" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
@@ -231,31 +271,13 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
         </section>
       )}
 
-      {resourcesByCategory.dealerSites.length > 0 && (
-        <section id="dealer-sites" className="mb-6">
+      {resourcesByCategory.dealerTradeStores.length > 0 && (
+        <section id="dealer-trade-stores" className="mb-6">
           <h2 className="text-xl font-bold mb-3">
-            Dealer Sites <span className="apple-emoji">🏢</span>
+            Dealer Trade Stores <span className="apple-emoji">🏪</span>
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {resourcesByCategory.dealerSites.map((resource) => (
-              <DashboardCard
-                key={resource._id}
-                id={resource._id}
-                {...resource}
-                image={resource.image ?? ""}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {resourcesByCategory.communication.length > 0 && (
-        <section id="communication" className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            Communication <span className="apple-emoji">💬</span>
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {resourcesByCategory.communication.map((resource) => (
+            {resourcesByCategory.dealerTradeStores.map((resource) => (
               <DashboardCard
                 key={resource._id}
                 id={resource._id}

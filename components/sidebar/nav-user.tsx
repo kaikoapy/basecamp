@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Bell, ChevronsUpDown, CreditCard, LogOut, User } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 
@@ -23,10 +24,51 @@ import {
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { user } = useUser();
-  const { signOut, openUserProfile } = useClerk();
+  const { signOut, openUserProfile, closeUserProfile, unmountUserProfile } =
+    useClerk();
+
+  useEffect(() => {
+    // Store original body style
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+
+    // Add event listener for Clerk dialog close
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === "childList" &&
+          !document.querySelector('[role="dialog"]')
+        ) {
+          // Dialog was removed from DOM, restore scroll
+          document.body.style.overflow = originalStyle;
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Cleanup function
+    return () => {
+      closeUserProfile();
+      document.body.style.overflow = originalStyle;
+      observer.disconnect();
+
+      const profileElement = document.getElementById(
+        "user-profile"
+      ) as HTMLDivElement;
+      if (profileElement) {
+        unmountUserProfile(profileElement);
+      }
+    };
+  }, [closeUserProfile, unmountUserProfile]);
+
+  const handleProfileClick = () => {
+    openUserProfile();
+  };
 
   if (!user) return null;
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -81,7 +123,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => openUserProfile()}>
+              <DropdownMenuItem onClick={handleProfileClick}>
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>

@@ -22,7 +22,9 @@ export interface NavProject {
     | "incentives"
     | "tools"
     | "volvo-sites"
+    | "dealer-sites"
     | "communication"
+    | "dealer-trade-stores"
     | "resources";
 }
 
