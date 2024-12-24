@@ -1,20 +1,19 @@
-import { Suspense } from "react";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "../../components/sidebar/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MountProvider } from "@/components/providers/mount-provider";
 
-export default function PlatformLayout({
-  children,
-}: {
+interface DashboardLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="flex h-screen">
         <Suspense fallback={<div className="w-64 bg-muted animate-pulse" />}>
           <AppSidebar />
         </Suspense>
-        <div className="flex flex-col flex-1 overflow-auto">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <MountProvider>
             <Suspense>{children}</Suspense>
           </MountProvider>
@@ -22,4 +21,6 @@ export default function PlatformLayout({
       </div>
     </SidebarProvider>
   );
-}
+};
+
+export default DashboardLayout;
