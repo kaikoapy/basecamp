@@ -3,7 +3,15 @@
 import * as React from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Search, ArrowUpRight, User, Mail, Phone } from "lucide-react";
+import {
+  Search,
+  ArrowUpRight,
+  User,
+  Mail,
+  Phone,
+  X,
+  History,
+} from "lucide-react"; // Import X icon
 import { CopyButton } from "@/components/copy-button";
 import { useDialog } from "@/components/providers/dialog-provider";
 import type { Doc } from "@/convex/_generated/dataModel";
@@ -20,7 +28,7 @@ interface SearchBarProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-// Add OS detection at the top
+// OS detection at the top
 const isMacOS =
   typeof window !== "undefined" &&
   window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
@@ -36,6 +44,10 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
     resources: [],
     directory: [],
   });
+
+  const [recentQueries, setRecentQueries] = React.useState<string[]>([]); // Recent queries state
+
+  const [isFocused, setIsFocused] = React.useState(false); // Track focus state
 
   const setOpenState = React.useCallback(
     (open: boolean) => {
@@ -65,6 +77,11 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
     }
   }, [searchResults]);
 
+  // Initialize recent queries on component mount
+  React.useEffect(() => {
+    setRecentQueries(getRecentQueries());
+  }, []);
+
   // Only use previous results if we're still searching
   const displayResults =
     search.length >= 2
@@ -80,6 +97,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
         !inputRef.current?.contains(event.target as Node)
       ) {
         setOpenState(false);
+        setIsFocused(false); // Update focus state
       }
     };
 
@@ -108,7 +126,36 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
     if (!isOpen) setOpenState(true);
   };
 
+  // Utility function to get recent queries from localStorage
+  const getRecentQueries = (): string[] => {
+    if (typeof window === "undefined") return [];
+    try {
+      const stored = localStorage.getItem("recentQueries");
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.error("Error reading recentQueries from localStorage:", error);
+      return [];
+    }
+  };
+
+  // Utility function to add a query to recentQueries in localStorage
+  const addRecentQuery = (query: string) => {
+    if (!query.trim()) return;
+    try {
+      const existing = getRecentQueries();
+      // Remove the query if it already exists to avoid duplicates
+      const filtered = existing.filter((q) => q !== query);
+      const updated = [query, ...filtered].slice(0, 5);
+      localStorage.setItem("recentQueries", JSON.stringify(updated));
+      setRecentQueries(updated); // Update state
+    } catch (error) {
+      console.error("Error adding recentQuery to localStorage:", error);
+    }
+  };
+
+  // Handle resource click
   const handleResourceClick = (resource: Resource) => {
+    addRecentQuery(resource.title); // Store the resource title
     setOpenState(false);
     if (resource.isModal && resource.component) {
       // Convert component name to dialog name (e.g., "BusinessFAQDialog" -> "business-faq")
@@ -123,11 +170,26 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
     }
   };
 
+  // Handle directory entry click (optional: if directory entries are clickable)
+  const handleDirectoryEntryClick = (entry: DirectoryEntry) => {
+    addRecentQuery(entry.name); // Store the directory entry name
+    setOpenState(false);
+    // Implement any additional logic for directory entry clicks if necessary
+  };
+
+  // Clear the search input
+  const clearSearch = () => {
+    setSearch("");
+    setIsFocused(false); // Optional: Update focus state
+    inputRef.current?.focus();
+  };
+
   const showDropdown =
     isOpen &&
     (search.length >= 3 ||
       displayResults.resources.length > 0 ||
-      displayResults.directory.length > 0);
+      displayResults.directory.length > 0 ||
+      (search.length < 2 && recentQueries.length > 0)); // Include recent queries
 
   return (
     <div className="relative w-full max-w-[600px] mx-auto">
@@ -138,17 +200,36 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
           type="text"
           value={search}
           onChange={handleSearchChange}
-          onFocus={() => setOpenState(true)}
+          onFocus={() => {
+            setOpenState(true);
+            setIsFocused(true);
+          }}
+          onBlur={() => setIsFocused(false)}
           placeholder="Search resources and directory..."
-          className="w-full h-10 px-4 py-2 pl-10 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-700/30"
+          className="w-full h-10 px-4 py-2 pl-10 pr-8 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-600/40 focus:shadow-md"
         />
         <Search
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
           aria-hidden="true"
         />
-        <kbd className="absolute hidden md:inline-flex right-3 top-1/2 transform -translate-y-1/2 pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-          <span className="text-xs">{isMacOS ? "⌘" : "Ctrl"}</span>K
-        </kbd>
+
+        {/* Conditional Rendering: Show 'X' button or 'kbd' */}
+        {isFocused ? (
+          <button
+            onMouseDown={(e) => {
+              e.preventDefault(); // Prevent input from losing focus
+              clearSearch();
+            }}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            aria-label="Clear search"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        ) : (
+          <kbd className="absolute hidden md:inline-flex right-3 top-1/2 transform -translate-y-1/2 pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs">{isMacOS ? "⌘" : "Ctrl"}</span>K
+          </kbd>
+        )}
       </div>
 
       {/* Results Dropdown */}
@@ -164,6 +245,34 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
           className="bg-white rounded-md shadow-lg border overflow-hidden max-h-[80vh] overflow-y-auto"
         >
           <div className="py-2">
+            {/* Recently Viewed Section */}
+            {search.length < 2 && recentQueries.length > 0 && (
+              <div>
+                <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                  <History
+                    className="h-4 w-4 text-gray-500"
+                    aria-hidden="true"
+                  />
+                  Recently Viewed
+                </div>
+                {recentQueries.map((query, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSearch(query);
+                      setOpenState(false);
+                      // Optionally, trigger a search for the recent query here
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                    type="button"
+                    aria-label={`Select recently viewed item: ${query}`}
+                  >
+                    {query}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Resources Section */}
             {displayResults.resources.length > 0 && (
               <div>
@@ -203,6 +312,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
                 {displayResults.directory.map((entry) => (
                   <div
                     key={entry._id}
+                    onClick={() => handleDirectoryEntryClick(entry)}
                     className="flex items-start px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer group"
                   >
                     <div className="flex-grow space-y-1">
@@ -220,6 +330,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
                             <span>{entry.number}</span>
                             <CopyButton
                               value={entry.number}
+                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
                               variant="ghost"
                               className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
                               iconSize={10}
@@ -233,6 +344,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
                             <span>Ext: {entry.extension}</span>
                             <CopyButton
                               value={entry.extension}
+                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
                               variant="ghost"
                               className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
                               iconSize={10}
@@ -246,6 +358,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
                             <span>{entry.email}</span>
                             <CopyButton
                               value={entry.email}
+                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
                               variant="ghost"
                               className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-600 ease-in-out text-zinc-400"
                               iconSize={10}

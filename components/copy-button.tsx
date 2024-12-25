@@ -1,3 +1,5 @@
+// File: /Users/kaiandpicha/dealer-hub/components/copy-button.tsx
+
 "use client";
 
 import * as React from "react";
@@ -18,6 +20,7 @@ interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   iconSize?: number;
   tooltipText?: string;
   disableTooltip?: boolean;
+  onClick?: () => void; // Add the optional onClick prop
 }
 
 export function CopyButton({
@@ -28,6 +31,7 @@ export function CopyButton({
   variant = "outline",
   size = "icon",
   disableTooltip = false,
+  onClick, // Destructure the onClick prop
   ...props
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
@@ -39,6 +43,9 @@ export function CopyButton({
       await navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      if (onClick) {
+        onClick(); // Invoke the external onClick handler if provided
+      }
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
@@ -52,7 +59,7 @@ export function CopyButton({
         "relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-100 hover:text-zinc-50",
         className
       )}
-      onClick={handleCopy}
+      onClick={handleCopy} // Use the internal handleCopy as the onClick handler
       aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
       disabled={copied}
       {...props}
