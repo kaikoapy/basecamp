@@ -2,6 +2,7 @@
 
 import { type LucideIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   SidebarGroup,
@@ -26,14 +27,41 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+  const scrollToSection = (section: string) => {
+    if (section === "dashboard") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const section = searchParams.get("section");
+    if (section) {
+      scrollToSection(section);
+    }
+  }, [searchParams]);
+
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     section: string
   ) => {
     e.preventDefault();
+
+    scrollToSection(section);
+
     const params = new URLSearchParams(searchParams);
     params.set("section", section);
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
@@ -46,27 +74,33 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
               asChild
               onClick={(e) => handleClick(e, item.section)}
               tooltip={item.name}
+              onMouseEnter={() => setHoveredItem(item.name)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
-              <button className="flex w-full items-center text-sm">
+              <button className="flex w-full items-center text-sm font-medium text-gray-700">
                 <div
-                  className={`flex items-center justify-center ${
+                  className={`flex items-center justify-center transition-all duration-200 ${
                     state === "collapsed"
-                      ? "w-8 h-8 rounded-md hover:bg-white/10"
-                      : "w-5 h-5 rounded-md bg-white shadow-sm hover:shadow-md"
+                      ? "w-10 h-10"
+                      : "w-7 h-7 rounded-md bg-white border"
                   }`}
-                  style={
-                    state !== "collapsed"
-                      ? {
-                          boxShadow: `0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)`,
-                        }
-                      : undefined
-                  }
+                  style={{
+                    borderColor:
+                      state !== "collapsed" && hoveredItem === item.name
+                        ? "#64748b"
+                        : "#d1d5db",
+                    boxShadow:
+                      state !== "collapsed" && hoveredItem === item.name
+                        ? `0 1px 2px ${item.iconColor}20, 0 1px 3px ${item.iconColor}20`
+                        : "none",
+                  }}
                 >
                   <item.icon
-                    className={`transition-transform duration-200 ${
-                      state === "collapsed" ? "h-4 w-4" : "h-3.5 w-3.5"
-                    }`}
-                    style={{ color: item.iconColor }}
+                    className="h-4 w-4 opacity-90 transition-opacity duration-200 [button:hover_&]:opacity-100"
+                    style={{
+                      color:
+                        state === "collapsed" ? "currentColor" : item.iconColor,
+                    }}
                   />
                 </div>
                 {state !== "collapsed" && (

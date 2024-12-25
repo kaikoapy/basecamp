@@ -9,6 +9,7 @@ import { SearchBar } from "../command-search";
 import { DealerInfo } from "../dealer-info";
 import { SpeedDial } from "../speed-dial";
 import { AnimatedBackground } from "@/components/core/animated-background";
+import { Separator } from "@/components/ui/separator";
 
 interface NavHeaderProps {
   searchQuery: string;
@@ -96,8 +97,9 @@ export function NavHeader({}: NavHeaderProps) {
         <div className="flex items-center gap-2 sm:gap-4">
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
+              <div className="flex items-center">
                 <SidebarTrigger className="-ml-1" />
+                <Separator orientation="vertical" className="mr-2 h-4" />
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -105,9 +107,9 @@ export function NavHeader({}: NavHeaderProps) {
             </TooltipContent>
           </Tooltip>
 
-          <Link href="/dashboard" className="hidden sm:block">
+          <Link href="/dashboard">
             <h1
-              className="text-2xl font-semibold tracking-tight"
+              className="text-2xl font-semibold tracking-tight -ml-2"
               style={{ fontFamily: "var(--font-heebo)" }}
             >
               <span className="text-RoadeoPurple font-[900]">DealerHub</span>

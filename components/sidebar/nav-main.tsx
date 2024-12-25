@@ -102,7 +102,9 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton tooltip={item.title} className="text-left">
                     <item.icon className="size-4" />
-                    <span className="flex-1 text-sm">{item.title}</span>
+                    <span className="flex-1 text-sm text-gray-800 hover:text-black">
+                      {item.title}
+                    </span>
                     <ChevronRight
                       className={`size-4 transition-transform ${
                         openItems[item.title] ? "rotate-90" : ""
@@ -119,7 +121,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <SidebarMenuButton
                           onClick={subItem.action}
                           tooltip={subItem.title}
-                          className="text-sm text-left"
+                          className="text-sm text-left hover:text-black"
                         >
                           <span>{subItem.title}</span>
                         </SidebarMenuButton>
@@ -127,7 +129,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <DynamicModal component={subItem.component}>
                           <SidebarMenuButton
                             tooltip={subItem.title}
-                            className="text-sm text-left"
+                            className="text-sm text-left hover:text-black"
                           >
                             <span>{subItem.title}</span>
                           </SidebarMenuButton>
@@ -142,7 +144,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                                   rel: "noopener noreferrer",
                                 }
                               : {})}
-                            className="text-sm text-left"
+                            className="text-sm text-left hover:text-black"
                           >
                             <span>{subItem.title}</span>
                           </Link>

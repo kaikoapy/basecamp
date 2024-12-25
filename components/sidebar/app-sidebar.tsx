@@ -23,7 +23,6 @@ import { useDialog } from "@/components/providers/dialog-provider";
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
 import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -264,21 +263,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="text-gray-800 font-semibold"
-      {...props}
-    >
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+    <Sidebar collapsible="icon" className="text-gray-800" {...props}>
+      <SidebarHeader className="h-16 border-b border-sidebar-border">
+        <NavUser />
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={navigationItems} />
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

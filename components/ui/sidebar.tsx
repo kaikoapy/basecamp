@@ -524,8 +524,7 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "text-sidebar-foreground hover:text-gray-900 hover:bg-white  hover:shadow-[0_4px_8px_rgba(0,0,0,0.08),0_2px_4px_rgba(0,0,0,0.05)]",
+        default: "text-sidebar-foreground hover:text-gray-900",
         ghost: "text-sidebar-foreground/60 hover:text-gray-900",
       },
       size: {
