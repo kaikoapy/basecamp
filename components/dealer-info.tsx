@@ -24,21 +24,18 @@ export function DealerInfo() {
         <div className="mb-4 text-lg font-semibold">Dealer Information</div>
         <div className="space-y-6">
           {/* Address Section */}
-          <div className="space-y-2">
-            <div className="flex items-center text-sm font-semibold text-muted-foreground">
-              <MapPin className="h-4 w-4 mr-2" />
-              <span>ADDRESS</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="h-5 w-5 shrink-0 text-muted-foreground" />
+              <span>{dealerInfo.address}</span>
             </div>
-            <div className="flex items-center justify-between pl-6">
-              <span className="text-sm">{dealerInfo.address}</span>
-              <CopyButton
-                value={dealerInfo.address}
-                variant="ghost"
-                className="hover:bg-transparent"
-                tooltipText="address"
-                disableTooltip
-              />
-            </div>
+            <CopyButton
+              value={dealerInfo.address}
+              variant="ghost"
+              className="hover:bg-transparent shrink-0 ml-2"
+              tooltipText="address"
+              disableTooltip
+            />
           </div>
 
           {/* Departments Section */}
