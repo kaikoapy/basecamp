@@ -72,6 +72,14 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+  ::selection {
+    background-color: #fde68a;
+    color: #171717;
+  }
+  ::-moz-selection {
+    background-color: #fde68a;
+    color: #171717;
+  }
 }
 
 @layer base {

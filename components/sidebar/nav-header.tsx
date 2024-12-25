@@ -1,31 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { CalendarDays, Building, Users, Search } from "lucide-react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Link from "next/link";
-import { SearchBar } from "../command-search";
+import { SearchBar, SearchBarHandle } from "../command-search"; // Import SearchBarHandle
 import { DealerInfo } from "../dealer-info";
 import { SpeedDial } from "../speed-dial";
 import { AnimatedBackground } from "@/components/core/animated-background";
 import { Separator } from "@/components/ui/separator";
 
-interface NavHeaderProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}
-
-export function NavHeader({}: NavHeaderProps) {
+export function NavHeader() {
   // Reference to the search component
-  const searchRef = React.useRef<HTMLDivElement>(null);
+  const searchRef = useRef<SearchBarHandle>(null);
 
   const handleSearchClick = () => {
-    // Find the input element within the search component and focus it
-    const searchInput = searchRef.current?.querySelector("input");
-    if (searchInput) {
-      searchInput.focus();
-    }
+    // Call the focus method exposed by SearchBar
+    searchRef.current?.focus();
   };
 
   // Desktop Nav Items with full components
@@ -115,8 +107,9 @@ export function NavHeader({}: NavHeaderProps) {
               <span className="text-RoadeoPurple font-[900]">DealerHub</span>
             </h1>
           </Link>
-          <div ref={searchRef} className="w-full sm:w-[400px] max-w-full">
-            <SearchBar onOpenChange={handleSearchClick} />
+          <div className="w-full sm:w-[400px] max-w-full">
+            {/* Attach ref to SearchBar */}
+            <SearchBar ref={searchRef} />
           </div>
         </div>
         <div className="hidden sm:flex items-center">
@@ -194,7 +187,8 @@ export function NavHeader({}: NavHeaderProps) {
           ))}
           <button
             className="flex-1 flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-950 active:text-zinc-950"
-            onClick={handleSearchClick}
+            onClick={handleSearchClick} // Use the ref's focus method
+            aria-label="Open Search"
           >
             <Search className="h-5 w-5" />
             <span className="text-xs mt-1">Search</span>

@@ -11,7 +11,7 @@ import {
   Phone,
   X,
   History,
-} from "lucide-react"; // Import X icon
+} from "lucide-react"; // Import X icon and History
 import { CopyButton } from "@/components/copy-button";
 import { useDialog } from "@/components/providers/dialog-provider";
 import type { Doc } from "@/convex/_generated/dataModel";
@@ -24,16 +24,11 @@ interface SearchResults {
   directory: DirectoryEntry[];
 }
 
-interface SearchBarProps {
-  onOpenChange?: (open: boolean) => void;
+export interface SearchBarHandle {
+  focus: () => void;
 }
 
-// OS detection at the top
-const isMacOS =
-  typeof window !== "undefined" &&
-  window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-
-export function SearchBar({ onOpenChange }: SearchBarProps) {
+export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -49,16 +44,17 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
 
   const [isFocused, setIsFocused] = React.useState(false); // Track focus state
 
-  const setOpenState = React.useCallback(
-    (open: boolean) => {
-      setIsOpen(open);
-      onOpenChange?.(open);
-      if (open) {
-        inputRef.current?.focus();
-      }
+  // Define isMacOS within the component
+  const isMacOS =
+    typeof window !== "undefined" &&
+    window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+
+  // Expose focus method to parent via ref
+  React.useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
     },
-    [onOpenChange]
-  );
+  }));
 
   // Query Convex
   const searchResults = useQuery(
@@ -103,7 +99,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setOpenState]);
+  }, []);
 
   // Handle keyboard shortcuts
   React.useEffect(() => {
@@ -119,7 +115,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [setOpenState]);
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -182,6 +178,13 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
     setSearch("");
     setIsFocused(false); // Optional: Update focus state
     inputRef.current?.focus();
+  };
+
+  const setOpenState = (open: boolean) => {
+    setIsOpen(open);
+    if (open) {
+      inputRef.current?.focus();
+    }
   };
 
   const showDropdown =
@@ -260,8 +263,7 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
                     key={index}
                     onClick={() => {
                       setSearch(query);
-                      setOpenState(false);
-                      // Optionally, trigger a search for the recent query here
+                      inputRef.current?.focus();
                     }}
                     className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
                     type="button"
@@ -386,4 +388,6 @@ export function SearchBar({ onOpenChange }: SearchBarProps) {
       </div>
     </div>
   );
-}
+});
+
+SearchBar.displayName = "SearchBar"; // For better debugging
