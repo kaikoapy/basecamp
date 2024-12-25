@@ -13,7 +13,7 @@ interface MountProviderProps {
 }
 
 export function MountProvider({ children }: MountProviderProps) {
-  const { isMounted, searchQuery, setSearchQuery } = useMount();
+  const { isMounted, searchQuery } = useMount();
 
   if (!isMounted) {
     return null;
@@ -31,7 +31,7 @@ export function MountProvider({ children }: MountProviderProps) {
 
   return (
     <>
-      <NavHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <NavHeader />
       {childrenWithProps}
     </>
   );
