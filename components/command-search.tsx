@@ -5,12 +5,20 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
   Search,
-  ArrowUpRight,
+  FileText,
   User,
   Mail,
   Phone,
   X,
   History,
+  DollarSign,
+  Wrench,
+  Globe,
+  Building2,
+  MessageSquare,
+  Store,
+  ArrowUpRight,
+  Maximize2,
 } from "lucide-react"; // Import X icon and History
 import { CopyButton } from "@/components/copy-button";
 import { useDialog } from "@/components/providers/dialog-provider";
@@ -26,6 +34,39 @@ interface SearchResults {
 
 export interface SearchBarHandle {
   focus: () => void;
+}
+
+function getResourceIcon(category: string) {
+  switch (category.toLowerCase()) {
+    case "incentives":
+      return (
+        <DollarSign className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    case "tools":
+      return (
+        <Wrench className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    case "volvo sites":
+      return (
+        <Globe className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    case "dealer site":
+      return (
+        <Building2 className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    case "communication":
+      return (
+        <MessageSquare className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    case "dealer trade store":
+      return (
+        <Store className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+    default:
+      return (
+        <FileText className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-orange-400" />
+      );
+  }
 }
 
 export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
@@ -154,12 +195,13 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
     addRecentQuery(resource.title); // Store the resource title
     setOpenState(false);
     if (resource.isModal && resource.component) {
-      // Convert component name to dialog name (e.g., "BusinessFAQDialog" -> "business-faq")
+      // Convert component name to dialog name by removing "Dialog" suffix and converting to kebab-case
       const dialogName = resource.component
         .replace(/Dialog$/, "")
         .replace(/([A-Z])/g, "-$1")
         .toLowerCase()
-        .replace(/^-/, "");
+        .replace(/^-/, "")
+        .replace(/-f-a-q$/, ""); // Remove FAQ suffix if present
       showDialog(dialogName);
     } else if (resource.url) {
       window.open(resource.url, "_blank", "noopener,noreferrer");
@@ -288,20 +330,30 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
                       className="w-full group flex items-center px-3 py-2 text-sm rounded-md hover:bg-orange-50 cursor-pointer text-left transition-colors"
                       type="button"
                     >
-                      <span className="flex-grow">
-                        <span className="font-medium group-hover:text-orange-600">
-                          {resource.title}
-                        </span>
-                        {resource.description && (
-                          <span className="ml-2 text-gray-500 hidden md:inline group-hover:text-orange-500/60">
-                            — {resource.description}
+                      <div className="flex items-center gap-2 flex-grow">
+                        {getResourceIcon(resource.category)}
+                        <div>
+                          <span className="font-medium group-hover:text-orange-600">
+                            {resource.title}
                           </span>
-                        )}
-                      </span>
-                      <ArrowUpRight
-                        className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:text-orange-400 transition-all"
-                        aria-hidden="true"
-                      />
+                          {resource.description && (
+                            <span className="ml-2 text-gray-500 hidden md:inline group-hover:text-orange-500/60">
+                              — {resource.description}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {resource.url ? (
+                        <ArrowUpRight
+                          className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:text-orange-400 transition-all"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <Maximize2
+                          className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:text-orange-400 transition-all"
+                          aria-hidden="true"
+                        />
+                      )}
                     </button>
                   </div>
                 ))}
