@@ -16,19 +16,22 @@ interface NavHeaderProps {
 }
 
 export function NavHeader({}: NavHeaderProps) {
-  const handleSearchClick = () => {};
+  // Reference to the search component
+  const searchRef = React.useRef<HTMLDivElement>(null);
 
-  const NAV_ITEMS = [
+  const handleSearchClick = () => {
+    // Find the input element within the search component and focus it
+    const searchInput = searchRef.current?.querySelector("input");
+    if (searchInput) {
+      searchInput.focus();
+    }
+  };
+
+  // Desktop Nav Items with full components
+  const DESKTOP_NAV_ITEMS = [
     {
       id: "dealer-info",
       label: "Dealer Info",
-      icon: Building,
-      onClick: () => {
-        const dealerInfo = document.querySelector(
-          '[data-id="dealer-info"] .absolute'
-        ) as HTMLElement;
-        dealerInfo?.click();
-      },
       component: (
         <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
           <Building className="h-5 w-5" />
@@ -42,13 +45,6 @@ export function NavHeader({}: NavHeaderProps) {
     {
       id: "speed-dial",
       label: "Speed Dial",
-      icon: Users,
-      onClick: () => {
-        const speedDial = document.querySelector(
-          '[data-id="speed-dial"] .absolute'
-        ) as HTMLElement;
-        speedDial?.click();
-      },
       component: (
         <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
           <Users className="h-5 w-5" />
@@ -62,7 +58,6 @@ export function NavHeader({}: NavHeaderProps) {
     {
       id: "schedule",
       label: "Schedule",
-      icon: CalendarDays,
       href: "/schedule",
       component: (
         <div className="flex items-center text-sm w-full text-gray-700 hover:text-gray-900 font-semibold">
@@ -70,6 +65,28 @@ export function NavHeader({}: NavHeaderProps) {
           <span className="nav-text ml-2">Schedule</span>
         </div>
       ),
+    },
+  ];
+
+  // Mobile Nav Items with simple structure
+  const MOBILE_NAV_ITEMS = [
+    {
+      id: "dealer-info",
+      label: "Dealer Info",
+      icon: Building,
+      component: <DealerInfo />,
+    },
+    {
+      id: "speed-dial",
+      label: "Speed Dial",
+      icon: Users,
+      component: <SpeedDial />,
+    },
+    {
+      id: "schedule",
+      label: "Schedule",
+      icon: CalendarDays,
+      href: "/schedule",
     },
   ];
 
@@ -96,13 +113,13 @@ export function NavHeader({}: NavHeaderProps) {
               <span className="text-RoadeoPurple font-[900]">DealerHub</span>
             </h1>
           </Link>
-          <div className="w-full sm:w-[400px] max-w-full">
+          <div ref={searchRef} className="w-full sm:w-[400px] max-w-full">
             <SearchBar onOpenChange={handleSearchClick} />
           </div>
         </div>
         <div className="hidden sm:flex items-center">
           <AnimatedBackground>
-            {NAV_ITEMS.map((item) => (
+            {DESKTOP_NAV_ITEMS.map((item) => (
               <div
                 key={item.id}
                 data-id={item.id}
@@ -136,7 +153,7 @@ export function NavHeader({}: NavHeaderProps) {
       {/* Mobile Bottom Navigation */}
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
         <div className="flex h-16 w-full">
-          {NAV_ITEMS.map((item) => (
+          {MOBILE_NAV_ITEMS.map((item) => (
             <div
               key={item.id}
               data-id={item.id}
@@ -147,21 +164,28 @@ export function NavHeader({}: NavHeaderProps) {
                   href={item.href}
                   className="w-full flex flex-col items-center justify-center"
                 >
-                  <div className="flex flex-col items-center">
-                    {/* Extract just the icon and text from the component */}
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-xs mt-1">{item.label}</span>
-                  </div>
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-xs mt-1">{item.label}</span>
                 </Link>
               ) : (
                 <button
+                  onClick={() => {
+                    // Find and trigger the click on the corresponding desktop nav item
+                    const desktopItem = document.querySelector(
+                      `[data-id="${item.id}"] .absolute`
+                    ) as HTMLElement;
+                    if (desktopItem) {
+                      const overlay =
+                        desktopItem.firstElementChild as HTMLElement;
+                      if (overlay) {
+                        overlay.click();
+                      }
+                    }
+                  }}
                   className="w-full flex flex-col items-center justify-center"
-                  onClick={item.onClick}
                 >
-                  <div className="flex flex-col items-center">
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-xs mt-1">{item.label}</span>
-                  </div>
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-xs mt-1">{item.label}</span>
                 </button>
               )}
             </div>
