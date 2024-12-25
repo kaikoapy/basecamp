@@ -3,7 +3,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ClipboardIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -13,6 +13,13 @@ import {
 import { cn } from "@/lib/utils";
 import { type VariantProps } from "class-variance-authority";
 import { buttonVariants } from "@/components/ui/button";
+import { motion, useAnimation } from "framer-motion";
+
+const defaultTransition = {
+  type: "spring",
+  stiffness: 500,
+  damping: 30,
+};
 
 interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   value: string;
@@ -20,7 +27,7 @@ interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   iconSize?: number;
   tooltipText?: string;
   disableTooltip?: boolean;
-  onClick?: () => void; // Add the optional onClick prop
+  onClick?: () => void;
 }
 
 export function CopyButton({
@@ -31,10 +38,11 @@ export function CopyButton({
   variant = "outline",
   size = "icon",
   disableTooltip = false,
-  onClick, // Destructure the onClick prop
+  onClick,
   ...props
 }: CopyButtonProps) {
   const [copied, setCopied] = React.useState(false);
+  const controls = useAnimation();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,29 +52,71 @@ export function CopyButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
       if (onClick) {
-        onClick(); // Invoke the external onClick handler if provided
+        onClick();
       }
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
   };
 
+  const AnimatedCopyIcon = () => (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <motion.svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={iconSize}
+        height={iconSize}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <motion.rect
+          width="14"
+          height="14"
+          x="8"
+          y="8"
+          rx="2"
+          ry="2"
+          variants={{
+            normal: { translateY: 0, translateX: 0 },
+            animate: { translateY: -2, translateX: -2 },
+          }}
+          animate={controls}
+          transition={defaultTransition}
+        />
+        <motion.path
+          d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+          variants={{
+            normal: { x: 0, y: 0 },
+            animate: { x: 2, y: 2 },
+          }}
+          transition={defaultTransition}
+          animate={controls}
+        />
+      </motion.svg>
+    </div>
+  );
+
   const button = (
     <Button
       variant={variant}
       size={size}
       className={cn(
-        "relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-100 hover:text-zinc-50",
+        "relative h-6 w-6 p-1 hover:bg-transparent hover:opacity-70",
         className
       )}
-      onClick={handleCopy} // Use the internal handleCopy as the onClick handler
+      onClick={handleCopy}
+      onMouseEnter={() => controls.start("animate")}
+      onMouseLeave={() => controls.start("normal")}
       aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
       disabled={copied}
       {...props}
     >
       <div
         className={cn(
-          "transition-all",
+          "absolute inset-0 flex items-center justify-center transition-all",
           copied ? "scale-100 opacity-100" : "scale-0 opacity-0"
         )}
       >
@@ -79,16 +129,11 @@ export function CopyButton({
       </div>
       <div
         className={cn(
-          "absolute transition-all",
-          copied ? "scale-0 opacity-0 " : "scale-100 opacity-100"
+          "flex items-center justify-center transition-all",
+          copied ? "scale-0 opacity-0" : "scale-100 opacity-100"
         )}
       >
-        <ClipboardIcon
-          className="stroke-gray-700"
-          size={iconSize}
-          strokeWidth={2}
-          aria-hidden="true"
-        />
+        <AnimatedCopyIcon />
       </div>
     </Button>
   );

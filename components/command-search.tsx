@@ -282,25 +282,28 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
                   Resources
                 </div>
                 {displayResults.resources.map((resource) => (
-                  <button
-                    key={resource._id}
-                    onClick={() => handleResourceClick(resource)}
-                    className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer group text-left"
-                    type="button"
-                  >
-                    <span className="flex-grow">
-                      <span className="font-medium">{resource.title}</span>
-                      {resource.description && (
-                        <span className="ml-2 text-gray-500 hidden md:inline">
-                          — {resource.description}
+                  <div key={resource._id} className="px-2">
+                    <button
+                      onClick={() => handleResourceClick(resource)}
+                      className="w-full group flex items-center px-3 py-2 text-sm rounded-md hover:bg-orange-50 cursor-pointer text-left transition-colors"
+                      type="button"
+                    >
+                      <span className="flex-grow">
+                        <span className="font-medium group-hover:text-orange-600">
+                          {resource.title}
                         </span>
-                      )}
-                    </span>
-                    <ArrowUpRight
-                      className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                      aria-hidden="true"
-                    />
-                  </button>
+                        {resource.description && (
+                          <span className="ml-2 text-gray-500 hidden md:inline group-hover:text-orange-500/60">
+                            — {resource.description}
+                          </span>
+                        )}
+                      </span>
+                      <ArrowUpRight
+                        className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:text-orange-400 transition-all"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -312,62 +315,71 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
                   Directory
                 </div>
                 {displayResults.directory.map((entry) => (
-                  <div
-                    key={entry._id}
-                    onClick={() => handleDirectoryEntryClick(entry)}
-                    className="flex items-start px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer group"
-                  >
-                    <div className="flex-grow space-y-1">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-400 shrink-0" />
-                        <span className="font-medium">{entry.name}</span>
-                      </div>
-                      <div className="text-gray-500 text-xs pl-6">
-                        {entry.position} • {entry.department}
-                      </div>
-                      <div className="flex flex-col gap-1.5 text-xs text-gray-600 pl-6">
-                        {entry.number && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-3 w-3 shrink-0" />
-                            <span>{entry.number}</span>
-                            <CopyButton
-                              value={entry.number}
-                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
-                              variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
-                              iconSize={10}
-                              disableTooltip
-                            />
-                          </div>
-                        )}
-                        {entry.extension && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-3 w-3 shrink-0" />
-                            <span>Ext: {entry.extension}</span>
-                            <CopyButton
-                              value={entry.extension}
-                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
-                              variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-300 ease-in-out text-zinc-400"
-                              iconSize={10}
-                              disableTooltip
-                            />
-                          </div>
-                        )}
-                        {entry.email && (
-                          <div className="flex items-center gap-2">
-                            <Mail className="h-3 w-3 shrink-0" />
-                            <span>{entry.email}</span>
-                            <CopyButton
-                              value={entry.email}
-                              onClick={() => addRecentQuery(entry.name)} // Store the entry name on copy
-                              variant="ghost"
-                              className="ml-1 opacity-0 bg-transparent group-hover:opacity-100 transition-opacity duration-600 ease-in-out text-zinc-400"
-                              iconSize={10}
-                              disableTooltip
-                            />
-                          </div>
-                        )}
+                  <div key={entry._id} className="px-2">
+                    <div
+                      onClick={() => handleDirectoryEntryClick(entry)}
+                      className="group flex items-start px-3 py-3 text-sm rounded-md hover:bg-sky-50 cursor-pointer transition-colors"
+                    >
+                      <div className="flex-grow space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-400 shrink-0 group-hover:text-sky-400" />
+                          <span className="font-medium group-hover:text-sky-600">
+                            {entry.name}
+                          </span>
+                        </div>
+                        <div className="text-gray-500 text-xs pl-6 group-hover:text-sky-500/60">
+                          {entry.position} • {entry.department}
+                        </div>
+                        <div className="flex flex-col gap-1.5 pl-6">
+                          {entry.number && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-3 w-3 shrink-0 group-hover:text-sky-400" />
+                              <span className="text-gray-500 group-hover:text-sky-500">
+                                {entry.number}
+                              </span>
+                              <CopyButton
+                                value={entry.number}
+                                onClick={() => addRecentQuery(entry.name)}
+                                variant="ghost"
+                                className="ml-1 -mr-1 h-4 w-4 p-0 opacity-0 hover:bg-transparent hover:text-sky-400 group-hover:opacity-100 transition-all"
+                                iconSize={10}
+                                disableTooltip
+                              />
+                            </div>
+                          )}
+                          {entry.extension && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-3 w-3 shrink-0 group-hover:text-sky-400" />
+                              <span className="text-gray-500 group-hover:text-sky-500">
+                                Ext: {entry.extension}
+                              </span>
+                              <CopyButton
+                                value={entry.extension}
+                                onClick={() => addRecentQuery(entry.name)}
+                                variant="ghost"
+                                className="ml-1 -mr-1 h-4 w-4 p-0 opacity-0 hover:bg-transparent hover:text-sky-400 group-hover:opacity-100 transition-all"
+                                iconSize={10}
+                                disableTooltip
+                              />
+                            </div>
+                          )}
+                          {entry.email && (
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-3 w-3 shrink-0 group-hover:text-sky-400" />
+                              <span className="text-gray-500 group-hover:text-sky-500">
+                                {entry.email}
+                              </span>
+                              <CopyButton
+                                value={entry.email}
+                                onClick={() => addRecentQuery(entry.name)}
+                                variant="ghost"
+                                className="ml-1 -mr-1 h-4 w-4 p-0 opacity-0 hover:bg-transparent hover:text-sky-400 group-hover:opacity-100 transition-all"
+                                iconSize={10}
+                                disableTooltip
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
