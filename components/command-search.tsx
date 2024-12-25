@@ -277,7 +277,7 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
         )}
       </div>
 
-      {/* Results Dropdown */}
+      {/* Results Dropdownds */}
       <div
         className={`absolute z-50 w-full mt-2 transform transition-all duration-200 ease-in-out ${
           showDropdown
