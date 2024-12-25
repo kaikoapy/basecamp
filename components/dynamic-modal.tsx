@@ -5,7 +5,7 @@ import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructio
 import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
 import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
 import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
-
+import { OnboardingDialog } from "@/app/(platform)/dialogs/onboarding-dialog";
 interface DynamicModalProps {
   component?: string;
   children: React.ReactNode;
@@ -16,6 +16,7 @@ const MODAL_COMPONENTS = {
   OutOfStateFAQDialog: OutOfStateDialog,
   BusinessFAQDialog: BusinessApplicationsDialog,
   ThirdPartyPayoffsDialog,
+  OnboardingDialog,
 };
 
 export function DynamicModal({ component, children }: DynamicModalProps) {

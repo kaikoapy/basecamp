@@ -16,12 +16,16 @@ interface SearchResults {
   directory: DirectoryEntry[];
 }
 
+interface SearchBarProps {
+  onOpenChange?: (open: boolean) => void;
+}
+
 // Add OS detection at the top
 const isMacOS =
   typeof window !== "undefined" &&
   window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 
-export function SearchBar() {
+export function SearchBar({ onOpenChange }: SearchBarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -32,6 +36,17 @@ export function SearchBar() {
     resources: [],
     directory: [],
   });
+
+  const setOpenState = React.useCallback(
+    (open: boolean) => {
+      setIsOpen(open);
+      onOpenChange?.(open);
+      if (open) {
+        inputRef.current?.focus();
+      }
+    },
+    [onOpenChange]
+  );
 
   // Query Convex
   const searchResults = useQuery(
@@ -64,38 +79,37 @@ export function SearchBar() {
         !resultsRef.current.contains(event.target as Node) &&
         !inputRef.current?.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        setOpenState(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setOpenState]);
 
   // Handle keyboard shortcuts
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setIsOpen(true);
-        inputRef.current?.focus();
+        setOpenState(true);
       }
       if (e.key === "Escape") {
-        setIsOpen(false);
+        setOpenState(false);
       }
     };
 
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, []);
+  }, [setOpenState]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    if (!isOpen) setIsOpen(true);
+    if (!isOpen) setOpenState(true);
   };
 
   const handleResourceClick = (resource: Resource) => {
-    setIsOpen(false);
+    setOpenState(false);
     if (resource.isModal && resource.component) {
       // Convert component name to dialog name (e.g., "BusinessFAQDialog" -> "business-faq")
       const dialogName = resource.component
@@ -124,7 +138,7 @@ export function SearchBar() {
           type="text"
           value={search}
           onChange={handleSearchChange}
-          onFocus={() => setIsOpen(true)}
+          onFocus={() => setOpenState(true)}
           placeholder="Search resources and directory..."
           className="w-full h-10 px-4 py-2 pl-10 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-700/30"
         />

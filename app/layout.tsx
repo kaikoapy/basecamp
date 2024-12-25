@@ -13,6 +13,7 @@ import {
   WireInstructionsDialog,
   ThirdPartyPayoffsDialog,
   EX90SheetDialog,
+  OnboardingDialog,
 } from "@/app/(platform)/dialogs";
 import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
 import { Suspense } from "react";
@@ -71,6 +72,9 @@ export default function RootLayout({
                     </DialogWrapper>
                     <DialogWrapper name="ex90-sheet">
                       {EX90SheetDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="onboarding">
+                      {OnboardingDialog}
                     </DialogWrapper>
                   </Providers>
                 </NuqsAdapter>

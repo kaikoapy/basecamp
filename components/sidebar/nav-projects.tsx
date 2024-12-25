@@ -47,19 +47,15 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
               onClick={(e) => handleClick(e, item.section)}
               tooltip={item.name}
             >
-              <button
-                className={`flex items-center text-sm ${
-                  state === "expanded" ? "justify-start" : "justify-center"
-                }`}
-              >
+              <button className="flex w-full items-center text-sm">
                 <div
                   className={`flex items-center justify-center ${
-                    state === "expanded"
-                      ? "w-5 h-5 rounded-md bg-white shadow-sm hover:shadow-md"
-                      : "w-8 h-8 rounded-md hover:bg-white/10"
+                    state === "collapsed"
+                      ? "w-8 h-8 rounded-md hover:bg-white/10"
+                      : "w-5 h-5 rounded-md bg-white shadow-sm hover:shadow-md"
                   }`}
                   style={
-                    state === "expanded"
+                    state !== "collapsed"
                       ? {
                           boxShadow: `0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)`,
                         }
@@ -68,12 +64,12 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
                 >
                   <item.icon
                     className={`transition-transform duration-200 ${
-                      state === "expanded" ? "h-3.5 w-3.5" : "h-4 w-4"
+                      state === "collapsed" ? "h-4 w-4" : "h-3.5 w-3.5"
                     }`}
                     style={{ color: item.iconColor }}
                   />
                 </div>
-                {state === "expanded" && (
+                {state !== "collapsed" && (
                   <span className="ml-2">{item.name}</span>
                 )}
               </button>

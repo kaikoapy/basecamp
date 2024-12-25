@@ -41,7 +41,6 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Initialize open state for items with isActive=true
     const initialOpenState = items.reduce(
       (acc, item) => {
         if (item.isActive) {
@@ -61,6 +60,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
     }));
   };
 
+  // Hide the entire component when sidebar is collapsed
   if (state === "collapsed") {
     return null;
   }

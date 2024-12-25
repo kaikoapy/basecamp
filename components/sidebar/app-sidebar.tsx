@@ -220,7 +220,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: "Start Here",
-            url: "/new-hires",
+            action: () => showDialog("onboarding"),
+            isModal: true,
           },
           {
             title: "Dealer Map",

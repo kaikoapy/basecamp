@@ -9,24 +9,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 interface OnboardingDialogProps {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function OnboardingDialog({
-  open = false,
+  open,
   onOpenChange,
 }: OnboardingDialogProps) {
   const [step, setStep] = useState(1);
-  const [isOpen, setIsOpen] = useState(open);
 
   const stepContent = [
     {
@@ -64,23 +62,14 @@ export function OnboardingDialog({
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    setIsOpen(newOpen);
-    if (newOpen) setStep(1);
-    onOpenChange?.(newOpen);
+    if (!newOpen) {
+      setStep(1);
+    }
+    onOpenChange(newOpen);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-        >
-          <Info className="h-5 w-5" />
-          <span className="sr-only">Help</span>
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="gap-0 p-0">
         <div className="p-2">
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
