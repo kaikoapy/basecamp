@@ -1,159 +1,165 @@
-"use client";
+import { Separator } from "@/components/ui/separator";
+import { ProductSection } from "@/components/product-knowledge/product-section";
+import Image from "next/image";
 
-import React from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-
-// Custom Dialog components for test
-const TestDialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPrimitive.Portal>
-    <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] bg-background p-6 shadow-lg duration-200 sm:rounded-lg",
-        className
-      )}
-      {...props}
-    >
-      <DialogPrimitive.Title className="sr-only">
-        Email Content
-      </DialogPrimitive.Title>
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPrimitive.Portal>
-));
-TestDialogContent.displayName = "TestDialogContent";
-
-const EmailDisplay = () => {
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-  const announcements = useQuery(api.announcements.list);
-  const email = announcements?.find((a) => a.isEmailGenerated);
-
-  const formatDate = (dateString: string | number | Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
-  };
-
-  if (!email) return <div>Loading...</div>;
-
-  return (
-    <>
-      <div className="container max-w-5xl py-6">
-        <div className="space-y-6">
-          <Card className="w-full">
-            <CardHeader className="border-b">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
-                    From: {email.createdBy}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {formatDate(email.postedAt)}
-                  </div>
-                </div>
-                {email.files && email.files.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <svg
-                      className="w-4 h-4 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                      />
-                    </svg>
-                    <span className="text-sm text-gray-500">
-                      {email.files[0].name}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: email.htmlDescription || email.description,
-                }}
-              />
-            </CardContent>
-          </Card>
-
-          <Button onClick={() => setDialogOpen(true)}>Open in Dialog</Button>
-        </div>
-      </div>
-
-      <DialogPrimitive.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-        <TestDialogContent>
-          <div className="border-b space-y-2 pb-4">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                From: {email.createdBy}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {formatDate(email.postedAt)}
-              </div>
-            </div>
-            {email.files && email.files.length > 0 && (
-              <div className="flex items-center space-x-2">
-                <svg
-                  className="w-4 h-4 text-muted-foreground"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-                </svg>
-                <span className="text-sm text-muted-foreground">
-                  {email.files[0].name}
-                </span>
-              </div>
-            )}
-          </div>
-
-          <div className="pt-6">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: email.htmlDescription || email.description,
-              }}
-              className="prose max-w-none"
-            />
-          </div>
-        </TestDialogContent>
-      </DialogPrimitive.Root>
-    </>
-  );
+export const metadata = {
+  title: "EX30 | Product Knowledge",
+  description: "Product knowledge details for the Volvo EX30",
 };
 
-export default EmailDisplay;
+export default function EX30Page() {
+  return (
+    <div className="h-full p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">Volvo EX30</h1>
+          <p className="text-muted-foreground">
+            The Future of Compact Electric SUVs
+          </p>
+        </div>
+
+        <Separator />
+
+        <p className="text-lg leading-relaxed">
+          The Volvo EX30 represents a bold step into the future of electric
+          mobility, offering the perfect blend of Scandinavian design,
+          cutting-edge technology, and Volvo&apos;s renowned safety features in
+          a compact, eco-friendly package. As the smallest model in Volvo&apos;s
+          lineup, it brings luxury electric vehicles to a more accessible price
+          point without compromising on performance or features.
+        </p>
+
+        {/* Performance Section with Image */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="space-y-6">
+            <ProductSection
+              title="Performance and Range"
+              items={[
+                "Single Motor Extended Range (RWD): 268 hp, 253 lb-ft",
+                "Twin Motor Performance (AWD): 422 hp, 400 lb-ft",
+                "0-60 mph in 3.4 seconds (Twin Motor)",
+                "275 miles maximum driving range",
+                "DC Fast-Charging: 10% to 80% in 26.5 minutes",
+              ]}
+            />
+            <div className="text-sm text-muted-foreground">
+              <p className="font-semibold">Starting Price:</p>
+              <ul className="list-disc list-inside">
+                <li>Single Motor: $36,245</li>
+                <li>Twin Motor: $46,195</li>
+              </ul>
+            </div>
+          </div>
+          <div className="relative h-[300px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/product-knowledge/ex30/performance.jpg"
+              alt="EX30 Performance"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Design Section with Image */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <ProductSection
+            title="Design and Dimensions"
+            items={[
+              "Signature Thor's Hammer headlights",
+              "Sleek, coupe-like roofline for sporty stance",
+              "Wheel options ranging from 19 to 22 inches",
+              "Height: 61 inches",
+              "Length: 166.7 inches",
+              "Width: 72 inches",
+              "20.7 cm shorter and 9.8 cm lower than XC40 Recharge",
+            ]}
+          />
+          <div className="relative h-[300px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/product-knowledge/ex30/exterior.jpg"
+              alt="EX30 Exterior Design"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Interior Section with Image */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <ProductSection
+            title="Interior Features"
+            items={[
+              "Minimalist Scandinavian-inspired design",
+              "Premium audio system featuring a stylish soundbar",
+              "Spacious cabin despite compact exterior dimensions",
+              "Dashboard composed of recycled window frames",
+              "Sustainably harvested textiles including Merino wool",
+            ]}
+          />
+          <div className="relative h-[300px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/product-knowledge/ex30/interior.jpg"
+              alt="EX30 Interior"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Technology Section with Image */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="space-y-6">
+            <ProductSection
+              title="Technology"
+              items={[
+                "12.3-inch center touchscreen",
+                "Google-powered infotainment system",
+                "Customizable driver interface",
+                "Advanced connectivity features",
+              ]}
+            />
+            <ProductSection
+              title="Safety and Driver Assistance"
+              items={[
+                "Park Pilot Assist with automated parallel parking",
+                "360° camera system",
+                "Door opening alert system for cyclist protection",
+                "Latest generation of driver assistance technologies",
+              ]}
+            />
+          </div>
+          <div className="relative h-[300px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/product-knowledge/ex30/technology.jpg"
+              alt="EX30 Technology Features"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+
+        <ProductSection
+          title="Environmental Impact"
+          items={[
+            "The smallest carbon footprint of any Volvo car to date",
+            "Extensive use of renewable and recycled materials",
+            "Zero-emission electric drivetrain",
+            "Thoughtful material selection throughout the vehicle",
+          ]}
+        />
+
+        <div className="bg-muted p-6 rounded-lg">
+          <h2 className="text-2xl font-semibold mb-4">Value Proposition</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Whether navigating city streets or embarking on longer journeys, the
+            EX30 delivers the perfect combination of sustainable luxury,
+            performance, and technology that modern drivers demand. It
+            represents not just Volvo&apos;s vision for the future of electric
+            vehicles, but a practical and attainable step toward sustainable
+            personal transportation.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
