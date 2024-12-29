@@ -229,17 +229,17 @@ const locations: LocationMarker[] = [
 
 function MapKey() {
   return (
-    <div className="absolute right-4 top-4 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200 w-56">
+    <div className="mt-6 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200">
       <h3 className="font-bold text-lg mb-3">Map Legend</h3>
-      <div className="space-y-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {Object.entries(locationColors).map(([title, colors]) => {
           const Icon = colors.icon;
           return (
             <div key={title} className="flex items-center gap-2">
               <div
-                className={`w-7 h-7 rounded-full ${colors.bg} flex items-center justify-center`}
+                className={`w-7 h-7 rounded-full bg-white border-2 ${colors.border} flex items-center justify-center`}
               >
-                <Icon className="w-4 h-4 text-white" />
+                <Icon className={`w-4 h-4 ${colors.text}`} />
               </div>
               <span className="text-sm text-gray-700">{title}</span>
             </div>
@@ -286,7 +286,7 @@ export default function InteractiveMap() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto">
+    <div className="relative w-full max-w-4xl mx-auto space-y-6">
       {/* Container for the image and markers */}
       <div className="relative">
         <Image
@@ -296,8 +296,6 @@ export default function InteractiveMap() {
           height={800}
           className="w-full h-auto"
         />
-
-        <MapKey />
 
         {isDeveloperMode && (
           <div className="absolute left-4 top-4 bg-black/80 text-white px-3 py-1 rounded-md text-sm">
@@ -374,6 +372,9 @@ export default function InteractiveMap() {
           </div>
         )}
       </div>
+
+      {/* Map Legend moved below the image */}
+      <MapKey />
     </div>
   );
 }
