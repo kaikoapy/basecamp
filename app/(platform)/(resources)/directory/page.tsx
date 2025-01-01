@@ -1,279 +1,306 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Users,
-  Wrench,
-  DollarSign,
-  ShieldCheck,
-  HeartHandshake,
-  ClipboardList,
-  Building,
-} from "lucide-react";
+"use client";
 
-export default function ContactDirectory() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="bg-white rounded-lg p-8 mb-8">
-          <h1 className="text-3xl font-bold mb-4">
-            Volvo North Miami Directory
-          </h1>
-          <p className="text-gray-600">
-            Internal contact information for all departments
-          </p>
+import React, { useState } from "react";
+import { Search, Phone, Building, Users, Edit2, Mail } from "lucide-react";
+import { api } from "../../../../convex/_generated/api";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
+import { useQuery, useMutation } from "convex/react";
+import _ from "lodash";
+import { EditForm } from "./(components)/editForm";
+
+type DirectoryContact = Doc<"directory">;
+
+const departmentIcons = {
+  Management: Users,
+  Sales: Users,
+  Service: Users,
+  Parts: Users,
+  Finance: Users,
+  Accounting: Users,
+  Logistics: Users,
+  Other: Users,
+} as const;
+
+type Department = keyof typeof departmentIcons;
+
+const ContactDirectory = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [editingContact, setEditingContact] = useState<{
+    id: Id<"directory">;
+    department: string;
+  } | null>(null);
+
+  const contacts = useQuery(api.directory.getAll);
+  const address = useQuery(api.directory.getAddress);
+  const dealerInfo = useQuery(api.directory.getImportantNumbers) ?? [];
+  const updateContact = useMutation(api.directory.update);
+  const deleteContact = useMutation(api.directory.deleteContact);
+
+  const handleSaveContact = async (
+    updatedContact: Partial<DirectoryContact>
+  ) => {
+    if (!editingContact) return;
+
+    await updateContact({
+      id: editingContact.id,
+      ...updatedContact,
+    });
+    setEditingContact(null);
+  };
+
+  const filterContacts = (contacts: DirectoryContact[] = []) => {
+    return contacts.filter((contact) =>
+      Object.values(contact)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const isManager = (position: string) => {
+    return (
+      position.toLowerCase().includes("manager") ||
+      position.toLowerCase().includes("director") ||
+      position.toLowerCase().includes("supervisor")
+    );
+  };
+
+  const groupContactsByDepartment = (contacts: DirectoryContact[] = []) => {
+    const grouped = _.groupBy(contacts, "department");
+
+    const managers = contacts.filter((contact) => isManager(contact.position));
+    if (managers.length > 0) {
+      grouped["Management"] = [
+        ...(grouped["Management"] || []),
+        ...managers.filter((m) => m.department !== "Management"),
+      ];
+    }
+
+    return grouped;
+  };
+
+  const groupContactsByPosition = (contacts: DirectoryContact[] = []) => {
+    return _.groupBy(contacts, "position");
+  };
+
+  const scrollToDepartment = (department: string) => {
+    const element = document.getElementById(`department-${department}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const DepartmentIndex = () => {
+    if (!contacts) return null;
+
+    const departments = Object.keys(groupContactsByDepartment(contacts));
+
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-3">
+          Departments
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {departments.map((dept) => (
+            <button
+              key={dept}
+              onClick={() => scrollToDepartment(dept)}
+              className="px-3 py-1.5 text-sm bg-white hover:bg-gray-50 text-gray-700 
+                rounded-md border border-gray-200 transition-colors duration-200
+                flex items-center gap-2"
+            >
+              {departmentIcons[dept as Department] && (
+                <span className="text-gray-500">
+                  {React.createElement(departmentIcons[dept as Department], {
+                    size: 16,
+                  })}
+                </span>
+              )}
+              {dept}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const ContactCard = ({ contact }: { contact: DirectoryContact }) => {
+    const isEditing = editingContact?.id === contact._id;
+
+    if (isEditing) {
+      return (
+        <EditForm
+          contact={contact}
+          onCancel={() => setEditingContact(null)}
+          onSave={handleSaveContact}
+          onDelete={() => {
+            deleteContact({ id: contact._id });
+            setEditingContact(null);
+          }}
+        />
+      );
+    }
+
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200">
+        <div className="border-b pb-2 mb-2 flex justify-between items-start">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {contact.name}
+            </h3>
+            <p className="text-sm text-gray-600">{contact.position}</p>
+          </div>
+          <button
+            onClick={() =>
+              setEditingContact({
+                id: contact._id,
+                department: contact.department,
+              })
+            }
+            className="p-1 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="space-y-2">
+          {contact.extension && (
+            <div className="flex items-center text-sm">
+              <Phone className="w-4 h-4 mr-2 text-gray-500" />
+              <span>Ext: {contact.extension}</span>
+            </div>
+          )}
+          {contact.number && (
+            <div className="flex items-center text-sm">
+              <Phone className="w-4 h-4 mr-2 text-gray-500" />
+              <span>{contact.number}</span>
+            </div>
+          )}
+          {contact.email && (
+            <div className="flex items-center text-sm">
+              <Mail className="w-4 h-4 mr-2 text-gray-500" />
+              <span>{contact.email}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const DepartmentSection = ({
+    title,
+    contacts = [],
+    department,
+  }: {
+    title: string;
+    contacts: DirectoryContact[];
+    department: string;
+  }) => {
+    const filteredList = filterContacts(contacts);
+    if (filteredList.length === 0) return null;
+
+    const Icon = departmentIcons[department as Department] || Users;
+    const groupedByPosition = groupContactsByPosition(filteredList);
+
+    const sortedPositions = Object.entries(groupedByPosition).sort(
+      ([posA], [posB]) => {
+        const isManagerA = isManager(posA);
+        const isManagerB = isManager(posB);
+        if (isManagerA && !isManagerB) return -1;
+        if (!isManagerA && isManagerB) return 1;
+        return posA.localeCompare(posB);
+      }
+    );
+
+    return (
+      <div
+        id={`department-${department}`}
+        className="bg-white rounded-lg shadow-md p-6 mb-6"
+      >
+        <div className="flex items-center mb-6">
+          <Icon className="w-6 h-6 text-gray-600" />
+          <h2 className="text-xl font-semibold text-gray-800 ml-2">{title}</h2>
         </div>
 
-        {/* Executive Leadership */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Building className="h-6 w-6 text-blue-600" />
-              <CardTitle>Executive Leadership</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">General Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Larry Johnson</span>
-                  </p>
-                  <p>📞 Ext: 101</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ ljohnson@volvonorthmiami.com</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Operations Director</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Sarah Martinez</span>
-                  </p>
-                  <p>📞 Ext: 102</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ smartinez@volvonorthmiami.com</p>
-                </div>
+        <div className="space-y-8">
+          {sortedPositions.map(([position, positionContacts]) => (
+            <div key={position} className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-700 border-b pb-2">
+                {position}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {positionContacts.map((contact) => (
+                  <ContactCard key={contact._id} contact={contact} />
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
-        {/* Sales Department */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-blue-600" />
-              <CardTitle>Sales Department</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">New Car Sales Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Mike Thompson</span>
-                  </p>
-                  <p>📞 Ext: 201</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ mthompson@volvonorthmiami.com</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Pre-Owned Sales Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">David Rodriguez</span>
-                  </p>
-                  <p>📞 Ext: 202</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ drodriguez@volvonorthmiami.com</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  if (!contacts) return <div>Loading...</div>;
 
-        {/* Service Department */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Wrench className="h-6 w-6 text-blue-600" />
-              <CardTitle>Service Department</CardTitle>
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Volvo Cars North Miami Directory
+          </h1>
+          {address && (
+            <div className="flex items-center mb-4 text-gray-600">
+              <Building className="w-5 h-5 mr-2" />
+              {address}
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Service Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Robert Chen</span>
-                  </p>
-                  <p>📞 Ext: 301</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ rchen@volvonorthmiami.com</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Service Advisor Lead</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Lisa Parker</span>
-                  </p>
-                  <p>📞 Ext: 302</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ lparker@volvonorthmiami.com</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
+      </div>
 
-        {/* Parts Department */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <ClipboardList className="h-6 w-6 text-blue-600" />
-              <CardTitle>Parts Department</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Parts Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">James Wilson</span>
-                  </p>
-                  <p>📞 Ext: 401</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ jwilson@volvonorthmiami.com</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Parts Counter Lead</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Carlos Ruiz</span>
-                  </p>
-                  <p>📞 Ext: 402</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ cruiz@volvonorthmiami.com</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <DepartmentIndex />
+      <div className="relative mb-8">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search contacts..."
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        {/* Finance Department */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-6 w-6 text-blue-600" />
-              <CardTitle>Finance Department</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Finance Director</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Patricia Lee</span>
-                  </p>
-                  <p>📞 Ext: 501</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ plee@volvonorthmiami.com</p>
-                </div>
+      {dealerInfo.length > 0 && (
+        <div className="mt-4 mb-8 bg-blue-50 rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-blue-800 mb-2">
+            Important Numbers
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {dealerInfo.map((info, index) => (
+              <div key={index} className="flex items-center">
+                <Phone className="w-4 h-4 mr-2 text-blue-500" />
+                <span className="text-sm">
+                  <span className="font-medium">{info.name}:</span> {info.phone}
+                </span>
               </div>
-              <div>
-                <h3 className="font-semibold mb-4">Finance Manager</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Mark Stevens</span>
-                  </p>
-                  <p>📞 Ext: 502</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ mstevens@volvonorthmiami.com</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
-        {/* Support Departments */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <HeartHandshake className="h-6 w-6 text-blue-600" />
-              <CardTitle>Support Departments</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Human Resources</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Maria Garcia</span>
-                  </p>
-                  <p>📞 Ext: 601</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ mgarcia@volvonorthmiami.com</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">IT Support</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Tech Support Desk</span>
-                  </p>
-                  <p>📞 Ext: 701</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                  <p>✉️ itsupport@volvonorthmiami.com</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Emergency Contacts */}
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-6 w-6 text-red-600" />
-              <CardTitle>Emergency Contacts</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Security</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Security Office</span>
-                  </p>
-                  <p>📞 Ext: 911</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-4">Facilities</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Maintenance Team</span>
-                  </p>
-                  <p>📞 Ext: 801</p>
-                  <p>📱 (305) XXX-XXXX</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-6">
+        {Object.entries(groupContactsByDepartment(contacts)).map(
+          ([department, deptContacts]) => (
+            <DepartmentSection
+              key={department}
+              title={department ? `${department} Department` : "Other"}
+              contacts={deptContacts as DirectoryContact[]}
+              department={department}
+            />
+          )
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default ContactDirectory;

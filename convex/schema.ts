@@ -27,9 +27,12 @@ export default defineSchema({
     address: v.string(),
     googleMapsUrl: v.string(),
     updatedAt: v.number(),
-  }),
+    // Add phone field for important numbers
+    phone: v.optional(v.string()),
+    category: v.optional(v.string()), // For identifying important numbers
+  }).index("by_category", ["category"]),
 
-  // New directory table
+  // Directory table
   directory: defineTable({
     name: v.string(),
     position: v.string(),
@@ -83,4 +86,49 @@ export default defineSchema({
       )
     ),
   }).index("by_status", ["isArchived"]),
+
+  // Main departments table
+  departments: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    order: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_order", ["order"]),
+
+  // Contacts table
+  contacts: defineTable({
+    name: v.string(),
+    role: v.string(),
+    extension: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    email: v.optional(v.string()),
+    departmentId: v.id("departments"),
+    isActive: v.boolean(),
+    order: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_department", ["departmentId"])
+    .index("by_active", ["isActive"]),
+
+  // Company settings table
+  companySettings: defineTable({
+    name: v.string(),
+    value: v.string(),
+    category: v.string(),
+    description: v.optional(v.string()),
+    order: v.optional(v.number()),
+    updatedAt: v.number(),
+  }).index("by_category", ["category"]),
+
+  // Audit log for tracking changes
+  auditLog: defineTable({
+    userId: v.string(),
+    action: v.string(),
+    tableName: v.string(),
+    recordId: v.string(),
+    changes: v.string(),
+    timestamp: v.number(),
+  }).index("by_record_id", ["recordId"]),
 });

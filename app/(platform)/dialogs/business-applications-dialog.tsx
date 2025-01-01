@@ -80,11 +80,40 @@ export function BusinessApplicationsDialog({
                     Important guidelines for processing business applications.
                   </p>
                   <p className="text-sm text-foreground/80">
-                    When processing deals, ensure there is an authorized
-                    guarantor listed in the business articles. All business
-                    applications must include a guarantor who is officially
-                    documented in the company&apos;s articles of incorporation.
+                    Typically, business deals are structured with the business
+                    listed as the primary purchaser (line 1), accompanied by an
+                    authorized guarantor who essentially co-signs for the
+                    business. The guarantor must be explicitly listed in the
+                    company&apos;s articles of incorporation.
                   </p>
+                  <p className="text-sm text-foreground/80">
+                    In some instances, a customer may prefer to structure the
+                    deal entirely under the business name. This approach is
+                    subject to stricter requirements and carries additional
+                    implications. If this is the case, please consult with the
+                    sales manager and refer to Volvo&apos;s Business
+                    documentation.
+                  </p>
+                  <p className="text-sm text-foreground/80">
+                    Regardless of whether the deal is structured as
+                    business-only or business-with-guarantor, ensure that:
+                  </p>
+                  <ul className="list-disc pl-5 text-sm text-foreground/80">
+                    <li>The business application form is fully completed.</li>
+                    <li>
+                      A printout of the business’s Sunbiz record is included.
+                      You can retrieve this record from{" "}
+                      <a
+                        href="https://search.sunbiz.org/Inquiry/CorporationSearch/ByName"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline"
+                      >
+                        Sunbiz.org
+                      </a>
+                      .
+                    </li>
+                  </ul>
                 </div>
                 <div className="h-[600px] border rounded-lg overflow-hidden bg-muted/50">
                   <div className="w-full h-full flex items-center justify-center p-2">

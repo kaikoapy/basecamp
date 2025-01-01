@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { useDialog } from "@/components/providers/dialog-provider";
+import { usePathname } from "next/navigation";
 
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
@@ -33,8 +34,23 @@ import {
 import { DOCUMENT_URLS } from "@/app/config/constants";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
   const { openOrganizationProfile } = useClerk();
   const { showDialog } = useDialog();
+
+  const handleSectionNavigation = async (section: string) => {
+    if (pathname !== "/dashboard") {
+      // Force navigation to dashboard with the section parameter
+      const url = `/dashboard?section=${encodeURIComponent(section)}`;
+      window.location.href = url;
+    } else {
+      // If already on dashboard, just scroll to section
+      const element = document.getElementById(section);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   const navigationItems: NavProject[] = [
     {
@@ -43,6 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "dashboard",
       iconColor: "#8B6DFF", // RoadeoPurple
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("dashboard"),
     },
     {
       name: "Announcements",
@@ -50,6 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "announcements",
       iconColor: "#FF6B6B", // Coral Red
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("announcements"),
     },
     {
       name: "Quick Access",
@@ -57,6 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "quick-access",
       iconColor: "#4CAF50", // Green
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("quick-access"),
     },
     {
       name: "Dealer Sites",
@@ -64,6 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "dealer-sites",
       iconColor: "#2196F3", // Blue
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("dealer-sites"),
     },
     {
       name: "Communication",
@@ -71,6 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "communication",
       iconColor: "#9C27B0", // Purple
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("communication"),
     },
     {
       name: "Incentives",
@@ -78,6 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "incentives",
       iconColor: "#FF9800", // Orange
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("incentives"),
     },
     {
       name: "Tools",
@@ -85,6 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "tools",
       iconColor: "#607D8B", // Blue Gray
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("tools"),
     },
     {
       name: "Volvo Sites",
@@ -92,6 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "volvo-sites",
       iconColor: "#00BCD4", // Cyan
       iconBgColor: "white",
+      onClick: () => handleSectionNavigation("volvo-sites"),
     },
   ];
 

@@ -17,8 +17,9 @@ export interface NavProject {
   name: string;
   icon: LucideIcon;
   section: string;
-  iconColor?: string;
-  iconBgColor?: string;
+  iconColor: string;
+  iconBgColor: string;
+  onClick?: () => void;
 }
 
 export function NavProjects({ projects }: { projects: NavProject[] }) {
@@ -53,15 +54,17 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
 
   const handleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
-    section: string
+    item: NavProject
   ) => {
     e.preventDefault();
-
-    scrollToSection(section);
-
-    const params = new URLSearchParams(searchParams);
-    params.set("section", section);
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    if (item.onClick) {
+      item.onClick();
+    } else {
+      scrollToSection(item.section);
+      const params = new URLSearchParams(searchParams);
+      params.set("section", item.section);
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }
   };
 
   return (
@@ -72,7 +75,7 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild
-              onClick={(e) => handleClick(e, item.section)}
+              onClick={(e) => handleClick(e, item)}
               tooltip={item.name}
               onMouseEnter={() => setHoveredItem(item.name)}
               onMouseLeave={() => setHoveredItem(null)}
