@@ -25,6 +25,9 @@ type Department = keyof typeof departmentIcons;
 
 const ContactDirectory = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
+    null
+  );
   const [editingContact, setEditingContact] = useState<{
     id: Id<"directory">;
     department: string;
@@ -49,12 +52,18 @@ const ContactDirectory = () => {
   };
 
   const filterContacts = (contacts: DirectoryContact[] = []) => {
-    return contacts.filter((contact) =>
-      Object.values(contact)
+    return contacts.filter((contact) => {
+      const matchesSearch = Object.values(contact)
         .join(" ")
         .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    );
+        .includes(searchQuery.toLowerCase());
+
+      const matchesDepartment = selectedDepartment
+        ? contact.department === selectedDepartment
+        : true;
+
+      return matchesSearch && matchesDepartment;
+    });
   };
 
   const isManager = (position: string) => {
@@ -83,13 +92,6 @@ const ContactDirectory = () => {
     return _.groupBy(contacts, "position");
   };
 
-  const scrollToDepartment = (department: string) => {
-    const element = document.getElementById(`department-${department}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const DepartmentIndex = () => {
     if (!contacts) return null;
 
@@ -101,16 +103,37 @@ const ContactDirectory = () => {
           Departments
         </h2>
         <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedDepartment(null)}
+            className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-200
+              ${
+                !selectedDepartment
+                  ? "bg-blue-50 border-blue-200 text-blue-700"
+                  : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+              }`}
+          >
+            All
+          </button>
           {departments.map((dept) => (
             <button
               key={dept}
-              onClick={() => scrollToDepartment(dept)}
-              className="px-3 py-1.5 text-sm bg-white hover:bg-gray-50 text-gray-700 
-                rounded-md border border-gray-200 transition-colors duration-200
-                flex items-center gap-2"
+              onClick={() => setSelectedDepartment(dept)}
+              className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-200
+                flex items-center gap-2
+                ${
+                  selectedDepartment === dept
+                    ? "bg-blue-50 border-blue-200 text-blue-700"
+                    : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+                }`}
             >
               {departmentIcons[dept as Department] && (
-                <span className="text-gray-500">
+                <span
+                  className={
+                    selectedDepartment === dept
+                      ? "text-blue-500"
+                      : "text-gray-500"
+                  }
+                >
                   {React.createElement(departmentIcons[dept as Department], {
                     size: 16,
                   })}
@@ -288,16 +311,19 @@ const ContactDirectory = () => {
       )}
 
       <div className="grid grid-cols-1 gap-6">
-        {Object.entries(groupContactsByDepartment(contacts)).map(
-          ([department, deptContacts]) => (
+        {Object.entries(groupContactsByDepartment(contacts))
+          .filter(
+            ([department]) =>
+              !selectedDepartment || department === selectedDepartment
+          )
+          .map(([department, deptContacts]) => (
             <DepartmentSection
               key={department}
               title={department ? `${department} Department` : "Other"}
               contacts={deptContacts as DirectoryContact[]}
               department={department}
             />
-          )
-        )}
+          ))}
       </div>
     </div>
   );

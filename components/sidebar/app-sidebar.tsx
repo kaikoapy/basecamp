@@ -191,10 +191,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "#",
           },
           {
-            title: "Rules & Policies",
-            url: "/rules",
-          },
-          {
             title: "Dealer Trade Stores",
             url: "/dealer-trade-stores",
           },
