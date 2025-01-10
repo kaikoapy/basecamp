@@ -52,7 +52,7 @@ export default function EX30Page() {
           </div>
           <div className="relative h-[300px] rounded-lg overflow-hidden">
             <Image
-              src="/images/product-knowledge/ex30/performance.jpg"
+              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yzvCzV9O0hjmS4fOLN1qgvdriDbFCVGYJwQlX"
               alt="EX30 Performance"
               fill
               className="object-cover"
@@ -76,7 +76,7 @@ export default function EX30Page() {
           />
           <div className="relative h-[300px] rounded-lg overflow-hidden">
             <Image
-              src="/images/product-knowledge/ex30/exterior.jpg"
+              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yoNNmSqwPkMteXwEh56n8B9TDmpOWubxqyJ7C"
               alt="EX30 Exterior Design"
               fill
               className="object-cover"
@@ -98,7 +98,7 @@ export default function EX30Page() {
           />
           <div className="relative h-[300px] rounded-lg overflow-hidden">
             <Image
-              src="/images/product-knowledge/ex30/interior.jpg"
+              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yObR4lDpvrsXpeiu26yZTBnadAzhLNKxb95WI"
               alt="EX30 Interior"
               fill
               className="object-cover"
@@ -130,7 +130,7 @@ export default function EX30Page() {
           </div>
           <div className="relative h-[300px] rounded-lg overflow-hidden">
             <Image
-              src="/images/product-knowledge/ex30/technology.jpg"
+              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yVklUijSuK4t9LmXyGPHapJfoWbeqcrSTOv26"
               alt="EX30 Technology Features"
               fill
               className="object-cover"

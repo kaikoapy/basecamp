@@ -186,10 +186,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Contact Directory",
             url: "/directory",
           },
-          {
-            title: "Overseas Delivery",
-            url: "#",
-          },
+          // {
+          //   title: "Overseas Delivery",
+          //   url: "#",
+          // },
           {
             title: "Dealer Trade Stores",
             url: "/dealer-trade-stores",
@@ -246,18 +246,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Dealer Map",
             url: "/dealer-map",
           },
-          {
-            title: "Product Info",
-            url: "#",
-          },
-          {
-            title: "Key Contacts",
-            url: "/directory",
-          },
-          {
-            title: "FAQ",
-            url: "/faq",
-          },
+          // {
+          //   title: "Product Info",
+          //   url: "#",
+          // },
+          // {
+          //   title: "Key Contacts",
+          //   url: "/directory",
+          // },
+          // {
+          //   title: "FAQ",
+          //   url: "/faq",
+          // },
         ],
       },
       {
