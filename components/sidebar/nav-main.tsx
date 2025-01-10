@@ -76,7 +76,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 <SidebarMenuButton
                   asChild
                   tooltip={item.title}
-                  className="hover:bg-slate-200/80 transition-colors" // Added hover style
+                  className="hover:bg-slate-200/90 transition-colors" // Added hover style
                 >
                   <Link
                     href={item.url || "#"}
@@ -106,7 +106,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className="text-left hover:bg-slate-200/80 transition-colors" // Added hover style
+                    className="text-left hover:bg-slate-200/90 transition-colors" // Added hover style
                   >
                     <item.icon className="size-4" />
                     <span className="flex-1 text-sm text-gray-800">
@@ -130,7 +130,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <SidebarMenuButton
                           onClick={subItem.action}
                           tooltip={subItem.title}
-                          className="text-sm text-left hover:bg-slate-200/80 transition-colors" // Added hover style
+                          className="text-sm text-left hover:bg-slate-200/90 transition-colors" // Added hover style
                         >
                           <span>{subItem.title}</span>
                         </SidebarMenuButton>
@@ -138,7 +138,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <DynamicModal component={subItem.component}>
                           <SidebarMenuButton
                             tooltip={subItem.title}
-                            className="text-sm text-left hover:bg-slate-200/80transition-colors" // Added hover style
+                            className="text-sm text-left hover:bg-slate-200/90transition-colors" // Added hover style
                           >
                             <span>{subItem.title}</span>
                           </SidebarMenuButton>
@@ -147,7 +147,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <SidebarMenuButton
                           asChild
                           tooltip={subItem.title}
-                          className="hover:bg-slate-200/80 transition-colors" // Added hover style
+                          className="hover:bg-slate-200/90 transition-colors" // Added hover style
                         >
                           <Link
                             href={subItem.url || "#"}

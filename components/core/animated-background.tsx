@@ -80,7 +80,7 @@ export function AnimatedBackground({
     >
       {active && (
         <motion.div
-          className="absolute inset-0 bg-zinc-200/50 dark:bg-zinc-700/50 rounded-md -z-10"
+          className="absolute inset-0 bg-slate-200/90 dark:bg-slate-700/50 rounded-md -z-10"
           layoutId="hover"
           initial={false}
           animate={{
