@@ -73,7 +73,11 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
           if (!item.items?.length) {
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  className="hover:bg-slate-200/80 transition-colors" // Added hover style
+                >
                   <Link
                     href={item.url || "#"}
                     {...(isExternalUrl(item.url || "")
@@ -100,9 +104,12 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
             >
               <CollapsibleTrigger asChild>
                 <SidebarMenuItem>
-                  <SidebarMenuButton tooltip={item.title} className="text-left">
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className="text-left hover:bg-slate-200/80 transition-colors" // Added hover style
+                  >
                     <item.icon className="size-4" />
-                    <span className="flex-1 text-sm text-gray-800 hover:text-black">
+                    <span className="flex-1 text-sm text-gray-800">
                       {item.title}
                     </span>
                     <ChevronRight
@@ -116,12 +123,14 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
               <CollapsibleContent>
                 <SidebarMenu className="ml-4 border-l border-border pl-2">
                   {item.items?.map((subItem) => (
-                    <SidebarMenuItem key={subItem.title}>
+                    <SidebarMenuItem key={subItem.title} className="pr-4">
+                      {" "}
+                      {/* Add right padding */}
                       {subItem.action ? (
                         <SidebarMenuButton
                           onClick={subItem.action}
                           tooltip={subItem.title}
-                          className="text-sm text-left hover:text-black"
+                          className="text-sm text-left hover:bg-slate-200/80 transition-colors" // Added hover style
                         >
                           <span>{subItem.title}</span>
                         </SidebarMenuButton>
@@ -129,13 +138,17 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <DynamicModal component={subItem.component}>
                           <SidebarMenuButton
                             tooltip={subItem.title}
-                            className="text-sm text-left hover:text-black"
+                            className="text-sm text-left hover:bg-slate-200/80transition-colors" // Added hover style
                           >
                             <span>{subItem.title}</span>
                           </SidebarMenuButton>
                         </DynamicModal>
                       ) : (
-                        <SidebarMenuButton asChild tooltip={subItem.title}>
+                        <SidebarMenuButton
+                          asChild
+                          tooltip={subItem.title}
+                          className="hover:bg-slate-200/80 transition-colors" // Added hover style
+                        >
                           <Link
                             href={subItem.url || "#"}
                             {...(isExternalUrl(subItem.url || "")
@@ -144,7 +157,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                                   rel: "noopener noreferrer",
                                 }
                               : {})}
-                            className="text-sm text-left hover:text-black"
+                            className="text-sm text-left"
                           >
                             <span>{subItem.title}</span>
                           </Link>

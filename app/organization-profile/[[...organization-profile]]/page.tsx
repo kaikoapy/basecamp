@@ -11,7 +11,7 @@ export default function OrganizationProfilePage() {
   const { organization, isLoaded } = useOrganization();
 
   if (!isLoaded) {
-    return null; // Let the loading.tsx handle the loading state
+    return null;
   }
 
   if (!organization) {

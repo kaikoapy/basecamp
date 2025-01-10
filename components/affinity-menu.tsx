@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/hover-card";
 import { CopyButton } from "@/components/copy-button";
 import { OpenLinkButton } from "@/components/open-link-button";
+import { useToast } from "@/hooks/use-toast";
 
 const SUPPORT_EMAIL = "support@aplanbyvolvo.com";
 
@@ -86,6 +87,7 @@ const associationOptions: AffinityOption[] = [
 
 export function AffinityMenu() {
   const [mounted, setMounted] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -266,6 +268,12 @@ export function AffinityMenu() {
                     variant="outline"
                     size="icon"
                     className="h-7 w-7 hover:bg-transparent p-0"
+                    onClick={() => {
+                      navigator.clipboard.writeText(SUPPORT_EMAIL_TEMPLATE);
+                      toast({
+                        description: "Email template copied to clipboard",
+                      });
+                    }}
                   >
                     <FileText size={14} strokeWidth={2} aria-hidden="true" />
                   </Button>

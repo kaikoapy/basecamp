@@ -57,7 +57,6 @@ export default function RootLayout({
                 <NuqsAdapter>
                   <Providers>
                     {children}
-
                     <DialogWrapper name="business-applications">
                       {BusinessApplicationsDialog}
                     </DialogWrapper>

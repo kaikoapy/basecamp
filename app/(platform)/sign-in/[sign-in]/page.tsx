@@ -1,5 +1,5 @@
-import { SignIn } from "@clerk/nextjs";
+import { SignInClientWrapper } from "./sign-in-client";
 
 export default function Page() {
-  return <SignIn />;
+  return <SignInClientWrapper />;
 }

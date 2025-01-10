@@ -2,12 +2,12 @@
  * app/page.tsx
  *******************************************************/
 
-import ScheduleDisplay from "./(components)/ScheduleDisplay";
+import { ScheduleImage } from "./(components)/ScheduleImage";
 
-export default function Home() {
+export default function Page() {
   return (
-    <main className="min-h-screen p-4">
-      <ScheduleDisplay />
+    <main className="min-h-screen">
+      <ScheduleImage />
     </main>
   );
 }

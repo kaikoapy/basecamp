@@ -61,9 +61,7 @@ export function SpeedDial() {
                     onMouseEnter={() => setHoveredItem(manager.name)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
-                    <div className="text-sm font-semibold">
-                      {manager.name} ({manager.title})
-                    </div>
+                    <div className="text-sm font-semibold">{manager.name}</div>
                     {renderContactButton(manager.phone)}
                   </div>
                 ))}

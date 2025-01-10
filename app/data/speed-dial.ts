@@ -27,17 +27,14 @@ export const speedDialContacts: SpeedDialContacts = {
   management: [
     {
       name: "Serdar",
-      title: "New Car Sales Manager",
       phone: "(954) 478-0068",
     },
     {
-      name: "Marlon",
-      title: "also a manager",
+      name: "Marlon (also a manager)",
       phone: "(305) 495-6700",
     },
     {
       name: "Cesar",
-      title: "Service Manager",
       phone: "(305) 333-9525",
     },
   ],

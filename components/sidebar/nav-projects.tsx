@@ -79,6 +79,7 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
               tooltip={item.name}
               onMouseEnter={() => setHoveredItem(item.name)}
               onMouseLeave={() => setHoveredItem(null)}
+              className="hover:bg-slate-200/80 transition-colors" // Added hover style
             >
               <button className="flex w-full items-center text-sm font-medium text-gray-700">
                 <div
