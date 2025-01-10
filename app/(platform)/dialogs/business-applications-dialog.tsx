@@ -82,9 +82,9 @@ export function BusinessApplicationsDialog({
                   <p className="text-sm text-foreground/80">
                     Typically, business deals are structured with the business
                     listed as the primary purchaser (line 1), accompanied by an
-                    authorized guarantor who essentially co-signs for the
-                    business. The guarantor must be explicitly listed in the
-                    company&apos;s articles of incorporation.
+                    authorized guarantor who co-signs for the business. The
+                    guarantor must be explicitly listed in the company&apos;s
+                    articles of incorporation.
                   </p>
                   <p className="text-sm text-foreground/80">
                     In some instances, a customer may prefer to structure the
@@ -114,6 +114,10 @@ export function BusinessApplicationsDialog({
                       .
                     </li>
                   </ul>
+                  <p className="text-sm pt-4 text-foreground/80">
+                    Below are the guidliens for a business-only (no guarantor)
+                    deal:
+                  </p>
                 </div>
                 <div className="h-[600px] border rounded-lg overflow-hidden bg-muted/50">
                   <div className="w-full h-full flex items-center justify-center p-2">

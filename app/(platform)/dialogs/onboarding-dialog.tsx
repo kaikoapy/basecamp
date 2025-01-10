@@ -30,25 +30,25 @@ export function OnboardingDialog({
     {
       title: "Welcome to Dealer Hub",
       description:
-        "Your centralized platform for accessing all essential dealer tools and resources in one place.",
+        "Here's your go-to spot for all the tools and resources you need, all in one place.",
       image: "/placeholder.svg?height=200&width=300",
     },
     {
       title: "Quick Access",
       description:
-        "Pin your most-used tools to the Quick Access section for faster navigation. Look for the pin icon when hovering over cards.",
+        "Pin your favorite tools here for quicker access. Just hover over a card and look for the pin icon.",
       image: "/placeholder.svg?height=200&width=300",
     },
     {
       title: "Tools & Resources",
       description:
-        "Access external tools like A-Plan, Carfax, and DealerSocket, plus internal resources like Wire Instructions and FAQs.",
+        "Get to external tools like A-Plan, Carfax, and DealerSocket, plus our internal stuff like wire instructions and FAQs.",
       image: "/placeholder.svg?height=200&width=300",
     },
     {
       title: "Stay Updated",
       description:
-        "Check the Announcements section for important updates and new features. Recent announcements will be marked as 'New'.",
+        "Keep an eye on the Announcements for the latest news or new features. You'll see 'New' on the recent ones.",
       image: "/placeholder.svg?height=200&width=300",
     },
   ];

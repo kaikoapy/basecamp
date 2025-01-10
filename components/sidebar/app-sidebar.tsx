@@ -6,7 +6,7 @@ import {
   BookOpen,
   Command,
   GalleryVerticalEnd,
-  Settings2,
+  // Settings2,
   Bookmark,
   Wrench,
   Tag,
@@ -17,7 +17,7 @@ import {
   Printer,
   Brain,
 } from "lucide-react";
-import { useClerk } from "@clerk/nextjs";
+// import { useClerk } from "@clerk/nextjs";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
 
@@ -35,10 +35,21 @@ import { DOCUMENT_URLS } from "@/app/config/constants";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const { openOrganizationProfile } = useClerk();
+  // const { openOrganizationProfile } = useClerk();
   const { showDialog } = useDialog();
 
   const handleSectionNavigation = async (section: string) => {
+    if (section === "dashboard") {
+      if (pathname !== "/dashboard") {
+        // Navigate to dashboard
+        window.location.href = "/dashboard";
+      } else {
+        // Already on dashboard, scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
+
     if (pathname !== "/dashboard") {
       // Force navigation to dashboard with the section parameter
       const url = `/dashboard?section=${encodeURIComponent(section)}`;
@@ -194,6 +205,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Dealer Trade Stores",
             url: "/dealer-trade-stores",
           },
+          {
+            title: "CSI Surveys",
+            url: `https://volvo.medallia.eu/sso/volvo/applications/ex_WEB-9/pages/255?roleId=512&f.calculation=41&f.benchmark=100000006&f.feedback-type=all-feedback&f.question-score=a_overall_score_with_social_media_5_buckets&f.timeperiod=365&f.reporting-date=k_bp_timezone_response_time&cf.topic-filter-builder=${encodeURIComponent('{"t":0,"s":0}')}&alreftoken=94fc738d2571cee6adddacd83c4c764d&responsesSortBy=k_bp_timezone_response_time&responsesSortAscending=false&responsesSortIndex=0&responsesOffset=0`,
+          },
         ],
       },
       {
@@ -246,6 +261,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Dealer Map",
             url: "/dealer-map",
           },
+          {
+            title: "Co-Advantage HR",
+            url: "https://coadquantum.coadvantage.com/Home",
+          },
           // {
           //   title: "Product Info",
           //   url: "#",
@@ -260,25 +279,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           // },
         ],
       },
-      {
-        title: "Settings",
-        url: "#",
-        icon: Settings2,
-        items: [
-          {
-            title: "Organization",
-            action: () => openOrganizationProfile(),
-          },
-          {
-            title: "Members",
-            action: () => openOrganizationProfile(),
-          },
-          {
-            title: "Billing",
-            action: () => openOrganizationProfile(),
-          },
-        ],
-      },
+      // {
+      //   title: "Settings",
+      //   url: "#",
+      //   icon: Settings2,
+      //   items: [
+      //     {
+      //       title: "Dealership Settings",
+      //       action: () => openOrganizationProfile(),
+      //     },
+      // {
+      //   title: "Members",
+      //   action: () => openOrganizationProfile(),
+      // },
+      // {
+      //   title: "Billing",
+      //   action: () => openOrganizationProfile(),
+      // },
+      //   ],
+      // },
     ],
   };
 
