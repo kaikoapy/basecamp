@@ -29,9 +29,7 @@ export default function Navbar() {
                 </Button>
               </SignInButton>
               <SignInButton mode="modal">
-                <Button className="text-sm font-medium">
-                  Start Free Trial
-                </Button>
+                <Button className="text-sm font-medium">Start Now</Button>
               </SignInButton>
             </SignedOut>
             <SignedIn>

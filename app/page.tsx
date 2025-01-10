@@ -49,7 +49,7 @@ export default function Home() {
             {/* Strong CTA that Handles Objections */}
             <div className="flex flex-col items-center gap-4">
               <Button size="lg" className="gap-2">
-                Start Free 30-Day Trial <ArrowRight className="h-4 w-4" />
+                Start Now <ArrowRight className="h-4 w-4" />
               </Button>
               <span className="text-sm text-gray-500">
                 No credit card required • Set up in 10 minutes
@@ -369,7 +369,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col items-center gap-4">
               <Button size="lg" variant="secondary" className="gap-2">
-                Start Your Free 30-Day Trial <ArrowRight className="h-4 w-4" />
+                Start Now <ArrowRight className="h-4 w-4" />
               </Button>
               <span className="text-sm text-blue-200">
                 No credit card required • Full access to all features
@@ -387,7 +387,7 @@ export default function Home() {
               <span className="font-semibold">DealerHub</span>
             </div>
             <p className="text-sm text-gray-500">
-              © 2024 DealerHub. All rights reserved.
+              © 2025 DealerHub. All rights reserved.
             </p>
           </div>
         </div>
