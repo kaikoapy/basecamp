@@ -3,16 +3,14 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, SquareArrowOutUpRight, Calendar } from "lucide-react";
+import { Clock, Calendar, Bookmark, ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { CopyButton } from "@/components/copy-button";
 import { AffinityMenu } from "@/components/affinity-menu";
 import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
 import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
@@ -25,7 +23,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-
+import { CopyButtonWithText } from "@/components/copy-button";
 // Base64 encoding function
 function encodeId(id: string): string {
   if (typeof window === "undefined") return id;
@@ -100,7 +98,6 @@ export function DashboardCard(props: DashboardCardProps) {
     isEmail,
     type,
     showCopyButton,
-    showExternalLink,
     readBy = [],
     files,
     content,
@@ -173,14 +170,6 @@ export function DashboardCard(props: DashboardCardProps) {
     }
   };
 
-  const handleOpenLink = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
-
   const handleCardClick = () => {
     if (isModal && component) {
       setDialogOpen(true);
@@ -200,7 +189,7 @@ export function DashboardCard(props: DashboardCardProps) {
 
   const renderCard = (
     <Card
-      className="overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] relative group"
+      className="overflow-hidden cursor-pointer transition-transform hover:scale-[1.02]  relative group hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)]"
       onClick={handleCardClick}
     >
       <div className="absolute top-2 right-2 flex gap-2 z-20">
@@ -216,18 +205,26 @@ export function DashboardCard(props: DashboardCardProps) {
             <button
               onClick={(e) => handlePinToggle(e, id)}
               className={cn(
-                "absolute top-2 right-2 z-30 transition-all hover:scale-110",
+                "absolute top-2 right-2 z-30 transition-all",
                 !isPinned && "hidden group-hover:block"
               )}
               aria-label={isPinned ? "Unpin" : "Pin"}
             >
               <div
                 className={cn(
-                  "w-7 h-7 rounded-full flex items-center justify-center shadow-sm transition-all",
-                  isPinned ? "bg-white" : "bg-gray-200"
+                  "flex items-center justify-center transition-all",
+                  "bg-white/90 rounded-full p-2 shadow-sm",
+                  "hover:shadow-md",
+                  isPinned
+                    ? "text-yellow-400"
+                    : "text-gray-400 hover:text-yellow-400"
                 )}
               >
-                <span className="text-lg">📌</span>
+                <Bookmark
+                  className="w-4 h-4"
+                  fill={isPinned ? "currentColor" : "none"}
+                  strokeWidth={2}
+                />
               </div>
             </button>
           </TooltipTrigger>
@@ -239,7 +236,7 @@ export function DashboardCard(props: DashboardCardProps) {
         </Tooltip>
       )}
       <div className="p-0">
-        <div className="relative aspect-video">
+        <div className="relative aspect-video bg-blue-50">
           <div className="absolute inset-0 bg-black/5 transition-opacity group-hover:opacity-0 z-10" />
           {displayImage ? (
             <Image
@@ -247,14 +244,14 @@ export function DashboardCard(props: DashboardCardProps) {
               alt={title}
               fill
               quality={100}
-              className="object-cover transition-all"
+              className="object-contain transition-all p-4"
             />
           ) : (
             <div
               className="absolute inset-0 bg-muted flex items-center justify-center p-4 text-center"
               style={{ fontFamily: "var(--font-poppins)" }}
             >
-              <h3 className="text-lg font-semibold text-muted-foreground/70">
+              <h3 className="text-xl font-semibold text-muted-foreground/70">
                 {coverText || title}
               </h3>
             </div>
@@ -263,7 +260,7 @@ export function DashboardCard(props: DashboardCardProps) {
         <div className="p-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-base leading-tight truncate flex-1 mr-2">
+              <h3 className="font-semibold text-xl leading-tight truncate flex-1 mr-2">
                 {title}
               </h3>
               <div className="flex items-center gap-1 shrink-0">
@@ -271,29 +268,7 @@ export function DashboardCard(props: DashboardCardProps) {
                   <AffinityMenu />
                 ) : url ? (
                   <div className="flex gap-1">
-                    {showCopyButton && <CopyButton value={url} />}
-                    {showExternalLink && (
-                      <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={handleOpenLink}
-                            aria-label="Open in new tab"
-                          >
-                            <SquareArrowOutUpRight
-                              size={12}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="px-2 py-1 text-xs">
-                          Open in new tab
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
+                    {showCopyButton && <CopyButtonWithText value={url} />}
                   </div>
                 ) : isAnnouncement && displayDate ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -318,6 +293,16 @@ export function DashboardCard(props: DashboardCardProps) {
                 {description}
               </p>
             )}
+            <button
+              className="w-full mt-6 bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCardClick();
+              }}
+            >
+              Open
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>

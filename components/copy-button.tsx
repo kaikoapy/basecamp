@@ -28,6 +28,7 @@ interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   tooltipText?: string;
   disableTooltip?: boolean;
   onClick?: () => void;
+  showText?: boolean;
 }
 
 export function CopyButton({
@@ -142,6 +143,112 @@ export function CopyButton({
 
   return (
     <Tooltip delayDuration={0} defaultOpen={false}>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent className="px-2 py-1 text-xs">
+        {copied ? "Copied!" : `Copy ${tooltipText} to clipboard`}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+export function CopyButtonWithText({
+  value,
+  className,
+  tooltipText = "link",
+  variant = "outline",
+  disableTooltip = false,
+  onClick,
+  ...props
+}: CopyButtonProps) {
+  const [copied, setCopied] = React.useState(false);
+  const controls = useAnimation();
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+      if (onClick) {
+        onClick();
+      }
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const AnimatedCopyIcon = () => (
+    <div className="relative flex items-cente justify-center gap-1.5 py-1">
+      <span className="font-medium text-xs">
+        {copied ? "Copied!" : "Copy link"}
+      </span>
+      {copied ? (
+        <Check className="w-3 h-3 stroke-emerald-500" />
+      ) : (
+        <motion.svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={12}
+          height={12}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <motion.rect
+            width="14"
+            height="14"
+            x="8"
+            y="8"
+            rx="2"
+            ry="2"
+            variants={{
+              normal: { translateY: 0, translateX: 0 },
+              animate: { translateY: -2, translateX: -2 },
+            }}
+            animate={controls}
+            transition={defaultTransition}
+          />
+          <motion.path
+            d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+            variants={{
+              normal: { x: 0, y: 0 },
+              animate: { x: 2, y: 2 },
+            }}
+            transition={defaultTransition}
+            animate={controls}
+          />
+        </motion.svg>
+      )}
+    </div>
+  );
+
+  const button = (
+    <Button
+      variant={variant}
+      size="sm"
+      className={cn(
+        "relative hover:bg-transparent hover:opacity-70 h-7",
+        copied && "text-emerald-500",
+        className
+      )}
+      onClick={handleCopy}
+      onMouseEnter={() => controls.start("animate")}
+      onMouseLeave={() => controls.start("normal")}
+      aria-label={copied ? "Copied" : `Copy ${tooltipText} to clipboard`}
+      disabled={copied}
+      {...props}
+    >
+      <AnimatedCopyIcon />
+    </Button>
+  );
+
+  if (disableTooltip) return button;
+
+  return (
+    <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent className="px-2 py-1 text-xs">
         {copied ? "Copied!" : `Copy ${tooltipText} to clipboard`}

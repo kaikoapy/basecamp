@@ -108,7 +108,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   };
 
   return (
-    <main className="flex-1 p-6 max-w-[1600px] mx-auto">
+    <main className="flex-1 p-6 max-w-[1600px] mx-auto bg-[rgb(250,250,252)]">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -165,7 +165,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
       )}
 
       {filteredContent.pinnedContent.length > 0 && (
-        <section id="quick-access" className="mb-6">
+        <section id="quick-access" className="mb-6 ">
           <h2
             className="text-xl font-bold mb-3"
             style={{ fontFamily: "var(--font-inter)" }}

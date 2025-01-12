@@ -77,8 +77,8 @@ export function NavUser() {
             <SidebarMenuButton
               size="lg"
               variant="ghost"
-              className={`data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-transparent ${
-                state === "collapsed" ? "px-2 justify-center" : ""
+              className={`data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-transparent  ${
+                state === "collapsed" ? "px-2 justify-center " : ""
               }`}
             >
               <Avatar
@@ -106,7 +106,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56  rounded-lg"
             side="right"
             align="start"
             sideOffset={4}
