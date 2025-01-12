@@ -181,6 +181,9 @@ export function DashboardCard(props: DashboardCardProps) {
       window.history.pushState({}, "", newUrl);
     } else if (type === "business-application") {
       dialog.onOpen();
+    } else if (isAffinitySearch && url) {
+      // Open URL in new tab for Affinity cards
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -296,7 +299,10 @@ export function DashboardCard(props: DashboardCardProps) {
             <button
               className="w-full mt-6 bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
               onClick={(e) => {
-                e.stopPropagation();
+                if (isAffinitySearch) {
+                  e.preventDefault(); // Only prevent default for Affinity cards
+                  e.stopPropagation();
+                }
                 handleCardClick();
               }}
             >
