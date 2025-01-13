@@ -14,6 +14,7 @@ import {
   ThirdPartyPayoffsDialog,
   EX90SheetDialog,
   OnboardingDialog,
+  GasSavingsDialog,
 } from "@/app/(platform)/dialogs";
 import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
 import { Suspense } from "react";
@@ -74,6 +75,9 @@ export default function RootLayout({
                     </DialogWrapper>
                     <DialogWrapper name="onboarding">
                       {OnboardingDialog}
+                    </DialogWrapper>
+                    <DialogWrapper name="gas-savings">
+                      {GasSavingsDialog}
                     </DialogWrapper>
                   </Providers>
                 </NuqsAdapter>

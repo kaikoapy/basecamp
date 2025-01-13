@@ -4,3 +4,4 @@ export { WireInstructionsDialog } from "./wire-instructions-dialog";
 export { ThirdPartyPayoffsDialog } from "./third-party-payoffs-dialog";
 export { EX90SheetDialog } from "./ex90-sheet-dialog";
 export { OnboardingDialog } from "./onboarding-dialog";
+export { GasSavingsDialog } from "./gas-savings-dialog";

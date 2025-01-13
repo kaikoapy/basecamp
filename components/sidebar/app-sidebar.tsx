@@ -206,6 +206,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "/dealer-trade-stores",
           },
           {
+            title: "Gas Savings Calculator",
+            action: () => showDialog("gas-savings"),
+            isModal: true,
+          },
+          {
             title: "CSI Surveys",
             url: `https://volvo.medallia.eu/sso/volvo/applications/ex_WEB-9/pages/255?roleId=512&f.calculation=41&f.benchmark=100000006&f.feedback-type=all-feedback&f.question-score=a_overall_score_with_social_media_5_buckets&f.timeperiod=365&f.reporting-date=k_bp_timezone_response_time&cf.topic-filter-builder=${encodeURIComponent('{"t":0,"s":0}')}&alreftoken=94fc738d2571cee6adddacd83c4c764d&responsesSortBy=k_bp_timezone_response_time&responsesSortAscending=false&responsesSortIndex=0&responsesOffset=0`,
           },
