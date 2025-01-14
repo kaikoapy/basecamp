@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
@@ -8,6 +8,16 @@ import Image from "next/image";
 
 export default function Navbar() {
   const { signOut } = useClerk();
+
+  // Cleanup function to restore scroll when component unmounts
+  useEffect(() => {
+    return () => {
+      // Reset body scroll on unmount
+      document.body.style.removeProperty("overflow");
+    };
+  }, []);
+
+  // Optional: Function to handle manual cleanup after dialog closes
 
   return (
     <nav className="border-b">
