@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Car } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Navbar from "./(marketing)/(components)/Navbar";
 import Image from "next/image";
 import { HighlightedOne } from "@/components/HighlightedOne";
@@ -9,6 +9,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
+
       {/* Hero Section - Above the Fold */}
       <div className="relative px-6 lg:px-8">
         <div className="mx-auto max-w-6xl py-20 sm:py-32">
@@ -51,7 +52,7 @@ export default function Home() {
           <div className="mt-16 flex justify-center">
             <div className="relative">
               <Image
-                src="https://utfs.io/f/WTe1MV8FTP1y6c66a5izlvmXCscai1MT9SpUGERnFPV3k05g"
+                src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1ytJB7nFhmFD09AfBcVTik6SMvZC54ePUNr82z"
                 alt="Unified dashboard with VIN lookup and tools"
                 width={1024}
                 height={680}
@@ -67,7 +68,13 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Car className="h-6 w-6 text-blue-600" />
+              <Image
+                src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yshxp8S1UoIShzARj4Eer1uOngfm9tc72CvHq"
+                alt="DealerHub Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
               <span className="font-semibold">DealerHub</span>
             </div>
             <p className="text-sm text-gray-500">
