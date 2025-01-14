@@ -6,9 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import {
   Car,
   DollarSign,
@@ -75,9 +73,6 @@ export function GasSavingsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Open Gas Savings Calculator</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="mb-4">
           <DialogTitle className="flex items-center gap-2">
