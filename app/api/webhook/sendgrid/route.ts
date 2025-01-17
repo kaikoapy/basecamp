@@ -197,6 +197,8 @@ async function processAttachment(
 }
 
 export async function POST(request: Request) {
+  console.log("Webhook function invoked"); // Simple log for testing
+
   try {
     console.log("📨 Received SendGrid webhook request");
 
