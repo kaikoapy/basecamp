@@ -105,7 +105,6 @@ export default function EX30Page() {
             />
           </div>
         </div>
-
         {/* Technology Section with Image */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <div className="space-y-6">
@@ -147,18 +146,6 @@ export default function EX30Page() {
             "Thoughtful material selection throughout the vehicle",
           ]}
         />
-
-        <div className="bg-muted p-6 rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Value Proposition</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Whether navigating city streets or embarking on longer journeys, the
-            EX30 delivers the perfect combination of sustainable luxury,
-            performance, and technology that modern drivers demand. It
-            represents not just Volvo&apos;s vision for the future of electric
-            vehicles, but a practical and attainable step toward sustainable
-            personal transportation.
-          </p>
-        </div>
       </div>
     </div>
   );

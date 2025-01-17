@@ -12,7 +12,8 @@ export const evFAQItems = [
       "Think of charging your EV as feeding your loyal pet:\n\n1. Small Snacks (Regular Home Outlet):\nLike giving your pet a nibble—enough to keep it going, but very slow.\n\n2. Regular Meals (Home Charger):\nLike serving a proper meal—plug in at night, and it’s ready to go by morning.\n\n3. Super Fast Treats (Fast Charging):\nLike giving your pet a quick energy boost when you’re on the go.",
     imageUrl:
       "https://utfs.io/f/WTe1MV8FTP1yAT9x2JNk1fWujrhGO6g2LBilZSV5oE3wtcbe",
-    simpleImageUrl: "/images/ev-charging-simple.png",
+    simpleImageUrl:
+      "https://utfs.io/f/WTe1MV8FTP1yAT9x2JNk1fWujrhGO6g2LBilZSV5oE3wtcbe",
   },
   {
     id: "2",
@@ -23,8 +24,10 @@ export const evFAQItems = [
       "Most owners charge at home using a Level 2 charger. Here's what you need to know:\n\n1. Installation: Hire a licensed electrician to install a 240V circuit.\n2. Recommended Setup: Choose a 40-amp or higher charger for faster charging and future-proofing.\n3. Charging Time: A Level 2 charger typically gives you a full charge overnight (8-10 hours).\n4. Backup Option: Every Volvo EV comes with a portable Level 1 charger that plugs into regular outlets.",
     simpleContent:
       "Setting up home charging is like preparing your pet’s feeding station:\n\n1. Call a Pro:\nJust like setting up an automatic feeder, you’ll need an electrician to install your EV’s ‘feeding system.’\n\n2. Pick the Right Feeder:\nChoose a setup that’s big enough to keep your pet (EV) happy, even if it gets hungrier (future needs).\n\n3. Overnight Refill:\nPlug it in at night, and it fills up while you rest—ready for action by morning.\n\n4. Emergency Snacks:\nYour EV comes with a small portable feeder (regular outlet charger) for when you’re on the go.",
-    imageUrl: "/images/ev-installing-home-charger.png",
-    simpleImageUrl: "/images/ev-installing-home-charger-simple.png",
+    imageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yiHIs0arGWDJBSPkiAbVLgH6UvF7dCXhEYpIQ",
+    simpleImageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yiHIs0arGWDJBSPkiAbVLgH6UvF7dCXhEYpIQ",
   },
   {
     id: "3",
@@ -35,8 +38,10 @@ export const evFAQItems = [
       "Charging in public is easy:\n\n1. Regular Public Chargers: Use your credit card or charging network app to start charging.\n2. Tesla Superchargers: All new Volvos can use Tesla's extensive charging network. Current models need an adapter, while future models will have built-in compatibility.\n3. Finding Chargers: Use your Volvo's navigation system or smartphone apps to locate nearby charging stations.\n4. Charging Time: Most public fast chargers will charge your car to 80% in about 40 minutes.",
     simpleContent:
       "Public charging is like finding water for your pet on a road trip:\n\n1. Regular Stops:\nSwipe your card or app—like refilling your pet’s water bowl at a rest stop.\n\n2. Special Fountains:\nTesla chargers are like special watering holes—your EV might need an adapter (like a unique bowl) to drink from them.\n\n3. Using Maps:\nYour Volvo’s built-in navigation is like a guide that shows you the nearest stops.\n\n4. Quick Breaks:\nYour pet recharges fast—enough energy for the road in the time it takes for a snack break.",
-    imageUrl: "/images/ev-using-public-chargers.png",
-    simpleImageUrl: "/images/ev-using-public-chargers-simple.png",
+    imageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1ymEIl2CyKv3dxk5GC76MncbHBIJiVoQqgsUR1",
+    simpleImageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1ymEIl2CyKv3dxk5GC76MncbHBIJiVoQqgsUR1",
   },
   {
     id: "4",
@@ -47,8 +52,10 @@ export const evFAQItems = [
       "Your Volvo EV can travel 200-300 miles on a full charge. Here's what affects your range:\n\n1. Weather: Cold weather reduces range.\n2. Driving Style: Aggressive acceleration uses more power.\n3. Climate Control: Using heat or AC affects range.\n4. Terrain: Hills use more energy than flat roads.\n\nTip: Use regenerative braking (one-pedal driving) to maximize your range. This feature recovers energy when slowing down.",
     simpleContent:
       "Your EV’s range is like how far your pet can travel on a walk:\n\n1. Weather:\nCold days slow it down—like needing a coat in winter.\n\n2. Speed:\nRunning burns energy faster than walking.\n\n3. Comfort:\nUsing heat or AC is like carrying extra gear—it takes more effort.\n\n4. Hills:\nClimbing hills is harder work than strolling on flat ground.\n\nCool Trick: Regenerative braking is like giving your pet a treat mid-walk—it helps them keep going!",
-    imageUrl: "/images/ev-range.png",
-    simpleImageUrl: "/images/ev-range-simple.png",
+    imageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1y81rSVyaxrslIj2kL7mSw0aoheCnYbiFQX6dU",
+    simpleImageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1y81rSVyaxrslIj2kL7mSw0aoheCnYbiFQX6dU",
   },
   {
     id: "5",
@@ -59,21 +66,23 @@ export const evFAQItems = [
       "While EVs cost more upfront, they save money over time:\n\n1. Purchase Savings:\n- Federal tax credit (up to $7,500).\n- State and local incentives.\n- Special Volvo offers.\n\n2. Operating Savings:\n- Charging costs less than gas.\n- Fewer maintenance visits needed.\n- No oil changes required.\n\n3. Long-term Benefits:\n- Lower total cost over time.\n- Regular free software updates.\n- Higher resale value.",
     simpleContent:
       "Think of your EV like adopting a pet:\n\n1. Adoption Perks:\nYou get incentives and bonuses (like treats for adopting an eco-friendly pet).\n\n2. Daily Savings:\nFeeding it electricity costs less than gas, and it doesn’t need expensive vet visits (maintenance).\n\n3. Long-Term Rewards:\nYour EV grows in value over time, stays updated (like learning tricks), and saves you money in the long run.",
-    imageUrl: "/images/ev-incentives.png",
-    simpleImageUrl: "/images/ev-incentives-simple.png",
+    imageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yLSRfRDU0NFxPEbliwHGXe5B84MSn3v7gULpk",
+    simpleImageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yLSRfRDU0NFxPEbliwHGXe5B84MSn3v7gULpk",
   },
-  {
-    id: "6",
-    iconName: "Shield",
-    title: "Battery Life and Protection",
-    sub: "Keeping your battery healthy and protected",
-    content:
-      "Your Volvo's battery is protected and built to last:\n\n1. Warranty Coverage:\n- 8 years or 100,000 miles\n- Covers battery defects and significant capacity loss\n\n2. Battery Care Tips:\n- Use DC fast charging mainly on road trips\n- Regular home charging is best for battery life\n- Keep the battery between 20% and 80% for daily use\n\n3. Battery Protection:\n- Built-in temperature management\n- Automatic charging speed adjustment\n- Battery health monitoring",
-    simpleContent:
-      "Think of your battery like caring for your pet’s health:\n\n1. Long-Term Health Guarantee:\nYour EV comes with a promise from Volvo—8 years of coverage to keep your pet healthy and active.\n\n2. Healthy Eating Habits:\n- Fast charging is like giving your pet occasional treats—great for road trips, but not for every meal.\n- Home charging is like giving balanced meals—perfect for daily energy.\n- Keep meals consistent (20-80%) to avoid overfeeding or underfeeding.\n\n3. Built-In Care Features:\n- Your EV monitors its own ‘temperature’ and adjusts to stay comfortable.\n- It knows when to charge fast or slow, like pacing its energy.\n- Alerts you if something’s wrong, just like a vet checkup!",
-    imageUrl: "/images/ev-battery-warranty.png",
-    simpleImageUrl: "/images/ev-battery-warranty-simple.png",
-  },
+  // {
+  //   id: "6",
+  //   iconName: "Shield",
+  //   title: "Battery Life and Protection",
+  //   sub: "Keeping your battery healthy and protected",
+  //   content:
+  //     "Your Volvo's battery is protected and built to last:\n\n1. Warranty Coverage:\n- 8 years or 100,000 miles\n- Covers battery defects and significant capacity loss\n\n2. Battery Care Tips:\n- Use DC fast charging mainly on road trips\n- Regular home charging is best for battery life\n- Keep the battery between 20% and 80% for daily use\n\n3. Battery Protection:\n- Built-in temperature management\n- Automatic charging speed adjustment\n- Battery health monitoring",
+  //   simpleContent:
+  //     "Think of your battery like caring for your pet’s health:\n\n1. Long-Term Health Guarantee:\nYour EV comes with a promise from Volvo—8 years of coverage to keep your pet healthy and active.\n\n2. Healthy Eating Habits:\n- Fast charging is like giving your pet occasional treats—great for road trips, but not for every meal.\n- Home charging is like giving balanced meals—perfect for daily energy.\n- Keep meals consistent (20-80%) to avoid overfeeding or underfeeding.\n\n3. Built-In Care Features:\n- Your EV monitors its own ‘temperature’ and adjusts to stay comfortable.\n- It knows when to charge fast or slow, like pacing its energy.\n- Alerts you if something’s wrong, just like a vet checkup!",
+  //   imageUrl: "/images/ev-battery-warranty.png",
+  //   simpleImageUrl: "/images/ev-battery-warranty-simple.png",
+  // },
   {
     id: "7",
     iconName: "Wrench",
@@ -83,21 +92,23 @@ export const evFAQItems = [
       "EVs need much less maintenance than gas cars:\n\n1. Regular Needs:\n- Tire rotation every 7,500 miles\n- Brake fluid check annually\n- Cabin air filter replacement\n\n2. What You Don't Need:\n- No oil changes\n- No spark plug replacement\n- No transmission service\n\n3. Additional Care:\n- Software updates (automatic)\n- Annual inspection recommended\n- Windshield washer fluid top-off",
     simpleContent:
       "Maintaining your EV is like taking care of a low-maintenance pet:\n\n1. Regular Grooming:\n- Rotate the tires—like trimming your pet’s nails.\n- Check the brakes once a year—like a quick health check.\n- Change the air filter—like brushing your pet’s fur.\n\n2. What You Don’t Need:\n- No oil changes or spark plugs—your pet doesn’t need complicated treatments.\n- No transmission service—it’s simpler than other vehicles.\n\n3. Extra Care:\n- Automatic updates keep your pet learning new tricks.\n- A quick annual inspection keeps everything in tip-top shape.\n- Just refill washer fluid—like making sure your pet has fresh water.",
-    imageUrl: "/images/ev-maintenance.png",
-    simpleImageUrl: "/images/ev-maintenance-simple.png",
+    imageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yL5W9HBkU0NFxPEbliwHGXe5B84MSn3v7gULp",
+    simpleImageUrl:
+      "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yL5W9HBkU0NFxPEbliwHGXe5B84MSn3v7gULp",
   },
-  {
-    id: "8",
-    iconName: "Cloud",
-    title: "Smart EV Features",
-    sub: "Making the most of your electric Volvo",
-    content:
-      "Your Volvo EV keeps getting better:\n\n1. Over-the-Air Updates:\n- Regular free improvements\n- New features added automatically\n- Performance optimizations\n\n2. Smart Charging:\n- Schedule charging for off-peak rates\n- Pre-condition while plugged in\n- Monitor charging from your phone\n\n3. Range Optimization:\n- One-pedal driving mode\n- Eco climate settings\n- Range prediction based on driving style",
-    simpleContent:
-      "Your Volvo EV is like a clever, evolving pet that learns as it grows:\n\n1. Regularly Learns New Tricks:\n- Over-the-air updates improve its behavior and add new features, like teaching your pet new commands overnight.\n\n2. Smart Feeding:\n- It charges when electricity is cheaper, like feeding at off-peak times.\n- Preheats itself while plugged in, so it’s cozy before you drive—like your pet stretching before a walk.\n- Lets you monitor its ‘food and energy’ from your phone.\n\n3. Optimizes Energy:\n- Learns your driving habits to stretch its range, like a pet pacing itself on long walks.\n- Eco settings are like teaching your pet to conserve energy while staying happy.",
-    imageUrl: "/images/ev-ota-updates.png",
-    simpleImageUrl: "/images/ev-ota-updates-simple.png",
-  },
+  // {
+  //   id: "8",
+  //   iconName: "Cloud",
+  //   title: "Smart EV Features",
+  //   sub: "Making the most of your electric Volvo",
+  //   content:
+  //     "Your Volvo EV keeps getting better:\n\n1. Over-the-Air Updates:\n- Regular free improvements\n- New features added automatically\n- Performance optimizations\n\n2. Smart Charging:\n- Schedule charging for off-peak rates\n- Pre-condition while plugged in\n- Monitor charging from your phone\n\n3. Range Optimization:\n- One-pedal driving mode\n- Eco climate settings\n- Range prediction based on driving style",
+  //   simpleContent:
+  //     "Your Volvo EV is like a clever, evolving pet that learns as it grows:\n\n1. Regularly Learns New Tricks:\n- Over-the-air updates improve its behavior and add new features, like teaching your pet new commands overnight.\n\n2. Smart Feeding:\n- It charges when electricity is cheaper, like feeding at off-peak times.\n- Preheats itself while plugged in, so it’s cozy before you drive—like your pet stretching before a walk.\n- Lets you monitor its ‘food and energy’ from your phone.\n\n3. Optimizes Energy:\n- Learns your driving habits to stretch its range, like a pet pacing itself on long walks.\n- Eco settings are like teaching your pet to conserve energy while staying happy.",
+  //   imageUrl: "/images/ev-ota-updates.png",
+  //   simpleImageUrl: "/images/ev-ota-updates-simple.png",
+  // },
 ];
 
 interface Misconception {

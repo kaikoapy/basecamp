@@ -71,7 +71,7 @@ export function FAQAccordion({
                   <span className="flex flex-col space-y-1">
                     <span>{item.title}</span>
                     {item.sub && (
-                      <span className="text-sm font-normal text-muted-foreground">
+                      <span className="text-md font-normal text-grey-800">
                         {item.sub}
                       </span>
                     )}
@@ -85,7 +85,7 @@ export function FAQAccordion({
                 />
               </AccordionPrimitive.Trigger>
             </AccordionPrimitive.Header>
-            <AccordionContent className="ms-3 pb-2 ps-10 text-muted-foreground">
+            <AccordionContent className="ms-3 pb-2 ps-10 text-md text-grey-800">
               <div className="space-y-4">
                 {item.simpleContent && (
                   <Button

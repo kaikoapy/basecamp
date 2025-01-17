@@ -69,7 +69,7 @@ export default function EVFAQPage() {
   return (
     <main className="mx-auto max-w-4xl py-8 px-4">
       <h1 className="mb-6 text-2xl font-bold">Volvo EV Resources</h1>
-      <p className="mb-8 text-muted-foreground">
+      <p className="mb-8 text-grey-800">
         Everything you need to know about Volvo Electric Vehicles, from charging
         basics to common misconceptions and the EV ownership journey.
       </p>

@@ -220,7 +220,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Product Knowledge",
         url: "#",
         icon: Brain,
-        isActive: true,
+        // isActive: true,
         items: [
           {
             title: "XC90 2025.5",
