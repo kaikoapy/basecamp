@@ -1,4 +1,3 @@
-// convex/announcements.ts
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
@@ -16,14 +15,16 @@ export const create = mutation({
     category: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("announcements", {
+    console.log("Creating announcement with args:", args);
+    const announcement = {
       ...args,
       createdBy: "test_user",
       postedAt: new Date().toISOString(),
       isEmailGenerated: false,
       files: [],
       readBy: [] as Reader[],
-    });
+    };
+    return await ctx.db.insert("announcements", announcement);
   },
 });
 
@@ -44,6 +45,7 @@ export const processEmailToAnnouncement = mutation({
   },
   handler: async (ctx, args) => {
     try {
+      console.log("Processing email to announcement with args:", args);
       const senderName = args.from.split("<")[0].trim() || args.from;
 
       // Create the announcement document matching our schema
@@ -71,7 +73,9 @@ export const processEmailToAnnouncement = mutation({
 
       console.log("Creating announcement:", announcement);
 
-      return await ctx.db.insert("announcements", announcement);
+      const result = await ctx.db.insert("announcements", announcement);
+      console.log("Announcement created successfully:", result);
+      return result;
     } catch (error) {
       console.error("Error in processEmailToAnnouncement:", error);
       throw error;
@@ -81,7 +85,13 @@ export const processEmailToAnnouncement = mutation({
 
 export const list = query({
   handler: async (ctx) => {
-    return await ctx.db.query("announcements").order("desc").collect();
+    console.log("Listing announcements");
+    const announcements = await ctx.db
+      .query("announcements")
+      .order("desc")
+      .collect();
+    console.log("Retrieved announcements:", announcements);
+    return announcements;
   },
 });
 
@@ -104,6 +114,7 @@ export const update = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    console.log("Updating announcement with args:", args);
     return await ctx.db.patch(args.id, {
       title: args.title,
       description: args.description,
@@ -118,6 +129,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("announcements") },
   handler: async (ctx, args) => {
+    console.log("Removing announcement with id:", args.id);
     return await ctx.db.delete(args.id);
   },
 });
@@ -125,6 +137,7 @@ export const remove = mutation({
 export const archive = mutation({
   args: { id: v.id("announcements") },
   handler: async (ctx, args) => {
+    console.log("Archiving announcement with id:", args.id);
     return await ctx.db.patch(args.id, {
       isArchived: true,
     });
@@ -135,7 +148,8 @@ export const generateUploadUrl = mutation({
   args: {
     type: v.string(),
   },
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    console.log("Generating upload URL for type:", args.type); // Corrected line
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -147,8 +161,12 @@ export const markAsRead = mutation({
     userName: v.string(),
   },
   handler: async (ctx, args) => {
+    console.log("Marking announcement as read with args:", args);
     const announcement = await ctx.db.get(args.id);
-    if (!announcement) return;
+    if (!announcement) {
+      console.warn("Announcement not found for id:", args.id);
+      return;
+    }
 
     const readBy = announcement.readBy || [];
     // Check if user has already read it
@@ -162,6 +180,7 @@ export const markAsRead = mutation({
       await ctx.db.patch(args.id, {
         readBy,
       });
+      console.log("Updated readBy list for announcement:", args.id);
     }
     return readBy;
   },
@@ -172,7 +191,10 @@ export const getReadStatus = query({
     id: v.id("announcements"),
   },
   handler: async (ctx, args) => {
+    console.log("Getting read status for announcement id:", args.id);
     const announcement = await ctx.db.get(args.id);
-    return announcement?.readBy || [];
+    const readStatus = announcement?.readBy || [];
+    console.log("Read status retrieved:", readStatus);
+    return readStatus;
   },
 });

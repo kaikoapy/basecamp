@@ -221,13 +221,17 @@ export async function POST(request: Request) {
 
     // If we have raw email and no parsed content, parse it
     if (emailRaw && !html && !text) {
+      console.log("Parsing raw email content...");
       const parsed = extractEmailBody(emailRaw);
       finalHtml = parsed.html;
       finalText = parsed.text;
+      console.log("Parsed HTML:", finalHtml);
+      console.log("Parsed Text:", finalText);
     }
 
     // Validate required fields
     if (!from || !subject) {
+      console.error("❌ Missing required fields: from or subject");
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -245,12 +249,14 @@ export async function POST(request: Request) {
 
     // Process attachments
     const attachments = [];
+    console.log("Looking for attachments in the raw email...");
 
     // Look for attachments in the raw email
     if (emailRaw) {
       const mainBoundaryMatch = emailRaw.match(/boundary="([^"]+)"/);
       if (mainBoundaryMatch) {
         const mainBoundary = mainBoundaryMatch[1];
+        console.log("Main boundary found:", mainBoundary);
         const parts = emailRaw.split(`--${mainBoundary}`);
 
         for (const part of parts) {
@@ -273,6 +279,7 @@ export async function POST(request: Request) {
 
               if (attachment) {
                 try {
+                  console.log("Uploading attachment:", attachment.filename);
                   const uploadUrl = await convex.mutation(
                     api.announcements.generateUploadUrl,
                     { type: "application/pdf" }
@@ -312,6 +319,8 @@ export async function POST(request: Request) {
             }
           }
         }
+      } else {
+        console.warn("No main boundary found in the raw email.");
       }
     }
 
@@ -325,7 +334,7 @@ export async function POST(request: Request) {
       emailId: `email_${Date.now()}`,
     };
 
-    console.log("📤 Sending to Convex:", payload);
+    console.log("📤 Sending to Convex:", JSON.stringify(payload, null, 2));
 
     // Send to Convex
     const result = await convex.mutation(
@@ -336,7 +345,7 @@ export async function POST(request: Request) {
     console.log("✅ Successfully created announcement:", result);
     return NextResponse.json({ success: true, id: result });
   } catch (error) {
-    console.error(" Error processing email:", error);
+    console.error("Error processing email:", error);
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
