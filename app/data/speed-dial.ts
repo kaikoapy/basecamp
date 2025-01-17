@@ -49,7 +49,7 @@ export const speedDialContacts: SpeedDialContacts = {
     { name: "Moudy", phone: "(786) 271-7515" },
     { name: "Kai", phone: "(786) 305-5161" },
     { name: "Gio", phone: "(786) 444-8322" },
-    { name: "Amr", phone: "(305)690-6038" }, // Goto
+    { name: "Amr", phone: "(305) 690-6038" }, // Goto
     { name: "Tito", phone: "(973) 420-9482" },
     { name: "Alex", phone: "(305) 586-6687" },
     { name: "Gabriel", phone: "(954) 995-4180" },

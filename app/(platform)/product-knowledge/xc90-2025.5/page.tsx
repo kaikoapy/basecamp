@@ -45,14 +45,13 @@ export default function XC902025Page() {
           <ProductSection
             title="Exterior Changes"
             items={[
-              "Slimmer 'Thor's Hammer' headlights with Matrix design technology",
-              "Redesigned front grille and air intake",
-              "Sculpted hood for a more striking appearance",
-              "Updated front bumper and fender designs",
-              "New wheel designs ranging from 20 to 22 inches",
-              "Darkened taillamps",
-              "New Mulberry Red color option",
-              "No Platinum Grey color option",
+              "New front bumper, sculpted hood, fenders, and grille design with iron mark",
+              "New slim signature headlights with Matrix-design LED technology",
+              'New wheels available in 20", 21" and 22" sizes',
+              "Improved comfort chassis with Frequency Selective Damping technology",
+              "New exterior color: Mulberry Red",
+              "Visually upgraded rear lamps with darkened design",
+              "Removed Platinum Grey",
             ]}
           />
           <div className="relative h-[300px] rounded-lg overflow-hidden">
@@ -70,10 +69,20 @@ export default function XC902025Page() {
           <ProductSection
             title="Interior Enhancements"
             items={[
-              "Improved sound insulation, including acoustic foam-filled pillars",
-              "Finer interior materials for a more upscale feel",
-              "New 11.2-inch center touchscreen with updated interface from EX90",
-              "Redesigned dashboard",
+              "New upholstery options: Nordico, Navy Herringbone, and Cardamom Ventilated Nappa Leather",
+              "New second row seat armrests with integrated cupholders (6-passenger variant)",
+              "6 Seat configurability with B5 engines",
+              "Improved sound insulation for a quieter ride",
+              "Updated steering wheel with new iron mark",
+              "Upgraded tailored instrument panel",
+              'Larger center screen (increased from 9" to 11.2")',
+              "New tailored tunnel console with improved wireless phone charger and 2+1 cupholder",
+              "Enhanced high spec interior illumination",
+              "New interior decors: Light Ash, Grey Ash, and Brown Ash",
+              "Removed Maroon interior options",
+              "Removed Amber interior",
+              "Removed Slate interior",
+              "6 passenger configurability with B5 engines",
             ]}
           />
           <div className="relative h-[300px] rounded-lg overflow-hidden">
@@ -85,31 +94,11 @@ export default function XC902025Page() {
             />
           </div>
         </div>
+      </div>
 
-        {/* Technology Section with Image */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          <ProductSection
-            title="Technology and Safety"
-            items={[
-              "Updated infotainment system",
-              "New 11.2-inch center touchscreen with updated interface from EX90",
-              "Wireless phone charger",
-            ]}
-          />
-          <div className="relative h-[300px] rounded-lg overflow-hidden">
-            <Image
-              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1y3XWlIvVG1iExufVLq5DMdWB7r4KkzpFSwmP3"
-              alt="XC90 2025.5 Technology Features"
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Trim Differences Section */}
-        <div className="space-y-4">
-          <TrimDifferences />
-        </div>
+      {/* Trim Differences Section */}
+      <div className="space-y-4 mt-6">
+        <TrimDifferences />
       </div>
     </div>
   );
