@@ -1,6 +1,35 @@
 // convex/directory.ts
-import { query, mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+
+// Predefined options for positions and departments
+export const POSITIONS = [
+  "General Manager",
+  "Sales Manager",
+  "Sales Specialist",
+  "Service Advisor",
+  "Service Manager",
+  "Service Mechanic",
+  "Stock Manager",
+  "Master Technician",
+  "Parts Specialist",
+  "Finance Manager",
+  "Accounting",
+  "Title Clerk",
+  "Porter",
+  "Detail Manager",
+  "Receptionist",
+] as const;
+
+export const DEPARTMENTS = [
+  "General",
+  "Sales",
+  "Service",
+  "Parts",
+  "Finance",
+  "Accounting",
+  "Logistics",
+] as const;
 
 export const getAll = query({
   handler: async (ctx) => {
@@ -27,54 +56,59 @@ export const getImportantNumbers = query({
   },
 });
 
+export const deleteOne = mutation({
+  args: { id: v.id("directory") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const deleteMany = mutation({
+  args: { ids: v.array(v.id("directory")) },
+  handler: async (ctx, args) => {
+    await Promise.all(args.ids.map((id) => ctx.db.delete(id)));
+  },
+});
+
 export const update = mutation({
   args: {
     id: v.id("directory"),
-    name: v.optional(v.string()),
-    position: v.optional(v.string()),
-    department: v.optional(v.string()),
-    extension: v.optional(v.string()),
-    email: v.optional(v.string()),
-    number: v.optional(v.string()),
+    name: v.string(),
+    position: v.string(),
+    department: v.string(),
+    extension: v.string(),
+    email: v.string(),
+    number: v.string(),
   },
   handler: async (ctx, args) => {
-    const { id, ...updates } = args;
-    await ctx.db.patch(id, updates);
+    await ctx.db.patch(args.id, {
+      name: args.name,
+      position: args.position,
+      department: args.department,
+      extension: args.extension,
+      email: args.email,
+      number: args.number,
+    });
   },
 });
 
-export const seedDirectory = mutation({
+export const create = mutation({
   args: {
-    entries: v.array(
-      v.object({
-        name: v.string(),
-        position: v.string(),
-        department: v.string(),
-        extension: v.string(),
-        email: v.string(),
-        number: v.string(),
-      })
-    ),
+    name: v.string(),
+    position: v.string(),
+    department: v.string(),
+    extension: v.string(),
+    email: v.string(),
+    number: v.string(),
   },
   handler: async (ctx, args) => {
-    // Clear existing entries
-    const existing = await ctx.db.query("directory").collect();
-    for (const entry of existing) {
-      await ctx.db.delete(entry._id);
-    }
-
-    // Insert new entries
-    for (const entry of args.entries) {
-      await ctx.db.insert("directory", entry);
-    }
-  },
-});
-
-export const deleteContact = mutation({
-  args: {
-    id: v.id("directory"),
-  },
-  handler: async (ctx, args) => {
-    await ctx.db.delete(args.id);
+    await ctx.db.insert("directory", {
+      name: args.name,
+      position: args.position,
+      department: args.department,
+      extension: args.extension,
+      email: args.email,
+      number: args.number,
+    });
   },
 });
