@@ -4,7 +4,15 @@ import { NextResponse } from "next/server";
 // Define public routes
 const publicRoutes = createRouteMatcher(["/", "/sign-in", "/sign-up"]);
 
+// Define webhook routes that should bypass auth
+const webhookRoutes = createRouteMatcher(["/api/webhook/postmark"]);
+
 export default clerkMiddleware(async (auth, request) => {
+  // Allow webhook routes to bypass auth
+  if (webhookRoutes(request)) {
+    return NextResponse.next();
+  }
+
   if (publicRoutes(request)) {
     // If user is signed in and trying to access public routes, redirect to dashboard
     const isSignedIn = await auth
