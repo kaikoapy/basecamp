@@ -162,7 +162,9 @@ export function NewAnnouncementDialog({
             headers: { "Content-Type": file.type },
           });
 
-          const fileUrl = uploadUrl.split("?")[0];
+          const fileId = uploadUrl.split("/").pop()?.split("?")[0];
+          const fileUrl = `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+
           return {
             url: fileUrl,
             name: file.name,
