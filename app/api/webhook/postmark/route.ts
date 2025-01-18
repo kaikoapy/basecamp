@@ -81,17 +81,28 @@ export async function POST(request: Request) {
               throw new Error(`Failed to upload file: ${response.statusText}`);
             }
 
-            // Extract the file ID from the upload URL and construct the download URL
-            const fileId = uploadUrl.split("/").pop()?.split("?")[0];
-            console.log("Extracted file ID:", fileId);
-            const storedUrl = `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+            // Get the storage ID from the response
+            const { storageId } = await response.json();
+            console.log("Received storage ID:", storageId);
+
+            // Generate the download URL using the storage ID
+            const storedUrl = await convex.query(api.announcements.getUrl, {
+              storageId,
+            });
             console.log("Constructed download URL:", storedUrl);
 
-            attachments.push({
-              url: storedUrl,
-              name: attachment.Name,
-              type: attachment.ContentType,
-            });
+            if (storedUrl) {
+              attachments.push({
+                url: storedUrl,
+                name: attachment.Name,
+                type: attachment.ContentType,
+              });
+            } else {
+              console.error(
+                "Failed to generate download URL for storage ID:",
+                storageId
+              );
+            }
 
             console.log(
               "Successfully processed PDF attachment:",

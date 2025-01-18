@@ -198,3 +198,13 @@ export const getReadStatus = query({
     return readStatus;
   },
 });
+
+export const getUrl = query({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    console.log("Generating URL for storage ID:", args.storageId);
+    return await ctx.storage.getUrl(args.storageId);
+  },
+});
