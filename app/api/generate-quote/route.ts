@@ -109,7 +109,7 @@ export async function POST() {
             "Generate a short, inspiring quote (max 50 words) and attribute it to a philosophical figure or wise teacher. Make it sound profound and meaningful, but keep it simple enough for everyone to understand.",
         },
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
     });
 
     const response =

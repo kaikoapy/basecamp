@@ -171,7 +171,7 @@ export async function POST() {
             "Choose a random country. Be diverse in your selection, including countries from all continents and of various sizes. Don't always pick the most well-known countries.",
         },
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
     });
 
     const country =
@@ -190,7 +190,7 @@ export async function POST() {
           content: `Generate 10 fascinating facts about ${country}. Each fact MUST be 25 words or less. Format as a numbered list. Mix cultural, historical, geographical, and modern facts. Be concise and engaging.`,
         },
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
     });
 
     const facts = completion.choices[0].message.content || "No facts available";
@@ -208,7 +208,7 @@ export async function POST() {
           content: facts,
         },
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
     });
 
     const spanishFacts =
