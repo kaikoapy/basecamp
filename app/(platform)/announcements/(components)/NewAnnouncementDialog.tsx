@@ -252,6 +252,17 @@ export function NewAnnouncementDialog({
   const hasUserRead = readStatus?.some((reader) => reader.userId === user?.id);
   const readCount = readStatus?.length || 0;
 
+  // Add helper function to get correct download URL
+  const getDownloadUrl = (fileUrl: string) => {
+    // If URL already contains /api/storage/, it's in the correct format
+    if (fileUrl.includes("/api/storage/")) {
+      return fileUrl;
+    }
+    // Extract file ID from upload URL
+    const fileId = fileUrl.split("/upload")[0].split("/").pop();
+    return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+  };
+
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -390,7 +401,7 @@ export function NewAnnouncementDialog({
                       asChild
                     >
                       <a
-                        href={`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${file.url.split("/").pop()?.split("?")[0]}`}
+                        href={getDownloadUrl(file.url)}
                         download={file.name}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -483,7 +494,7 @@ export function NewAnnouncementDialog({
                       asChild
                     >
                       <a
-                        href={`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${file.url.split("/").pop()?.split("?")[0]}`}
+                        href={getDownloadUrl(file.url)}
                         download={file.name}
                         target="_blank"
                         rel="noopener noreferrer"
