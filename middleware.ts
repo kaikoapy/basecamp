@@ -1,19 +1,41 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-// Define only the root path as public
-const isPublicRoute = createRouteMatcher(["/"]);
+// Define public routes
+const publicRoutes = createRouteMatcher(["/", "/sign-in", "/sign-up"]);
 
 export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect();
+  if (publicRoutes(request)) {
+    // If user is signed in and trying to access public routes, redirect to dashboard
+    const isSignedIn = await auth
+      .protect()
+      .then(() => true)
+      .catch(() => false);
+    if (isSignedIn && request.nextUrl.pathname === "/") {
+      const dashboard = new URL("/dashboard", request.url);
+      return NextResponse.redirect(dashboard);
+    }
+    return NextResponse.next();
+  }
+
+  // Protect all other routes
+  const signedIn = await auth.protect();
+  if (!signedIn) {
+    const home = new URL("/", request.url);
+    return NextResponse.redirect(home);
   }
 });
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public folder)
+     */
+    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/api/:path*",
   ],
 };
