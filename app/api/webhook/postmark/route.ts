@@ -81,7 +81,10 @@ export async function POST(request: Request) {
               throw new Error(`Failed to upload file: ${response.statusText}`);
             }
 
-            const storedUrl = uploadUrl.split("?")[0];
+            // Extract the file ID from the upload URL and construct the download URL
+            const fileId = uploadUrl.split("/").pop()?.split("?")[0];
+            const storedUrl = `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+
             attachments.push({
               url: storedUrl,
               name: attachment.Name,
