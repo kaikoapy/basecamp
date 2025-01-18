@@ -162,9 +162,7 @@ export function NewAnnouncementDialog({
             headers: { "Content-Type": file.type },
           });
 
-          const fileId = uploadUrl.split("/").pop()?.split("?")[0];
-          const fileUrl = `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
-
+          const fileUrl = uploadUrl.split("?")[0];
           return {
             url: fileUrl,
             name: file.name,
@@ -392,7 +390,7 @@ export function NewAnnouncementDialog({
                       asChild
                     >
                       <a
-                        href={file.url}
+                        href={`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${file.url.split("/").pop()?.split("?")[0]}`}
                         download={file.name}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -485,7 +483,7 @@ export function NewAnnouncementDialog({
                       asChild
                     >
                       <a
-                        href={file.url}
+                        href={`${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${file.url.split("/").pop()?.split("?")[0]}`}
                         download={file.name}
                         target="_blank"
                         rel="noopener noreferrer"
