@@ -104,7 +104,7 @@ export async function POST(request: Request) {
 
     // Prepare payload for Convex
     const payload = {
-      from: data.From,
+      from: data.FromName || data.From,
       subject: data.Subject,
       body: data.TextBody,
       htmlBody: data.HtmlBody,
