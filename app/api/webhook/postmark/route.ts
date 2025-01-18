@@ -21,17 +21,29 @@ interface PostmarkWebhook {
   MessageID: string;
 }
 
+// Configure allowed methods
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 export async function POST(request: Request) {
   try {
     console.log("📨 Received Postmark webhook request");
 
+    // Log the request method and headers for debugging
+    console.log("Request method:", request.method);
+    console.log("Request headers:", Object.fromEntries(request.headers));
+
     // Postmark sends JSON directly - no need for formData parsing
     const data = (await request.json()) as PostmarkWebhook;
 
-    console.log("From:", data.From);
-    console.log("Subject:", data.Subject);
-    console.log("Has HTML:", !!data.HtmlBody);
-    console.log("Has text:", !!data.TextBody);
+    console.log("Webhook data received:", {
+      from: data.From,
+      subject: data.Subject,
+      messageId: data.MessageID,
+      hasHtml: !!data.HtmlBody,
+      hasText: !!data.TextBody,
+      attachmentsCount: data.Attachments?.length || 0,
+    });
 
     // Process attachments if any
     const attachments = [];
@@ -54,6 +66,8 @@ export async function POST(request: Request) {
               api.announcements.generateUploadUrl,
               { type: attachment.ContentType }
             );
+
+            console.log("Generated Convex upload URL:", uploadUrl);
 
             const response = await fetch(uploadUrl, {
               method: "POST",
