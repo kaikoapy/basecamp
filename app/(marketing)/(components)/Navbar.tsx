@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignInButton, SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Navbar() {
   const { signOut } = useClerk();
@@ -25,13 +24,6 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yshxp8S1UoIShzARj4Eer1uOngfm9tc72CvHq"
-              alt="DealerHub Logo"
-              width={32}
-              height={32}
-              className="object-contain"
-            />
             <h1
               className="text-xl font-semibold tracking-tight"
               style={{ fontFamily: "var(--font-poppins)" }}
