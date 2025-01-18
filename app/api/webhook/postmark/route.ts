@@ -83,7 +83,9 @@ export async function POST(request: Request) {
 
             // Extract the file ID from the upload URL and construct the download URL
             const fileId = uploadUrl.split("/").pop()?.split("?")[0];
+            console.log("Extracted file ID:", fileId);
             const storedUrl = `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+            console.log("Constructed download URL:", storedUrl);
 
             attachments.push({
               url: storedUrl,
