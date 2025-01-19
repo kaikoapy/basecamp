@@ -199,6 +199,22 @@ export function SpeedDial() {
                     renderContactButton(speedDialContacts.external.aPlan.email)}
                 </div>
 
+                {/* Roadside Assistance */}
+                <div
+                  className={cn(
+                    "p-2 rounded-md transition-colors",
+                    hoveredItem === "roadside" && "bg-muted"
+                  )}
+                  onMouseEnter={() => setHoveredItem("roadside")}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  <h4 className="text-sm font-semibold">Roadside Assistance</h4>
+                  {speedDialContacts.external.roadside.phone &&
+                    renderContactButton(
+                      speedDialContacts.external.roadside.phone
+                    )}
+                </div>
+
                 {/* Costco */}
                 <div
                   className={cn(

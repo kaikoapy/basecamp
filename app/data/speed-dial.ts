@@ -20,6 +20,7 @@ interface SpeedDialContacts {
     vfs: ExternalContact;
     aPlan: ExternalContact;
     costco: ExternalContact;
+    roadside: ExternalContact;
   };
 }
 
@@ -69,6 +70,10 @@ export const speedDialContacts: SpeedDialContacts = {
     aPlan: {
       name: "A-Plan",
       email: "Support@aplanbyvolvo.com",
+    },
+    roadside: {
+      name: "Roadside Assistance",
+      phone: "1-800-222-4357",
     },
     costco: {
       name: "Costco Auto Program",

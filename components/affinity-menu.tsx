@@ -73,15 +73,15 @@ const regularOptions: AffinityOption[] = [
 const associationOptions: AffinityOption[] = [
   {
     label: "American Bar Association",
-    url: "https://volvoaffinity.com/programs/american-bar-association",
+    url: "https://www.americanbar.org/membership/aba_advantage_discounts/volvo",
   },
   {
     label: "American Medical Association",
-    url: "https://volvoaffinity.com/programs/american-medical-association",
+    url: "https://www.ama-assn.org/member-benefits/personal-member-benefits-discounts/volvo-discounts",
   },
   {
     label: "American Dental Association",
-    url: "https://volvoaffinity.com/programs/american-dental-association",
+    url: "https://www.adamemberadvantage.com/endorsed-programs/sustainable-vehicles",
   },
 ];
 

@@ -223,6 +223,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         // isActive: true,
         items: [
           {
+            title: "Thrive - Volvo Training",
+            url: "https://ssovolvocars.learn.link/content/",
+          },
+          {
             title: "XC90 2025.5",
             url: "/product-knowledge/xc90-2025.5",
           },
@@ -245,10 +249,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
             title: "Brochures",
             url: "/brochures",
-          },
-          {
-            title: "Thrive - Volvo Training",
-            url: "https://ssovolvocars.learn.link/content/",
           },
         ],
       },
