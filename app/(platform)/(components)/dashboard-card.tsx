@@ -192,7 +192,10 @@ export function DashboardCard(props: DashboardCardProps) {
 
   const renderCard = (
     <Card
-      className="overflow-hidden cursor-pointer transition-transform hover:scale-[1.02]  relative group hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)]"
+      className={cn(
+        "overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] relative group hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)]",
+        isAnnouncement ? "col-span-2" : "col-span-1"
+      )}
       onClick={handleCardClick}
     >
       <div className="absolute top-2 right-2 flex gap-2 z-20">

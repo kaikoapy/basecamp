@@ -6,9 +6,7 @@ import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-
-const DEFAULT_COVER_IMAGE =
-  "https://utfs.io/f/WTe1MV8FTP1yxrDyXuG50m3fOZqTYSyoQcrgMelRFbzW79pI";
+import { AnnouncementCard } from "../../(components)/announcement-card";
 
 interface DashboardContentProps {
   searchQuery?: string;
@@ -134,9 +132,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3">
             {filteredContent.announcements.map((announcement) => (
-              <DashboardCard
+              <AnnouncementCard
                 key={announcement._id}
                 id={announcement._id}
                 title={announcement.title}
@@ -148,14 +146,10 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 content={
                   announcement.htmlDescription || announcement.description
                 }
-                images={announcement.images}
-                category="announcement"
                 postedAt={announcement.postedAt}
                 formattedDate={formatDate(announcement.postedAt)}
                 createdBy={announcement.createdBy}
-                isAnnouncement={true}
                 isEmail={announcement.isEmailGenerated}
-                image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
                 files={announcement.files}
                 readBy={announcement.readBy}
               />

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
-import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
-
-const DEFAULT_COVER_IMAGE =
-  "https://utfs.io/f/WTe1MV8FTP1yxrDyXuG50m3fOZqTYSyoQcrgMelRFbzW79pI";
+import { AnnouncementCard } from "../(components)/announcement-card";
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -111,7 +108,7 @@ export default function AnnouncementsPage() {
       {/* Announcements Grid */}
       {filteredAnnouncements === undefined ? (
         // Loading state
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3">
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
@@ -135,9 +132,9 @@ export default function AnnouncementsPage() {
         </div>
       ) : (
         // Announcements grid
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {filteredAnnouncements.map((announcement) => (
-            <DashboardCard
+            <AnnouncementCard
               key={announcement._id}
               id={announcement._id}
               title={announcement.title}
@@ -147,14 +144,10 @@ export default function AnnouncementsPage() {
                   : announcement.description
               }
               content={announcement.htmlDescription || announcement.description}
-              images={announcement.images}
               postedAt={announcement.postedAt}
-              category="announcement"
               createdBy={announcement.createdBy}
-              isAnnouncement={true}
               isEmail={announcement.isEmailGenerated}
               files={announcement.files}
-              image={announcement.images?.[0] || DEFAULT_COVER_IMAGE}
               readBy={announcement.readBy}
             />
           ))}
