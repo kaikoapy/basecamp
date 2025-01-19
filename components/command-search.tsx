@@ -25,7 +25,15 @@ import { useDialog } from "@/components/providers/dialog-provider";
 import type { Doc } from "@/convex/_generated/dataModel";
 import type { Resource } from "@/types/resources";
 
-type DirectoryEntry = Doc<"directory">;
+type DirectoryEntry = Doc<"directory"> & {
+  name: string;
+  nickname?: string;
+  position: string;
+  department: string;
+  extension: string;
+  email: string;
+  number: string;
+};
 
 interface SearchResults {
   resources: Resource[];
@@ -210,7 +218,10 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
 
   // Handle directory entry click (optional: if directory entries are clickable)
   const handleDirectoryEntryClick = (entry: DirectoryEntry) => {
-    addRecentQuery(entry.name); // Store the directory entry name
+    // Store both name and nickname if available
+    addRecentQuery(
+      entry.nickname ? `${entry.name} (${entry.nickname})` : entry.name
+    );
     setOpenState(false);
     // Implement any additional logic for directory entry clicks if necessary
   };
@@ -250,7 +261,7 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
             setIsFocused(true);
           }}
           onBlur={() => setIsFocused(false)}
-          placeholder="Search resources and directory..."
+          placeholder="Search for resources or contacts..."
           className="w-full h-10 px-4 py-2 pl-10 pr-8 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-violet-600/40 focus:shadow-md"
         />
         <Search
@@ -377,6 +388,11 @@ export const SearchBar = React.forwardRef<SearchBarHandle>((props, ref) => {
                           <User className="h-4 w-4 text-gray-400 shrink-0 group-hover:text-sky-400" />
                           <span className="font-medium group-hover:text-sky-600">
                             {entry.name}
+                            {entry.nickname && (
+                              <span className="ml-2 text-sm text-gray-500 group-hover:text-sky-500/60">
+                                ({entry.nickname})
+                              </span>
+                            )}
                           </span>
                         </div>
                         <div className="text-gray-500 text-xs pl-6 group-hover:text-sky-500/60">

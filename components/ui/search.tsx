@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { motion, useAnimation } from 'motion/react';
+import { motion, useAnimation } from "motion/react";
 
 const SearchIcon = () => {
   const controls = useAnimation();
@@ -8,8 +8,8 @@ const SearchIcon = () => {
   return (
     <div
       className="cursor-pointer select-none p-2 hover:bg-accent rounded-md transition-colors duration-200 flex items-center justify-center overflow-hidden"
-      onMouseEnter={() => controls.start('animate')}
-      onMouseLeave={() => controls.start('normal')}
+      onMouseEnter={() => controls.start("animate")}
+      onMouseLeave={() => controls.start("normal")}
     >
       <motion.svg
         xmlns="http://www.w3.org/2000/svg"

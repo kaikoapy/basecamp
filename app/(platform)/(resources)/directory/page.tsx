@@ -15,10 +15,7 @@ const ContactDirectory = () => {
     department: string;
   } | null>(null);
 
-  const contacts = useQuery(api.directory.getAll);
   const address = useQuery(api.directory.getAddress);
-
-  if (!contacts) return <div>Loading...</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

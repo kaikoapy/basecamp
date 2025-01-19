@@ -74,6 +74,7 @@ export const update = mutation({
   args: {
     id: v.id("directory"),
     name: v.string(),
+    nickname: v.optional(v.string()),
     position: v.string(),
     department: v.string(),
     extension: v.string(),
@@ -83,6 +84,7 @@ export const update = mutation({
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
       name: args.name,
+      nickname: args.nickname,
       position: args.position,
       department: args.department,
       extension: args.extension,
@@ -95,6 +97,7 @@ export const update = mutation({
 export const create = mutation({
   args: {
     name: v.string(),
+    nickname: v.optional(v.string()),
     position: v.string(),
     department: v.string(),
     extension: v.string(),
@@ -104,6 +107,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     await ctx.db.insert("directory", {
       name: args.name,
+      nickname: args.nickname,
       position: args.position,
       department: args.department,
       extension: args.extension,

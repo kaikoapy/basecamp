@@ -29,6 +29,7 @@ import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
+  nickname: z.string().optional(),
   position: z.string().min(1, "Position is required"),
   department: z.string().min(1, "Department is required"),
   extension: z.string(),
@@ -42,6 +43,7 @@ interface EditFormProps {
   contact?: {
     _id: Id<"directory">;
     name: string;
+    nickname?: string;
     position: string;
     department: string;
     extension: string;
@@ -67,6 +69,7 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: contact || {
       name: "",
+      nickname: "",
       position: "",
       department: "",
       extension: "",
@@ -83,6 +86,7 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
     if (contact) {
       reset({
         name: contact.name,
+        nickname: contact.nickname || "",
         position: contact.position,
         department: contact.department,
         extension: contact.extension,
@@ -92,6 +96,7 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
     } else {
       reset({
         name: "",
+        nickname: "",
         position: "",
         department: "",
         extension: "",
@@ -139,6 +144,14 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
               {errors.name && (
                 <p className="text-sm text-red-500">{errors.name.message}</p>
               )}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="nickname">Nickname (Optional)</Label>
+              <Input
+                id="nickname"
+                {...register("nickname")}
+                placeholder="e.g. Senior, Jr, etc"
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="position">Position</Label>

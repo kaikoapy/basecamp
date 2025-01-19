@@ -89,7 +89,7 @@ const multiColumnFilterFn: FilterFn<DirectoryItem> = (
   filterValue
 ) => {
   const searchableRowContent =
-    `${row.original.name} ${row.original.email} ${row.original.department}`.toLowerCase();
+    `${row.original.name} ${row.original.nickname || ""} ${row.original.email} ${row.original.department}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
@@ -273,7 +273,6 @@ export default function DirectoryTable() {
     null
   );
   const [isAddingContact, setIsAddingContact] = useState(false);
-
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "department",
@@ -288,21 +287,13 @@ export default function DirectoryTable() {
   // Fetch data from Convex
   const rawData = useQuery(api.directory.getAll);
   const data = useMemo(() => rawData ?? [], [rawData]);
+  const deleteMany = useMutation(api.directory.deleteMany);
 
   // Get unique departments
   const departments = useMemo(() => {
     const uniqueDepartments = new Set(data.map((item) => item.department));
     return Array.from(uniqueDepartments).sort();
   }, [data]);
-
-  const deleteMany = useMutation(api.directory.deleteMany);
-
-  const handleDeleteRows = async () => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const ids = selectedRows.map((row) => row.original._id);
-    await deleteMany({ ids });
-    table.resetRowSelection();
-  };
 
   const table = useReactTable({
     data,
@@ -333,6 +324,13 @@ export default function DirectoryTable() {
       table.getColumn("department")?.setFilterValue(undefined);
     }
   }, [selectedDepartment, table]);
+
+  const handleDeleteRows = async () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    const ids = selectedRows.map((row) => row.original._id);
+    await deleteMany({ ids });
+    table.resetRowSelection();
+  };
 
   return (
     <div className="space-y-4">

@@ -35,6 +35,7 @@ export default defineSchema({
   // Directory table
   directory: defineTable({
     name: v.string(),
+    nickname: v.optional(v.string()),
     position: v.string(),
     department: v.string(),
     extension: v.string(),

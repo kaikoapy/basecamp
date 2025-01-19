@@ -98,6 +98,7 @@ export const search = query({
       .filter((entry) => {
         const searchableFields = [
           entry.name,
+          entry.nickname || "",
           entry.position,
           entry.department,
           entry.extension,

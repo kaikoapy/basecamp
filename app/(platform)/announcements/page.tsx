@@ -41,10 +41,6 @@ export default function AnnouncementsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
 
-  if (!announcements) {
-    return <div>Loading...</div>;
-  }
-
   // Filter announcements based on search query and time filter
   const filteredAnnouncements = announcements?.filter((announcement) => {
     const matchesSearch =
@@ -106,17 +102,7 @@ export default function AnnouncementsPage() {
       </div>
 
       {/* Announcements Grid */}
-      {filteredAnnouncements === undefined ? (
-        // Loading state
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="aspect-[1.5] rounded-lg bg-muted animate-pulse"
-            />
-          ))}
-        </div>
-      ) : filteredAnnouncements.length === 0 && !searchQuery ? (
+      {filteredAnnouncements?.length === 0 && !searchQuery ? (
         // Empty state
         <div className="text-center py-12">
           <h3 className="text-lg font-semibold mb-2">No announcements yet</h3>
@@ -133,7 +119,7 @@ export default function AnnouncementsPage() {
       ) : (
         // Announcements grid
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {filteredAnnouncements.map((announcement) => (
+          {filteredAnnouncements?.map((announcement) => (
             <AnnouncementCard
               key={announcement._id}
               id={announcement._id}
