@@ -109,3 +109,11 @@
     transform: translateX(-100%);
   }
 }
+
+.tiptap .ProseMirror:focus {
+  outline: none !important;
+}
+
+.tiptap .ProseMirror-focused {
+  outline: none !important;
+}

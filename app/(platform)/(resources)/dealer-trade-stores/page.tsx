@@ -4,11 +4,11 @@ import { ExternalLink } from "lucide-react";
 
 const dealerStores = [
   {
-    name: "Schumacher Volvo Cars Palm Beaches",
+    name: "Schumacher Palm Beaches",
     url: "https://www.volvoofthepalmbeaches.com/new-inventory/index.htm",
   },
   {
-    name: "Gunther Volvo Cars Coconut Creek",
+    name: "Gunther Coconut Creek",
     url: "https://www.gunthervolvocars.net/new-inventory/index.htm",
   },
   {
@@ -60,7 +60,7 @@ export default function DealerTradeStores() {
               hover:border-blue-500 hover:shadow-md transition-all duration-200
               flex items-center justify-between"
           >
-            <span className="text-gray-900 group-hover:text-blue-600 font-medium">
+            <span className="text-gray-900 group-hover:text-blue-600 font-medium pr-2">
               {store.name}
             </span>
             <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-blue-500" />

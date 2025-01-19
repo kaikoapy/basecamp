@@ -20,6 +20,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShimmerButton from "@/components/ui/shimmer-button";
 import { useQueryState } from "nuqs";
+import TiptapEditor from "./TipTapEditor";
 
 // Base64 encoding/decoding functions
 function encodeId(id: string): string {
@@ -66,7 +67,7 @@ const DialogContent = React.forwardRef<
         Email Content
       </DialogPrimitive.Title>
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-muted p-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-muted p-2 focus:outline-none focus:ring-none focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:text-muted-foreground">
         <X className="h-5 w-5" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -272,11 +273,11 @@ export function NewAnnouncementDialog({
             <Input
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
-              className="text-2xl font-bold mb-3 h-auto py-2 px-3"
+              className="text-xl font-bold mb-3 h-auto py-2 px-3 max-w-3xl"
               placeholder="Enter title..."
             />
           ) : (
-            <h2 className="text-2xl font-bold mb-3">{announcement.title}</h2>
+            <h2 className="text-xl font-bold mb-3">{announcement.title}</h2>
           )}
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div>
@@ -288,13 +289,11 @@ export function NewAnnouncementDialog({
         </div>
 
         {/* Main content */}
-        <div className="flex-1 overflow-y-auto py-4">
+        <div className="flex-1 overflow-y-auto py-4 focus:outline-none">
           {isEditing ? (
-            <textarea
-              value={editedDescription}
-              onChange={(e) => setEditedDescription(e.target.value)}
-              className="w-full h-full min-h-[400px] p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-ring resize-none font-[inherit] text-[inherit]"
-              placeholder="Enter description..."
+            <TiptapEditor
+              content={editedDescription}
+              onChange={setEditedDescription}
             />
           ) : (
             <div
@@ -302,7 +301,7 @@ export function NewAnnouncementDialog({
                 __html:
                   announcement.htmlDescription || announcement.description,
               }}
-              className="prose prose-sm max-w-none min-h-[400px] [&_p]:my-4 [&_a]:text-blue-600 [&_a]:underline [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-2 [&_strong]:font-semibold [&_em]:italic [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_code]:font-mono [&_code]:text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_th]:bg-gray-100"
+              className="prose prose-sm max-w-none min-h-[400px] [&_p]:my-4 [&_a]:text-blue-600 [&_a]:underline [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-2 [&_strong]:font-semibold [&_em]:italic [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_pre]:bg-gray-100 [&_pre]:p-4 [&_pre]:rounded [&_code]:font-mono [&_code]:text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_th]:bg-gray-100 focus:outline-none"
             />
           )}
         </div>
