@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-
       {/* Hero Section - Above the Fold */}
       <div className="relative px-6 lg:px-8">
         <div className="mx-auto max-w-6xl py-20 sm:py-32">

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
 import { AnnouncementCard } from "../(components)/announcement-card";
+import { useAnnouncementsPermission } from "./hooks/use-announcements-permission";
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -37,6 +38,7 @@ function extractTextFromHtml(html: string): string {
 }
 
 export default function AnnouncementsPage() {
+  const hasPermission = useAnnouncementsPermission();
   const announcements = useQuery(api.announcements.list);
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
@@ -68,12 +70,14 @@ export default function AnnouncementsPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Announcements 📰</h1>
-        <Link href="/announcements/new">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            New Announcement
-          </Button>
-        </Link>
+        {hasPermission && (
+          <Link href="/announcements/new">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              New Announcement
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Search and Filter Bar */}
@@ -109,12 +113,14 @@ export default function AnnouncementsPage() {
           <p className="text-muted-foreground mb-4">
             Create your first announcement to get started
           </p>
-          <Link href="/announcements/new">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Announcement
-            </Button>
-          </Link>
+          {hasPermission && (
+            <Link href="/announcements/new">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Announcement
+              </Button>
+            </Link>
+          )}
         </div>
       ) : (
         // Announcements grid

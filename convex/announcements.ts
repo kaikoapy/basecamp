@@ -15,14 +15,24 @@ export const create = mutation({
     category: v.string(),
   },
   handler: async (ctx, args) => {
-    console.log("Creating announcement with args:", args);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Check for admin role in org claims
+    const orgRole = identity.orgRole;
+    if (orgRole !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
+    }
+
     const announcement = {
       ...args,
-      createdBy: "test_user",
+      createdBy: identity.email || identity.subject,
       postedAt: new Date().toISOString(),
       isEmailGenerated: false,
       files: [],
-      readBy: [] as Reader[],
+      readBy: [],
     };
     return await ctx.db.insert("announcements", announcement);
   },
@@ -85,12 +95,16 @@ export const processEmailToAnnouncement = mutation({
 
 export const list = query({
   handler: async (ctx) => {
-    console.log("Listing announcements");
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
     const announcements = await ctx.db
       .query("announcements")
       .order("desc")
       .collect();
-    console.log("Retrieved announcements:", announcements);
+
     return announcements;
   },
 });
@@ -114,6 +128,17 @@ export const update = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    if (!identity.tokenIdentifier.includes("announcements:manage")) {
+      throw new Error(
+        "Unauthorized: Requires announcement management permission"
+      );
+    }
+
     console.log("Updating announcement with args:", args);
     return await ctx.db.patch(args.id, {
       title: args.title,
@@ -161,15 +186,17 @@ export const markAsRead = mutation({
     userName: v.string(),
   },
   handler: async (ctx, args) => {
-    console.log("Marking announcement as read with args:", args);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
     const announcement = await ctx.db.get(args.id);
     if (!announcement) {
-      console.warn("Announcement not found for id:", args.id);
-      return;
+      throw new Error("Announcement not found");
     }
 
     const readBy = announcement.readBy || [];
-    // Check if user has already read it
     if (!readBy.some((reader: Reader) => reader.userId === args.userId)) {
       readBy.push({
         userId: args.userId,
@@ -177,10 +204,7 @@ export const markAsRead = mutation({
         readAt: new Date().toISOString(),
       });
 
-      await ctx.db.patch(args.id, {
-        readBy,
-      });
-      console.log("Updated readBy list for announcement:", args.id);
+      await ctx.db.patch(args.id, { readBy });
     }
     return readBy;
   },
@@ -191,10 +215,8 @@ export const getReadStatus = query({
     id: v.id("announcements"),
   },
   handler: async (ctx, args) => {
-    console.log("Getting read status for announcement id:", args.id);
     const announcement = await ctx.db.get(args.id);
     const readStatus = announcement?.readBy || [];
-    console.log("Read status retrieved:", readStatus);
     return readStatus;
   },
 });
@@ -204,7 +226,6 @@ export const getUrl = query({
     storageId: v.id("_storage"),
   },
   handler: async (ctx, args) => {
-    console.log("Generating URL for storage ID:", args.storageId);
     return await ctx.storage.getUrl(args.storageId);
   },
 });

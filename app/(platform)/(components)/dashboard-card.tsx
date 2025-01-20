@@ -22,8 +22,11 @@ import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useOrganization } from "@clerk/nextjs";
 import { CopyButtonWithText } from "@/components/copy-button";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 // Base64 encoding function
 function encodeId(id: string): string {
   if (typeof window === "undefined") return id;
@@ -104,6 +107,8 @@ export function DashboardCard(props: DashboardCardProps) {
   } = props;
 
   const { user } = useUser();
+  const { organization, isLoaded } = useOrganization();
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const togglePinnedMutation = useMutation(api.resources.togglePinned);
   const isPinned = defaultPinned;
@@ -116,7 +121,6 @@ export function DashboardCard(props: DashboardCardProps) {
   // Check if the announcement is new (not read by current user and within 30 days)
   const isNew = React.useMemo(() => {
     if (!postedAt || !user) {
-      console.log("No postedAt or user:", { postedAt, userId: user?.id });
       return false;
     }
 
@@ -317,6 +321,16 @@ export function DashboardCard(props: DashboardCardProps) {
       </div>
     </Card>
   );
+
+  useEffect(() => {
+    if (isLoaded && !organization) {
+      router.push("/select-org");
+    }
+  }, [isLoaded, organization, router]);
+
+  if (!isLoaded || !organization) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

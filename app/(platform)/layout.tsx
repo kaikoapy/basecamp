@@ -1,6 +1,7 @@
 import { AppSidebar } from "../../components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MountProvider } from "@/components/providers/mount-provider";
+import { OrganizationCheck } from "./(components)/organization-check";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,7 +12,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <MountProvider>{children}</MountProvider>
+        <MountProvider>
+          <OrganizationCheck>{children}</OrganizationCheck>
+        </MountProvider>
       </SidebarInset>
     </SidebarProvider>
   );

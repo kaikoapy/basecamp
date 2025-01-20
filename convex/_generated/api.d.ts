@@ -18,6 +18,7 @@ import type * as directory from "../directory.js";
 import type * as files from "../files.js";
 import type * as resources from "../resources.js";
 import type * as types from "../types.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   resources: typeof resources;
   types: typeof types;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

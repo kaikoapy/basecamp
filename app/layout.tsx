@@ -46,13 +46,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${heebo.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
-      >
-        <TooltipProvider>
-          <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${heebo.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
+        >
+          <TooltipProvider>
             <ConvexClientProvider>
               <Suspense fallback={<div>Loading...</div>}>
                 <NuqsAdapter>
@@ -84,9 +83,9 @@ export default function RootLayout({
                 <Toaster />
               </Suspense>
             </ConvexClientProvider>
-          </ClerkProvider>
-        </TooltipProvider>
-      </body>
-    </html>
+          </TooltipProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

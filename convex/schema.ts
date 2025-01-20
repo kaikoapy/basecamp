@@ -44,10 +44,12 @@ export default defineSchema({
   }).index("by_department", ["department"]),
 
   users: defineTable({
+    name: v.string(),
     email: v.string(),
+    clerkId: v.string(),
     isManager: v.boolean(),
     // Add any other user fields you need
-  }),
+  }).index("by_clerk_id", ["clerkId"]),
 
   // Announcements table
   announcements: defineTable({
@@ -87,31 +89,6 @@ export default defineSchema({
       )
     ),
   }).index("by_status", ["isArchived"]),
-
-  // Main departments table
-  departments: defineTable({
-    name: v.string(),
-    description: v.optional(v.string()),
-    order: v.number(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  }).index("by_order", ["order"]),
-
-  // Contacts table
-  contacts: defineTable({
-    name: v.string(),
-    role: v.string(),
-    extension: v.optional(v.string()),
-    phone: v.optional(v.string()),
-    email: v.optional(v.string()),
-    departmentId: v.id("departments"),
-    isActive: v.boolean(),
-    order: v.optional(v.number()),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_department", ["departmentId"])
-    .index("by_active", ["isActive"]),
 
   // Company settings table
   companySettings: defineTable({

@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ShimmerButton from "@/components/ui/shimmer-button";
 import { useQueryState } from "nuqs";
 import TiptapEditor from "./TipTapEditor";
+import { useAnnouncementsPermission } from "@/app/(platform)/announcements/hooks/use-announcements-permission";
 
 // Base64 encoding/decoding functions
 function encodeId(id: string): string {
@@ -128,6 +129,7 @@ export function NewAnnouncementDialog({
   }) as Reader[] | undefined;
   const { user } = useUser();
   const { toast } = useToast();
+  const hasPermission = useAnnouncementsPermission();
 
   const getClerkUserImageUrl = (userId: string) => {
     return userId === user?.id ? user?.imageUrl : undefined;
@@ -580,36 +582,38 @@ export function NewAnnouncementDialog({
             {!hasUserRead && <ShimmerButton onClick={handleMarkAsRead} />}
           </div>
 
-          <div className="flex items-center gap-2">
-            {!isEditing ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit
-              </Button>
-            ) : (
-              <div className="flex items-center gap-2">
+          {hasPermission && (
+            <div className="flex items-center gap-2">
+              {!isEditing ? (
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setEditedTitle(announcement.title);
-                    setEditedDescription(
-                      announcement.htmlDescription || announcement.description
-                    );
-                    setIsEditing(false);
-                  }}
+                  onClick={() => setIsEditing(true)}
                 >
-                  Cancel
+                  Edit
                 </Button>
-                <Button size="sm" onClick={handleSave}>
-                  Save
-                </Button>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setEditedTitle(announcement.title);
+                      setEditedDescription(
+                        announcement.htmlDescription || announcement.description
+                      );
+                      setIsEditing(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button size="sm" onClick={handleSave}>
+                    Save
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </DialogContent>
     </DialogPrimitive.Root>

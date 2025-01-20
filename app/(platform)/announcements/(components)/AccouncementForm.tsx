@@ -1,7 +1,7 @@
 // app/(platform)/dashboard/announcements/(components)/AccouncementForm.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { useAnnouncementsPermission } from "@/app/(platform)/announcements/hooks/use-announcements-permission";
+import { useRouter } from "next/navigation";
 
 const AnnouncementForm = () => {
   const [title, setTitle] = useState("");
@@ -23,6 +25,18 @@ const AnnouncementForm = () => {
   const createAnnouncement = useMutation(api.announcements.create);
   const getUploadUrls = useMutation(api.files.generateUploadUrls);
   const { toast } = useToast();
+  const hasPermission = useAnnouncementsPermission();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!hasPermission) {
+      router.push("/announcements");
+    }
+  }, [hasPermission, router]);
+
+  if (!hasPermission) {
+    return null;
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);

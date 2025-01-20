@@ -33,12 +33,20 @@ export const DEPARTMENTS = [
 
 export const getAll = query({
   handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
     return await ctx.db.query("directory").collect();
   },
 });
 
 export const getAddress = query({
   handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
     const dealerInfo = await ctx.db
       .query("dealerInfo")
       .filter((q) => q.eq(q.field("category"), "address"))
@@ -49,6 +57,10 @@ export const getAddress = query({
 
 export const getImportantNumbers = query({
   handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
     return await ctx.db
       .query("dealerInfo")
       .filter((q) => q.eq(q.field("category"), "important_number"))
@@ -59,6 +71,15 @@ export const getImportantNumbers = query({
 export const deleteOne = mutation({
   args: { id: v.id("directory") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    if (!identity.tokenIdentifier.includes("directory:manage")) {
+      throw new Error("Unauthorized: Requires directory management permission");
+    }
+
     await ctx.db.delete(args.id);
   },
 });
@@ -66,6 +87,15 @@ export const deleteOne = mutation({
 export const deleteMany = mutation({
   args: { ids: v.array(v.id("directory")) },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    if (!identity.tokenIdentifier.includes("directory:manage")) {
+      throw new Error("Unauthorized: Requires directory management permission");
+    }
+
     await Promise.all(args.ids.map((id) => ctx.db.delete(id)));
   },
 });
@@ -82,15 +112,16 @@ export const update = mutation({
     number: v.string(),
   },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.id, {
-      name: args.name,
-      nickname: args.nickname,
-      position: args.position,
-      department: args.department,
-      extension: args.extension,
-      email: args.email,
-      number: args.number,
-    });
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    if (!identity.tokenIdentifier.includes("directory:manage")) {
+      throw new Error("Unauthorized: Requires directory management permission");
+    }
+
+    await ctx.db.patch(args.id, args);
   },
 });
 
@@ -105,6 +136,17 @@ export const create = mutation({
     number: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Check for admin role in org claims
+    const orgRole = identity.orgRole;
+    if (orgRole !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
+    }
+
     await ctx.db.insert("directory", {
       name: args.name,
       nickname: args.nickname,

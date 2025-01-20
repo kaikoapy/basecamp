@@ -79,15 +79,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useDirectoryPermission } from "../hooks/use-directory-permission";
 
 type DirectoryItem = Doc<"directory">;
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<DirectoryItem> = (
-  row,
-  columnId,
-  filterValue
-) => {
+const multiColumnFilterFn: FilterFn<DirectoryItem> = (row, filterValue) => {
   const searchableRowContent =
     `${row.original.name} ${row.original.nickname || ""} ${row.original.email} ${row.original.department}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
@@ -284,6 +281,8 @@ export default function DirectoryTable() {
     },
   ]);
 
+  const hasDirectoryPermission = useDirectoryPermission();
+
   // Fetch data from Convex
   const rawData = useQuery(api.directory.getAll);
   const data = useMemo(() => rawData ?? [], [rawData]);
@@ -426,71 +425,75 @@ export default function DirectoryTable() {
         </div>
         <div className="flex items-center gap-3">
           {/* Delete button */}
-          {table.getSelectedRowModel().rows.length > 0 && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="ml-auto" variant="outline">
-                  <Trash
-                    className="-ms-1 me-2 opacity-60"
-                    size={16}
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                  Delete
-                  <span className="-me-1 ms-3 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
-                    {table.getSelectedRowModel().rows.length}
-                  </span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
-                  <div
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
-                    aria-hidden="true"
-                  >
-                    <CircleAlert
-                      className="opacity-80"
+          {hasDirectoryPermission &&
+            table.getSelectedRowModel().rows.length > 0 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="ml-auto" variant="outline">
+                    <Trash
+                      className="-ms-1 me-2 opacity-60"
                       size={16}
                       strokeWidth={2}
+                      aria-hidden="true"
                     />
-                  </div>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete{" "}
-                      {table.getSelectedRowModel().rows.length} selected{" "}
-                      {table.getSelectedRowModel().rows.length === 1
-                        ? "row"
-                        : "rows"}
-                      .
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteRows}>
                     Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
+                    <span className="-me-1 ms-3 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
+                      {table.getSelectedRowModel().rows.length}
+                    </span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                    <div
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
+                      aria-hidden="true"
+                    >
+                      <CircleAlert
+                        className="opacity-80"
+                        size={16}
+                        strokeWidth={2}
+                      />
+                    </div>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete {table.getSelectedRowModel().rows.length}{" "}
+                        selected{" "}
+                        {table.getSelectedRowModel().rows.length === 1
+                          ? "row"
+                          : "rows"}
+                        .
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteRows}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           {/* Add user button */}
-          <Button
-            className="ml-auto"
-            variant="outline"
-            onClick={() => setIsAddingContact(true)}
-          >
-            <Plus
-              className="-ms-1 me-2 opacity-60"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-            Add Contact
-          </Button>
+          {hasDirectoryPermission && (
+            <Button
+              className="ml-auto"
+              variant="outline"
+              onClick={() => setIsAddingContact(true)}
+            >
+              <Plus
+                className="-ms-1 me-2 opacity-60"
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              Add Contact
+            </Button>
+          )}
         </div>
       </div>
 
@@ -618,12 +621,17 @@ export default function DirectoryTable() {
 }
 
 function RowActions({ row }: { row: Row<DirectoryItem> }) {
+  const hasDirectoryPermission = useDirectoryPermission();
   const [isEditing, setIsEditing] = useState(false);
   const deleteOne = useMutation(api.directory.deleteOne);
 
   const handleDelete = async () => {
     await deleteOne({ id: row.original._id });
   };
+
+  if (!hasDirectoryPermission) {
+    return null;
+  }
 
   return (
     <>
