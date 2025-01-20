@@ -7,16 +7,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "@/components/providers";
-import {
-  BusinessApplicationsDialog,
-  OutOfStateDialog,
-  WireInstructionsDialog,
-  ThirdPartyPayoffsDialog,
-  EX90SheetDialog,
-  OnboardingDialog,
-  GasSavingsDialog,
-} from "@/app/(platform)/dialogs";
-import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
 import { Suspense } from "react";
 
 const heebo = Heebo({
@@ -57,27 +47,6 @@ export default function RootLayout({
                 <NuqsAdapter>
                   <Providers>
                     {children}
-                    <DialogWrapper name="business-applications">
-                      {BusinessApplicationsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="out-of-state">
-                      {OutOfStateDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="wire-instructions">
-                      {WireInstructionsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="third-party-payoffs">
-                      {ThirdPartyPayoffsDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="ex90-sheet">
-                      {EX90SheetDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="onboarding">
-                      {OnboardingDialog}
-                    </DialogWrapper>
-                    <DialogWrapper name="gas-savings">
-                      {GasSavingsDialog}
-                    </DialogWrapper>
                   </Providers>
                 </NuqsAdapter>
                 <Toaster />

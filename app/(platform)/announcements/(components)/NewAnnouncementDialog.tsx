@@ -18,7 +18,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ShimmerButton from "@/components/ui/shimmer-button";
 import { useQueryState } from "nuqs";
 import TiptapEditor from "./TipTapEditor";
 import { useAnnouncementsPermission } from "@/app/(platform)/announcements/hooks/use-announcements-permission";
@@ -579,12 +578,11 @@ export function NewAnnouncementDialog({
                 Read by {readCount}
               </span>
             )}
-            {!hasUserRead && <ShimmerButton onClick={handleMarkAsRead} />}
           </div>
 
-          {hasPermission && (
-            <div className="flex items-center gap-2">
-              {!isEditing ? (
+          <div className="flex items-center gap-2">
+            {hasPermission && (
+              !isEditing ? (
                 <Button
                   variant="outline"
                   size="sm"
@@ -593,7 +591,7 @@ export function NewAnnouncementDialog({
                   Edit
                 </Button>
               ) : (
-                <div className="flex items-center gap-2">
+                <>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -610,10 +608,15 @@ export function NewAnnouncementDialog({
                   <Button size="sm" onClick={handleSave}>
                     Save
                   </Button>
-                </div>
-              )}
-            </div>
-          )}
+                </>
+              )
+            )}
+            {!hasUserRead && (
+              <Button variant="default" size="sm" onClick={handleMarkAsRead}>
+                Mark as Read
+              </Button>
+            )}
+          </div>
         </div>
       </DialogContent>
     </DialogPrimitive.Root>
