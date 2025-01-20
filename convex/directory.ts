@@ -68,6 +68,12 @@ export const getImportantNumbers = query({
   },
 });
 
+// Update the interface to match the actual structure
+interface ClerkUserIdentity {
+  org_role: string;
+  permissions: string[];
+}
+
 export const deleteOne = mutation({
   args: { id: v.id("directory") },
   handler: async (ctx, args) => {
@@ -76,7 +82,8 @@ export const deleteOne = mutation({
       throw new Error("Unauthenticated");
     }
 
-    if (!identity.tokenIdentifier.includes("directory:manage")) {
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
@@ -92,7 +99,8 @@ export const deleteMany = mutation({
       throw new Error("Unauthenticated");
     }
 
-    if (!identity.tokenIdentifier.includes("directory:manage")) {
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
@@ -117,11 +125,13 @@ export const update = mutation({
       throw new Error("Unauthenticated");
     }
 
-    if (!identity.tokenIdentifier.includes("directory:manage")) {
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
-    await ctx.db.patch(args.id, args);
+    const { id, ...updateData } = args;
+    await ctx.db.patch(id, updateData);
   },
 });
 
@@ -138,13 +148,12 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new Error("Unauthenticated");
     }
 
-    // Check for admin role in org claims
-    const orgRole = identity.orgRole;
-    if (orgRole !== "org:admin") {
-      throw new Error("Unauthorized: Requires admin role");
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
+      throw new Error("Unauthorized: Requires directory management permission");
     }
 
     await ctx.db.insert("directory", {

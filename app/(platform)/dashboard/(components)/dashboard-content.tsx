@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { DashboardCard } from "@/app/(platform)/(components)/dashboard-card";
+import { DashboardCard } from "./dashboard-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

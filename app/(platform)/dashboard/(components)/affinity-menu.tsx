@@ -32,7 +32,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { CopyButton } from "@/components/copy-button";
-import { OpenLinkButton } from "@/components/open-link-button";
+import { OpenLinkButton } from "./open-link-button";
 import { useToast } from "@/hooks/use-toast";
 
 const SUPPORT_EMAIL = "support@aplanbyvolvo.com";

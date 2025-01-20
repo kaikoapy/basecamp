@@ -7,6 +7,10 @@ interface Reader {
   readAt: string;
 }
 
+interface ClerkUserIdentity {
+  permissions: string[];
+}
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -17,13 +21,12 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new Error("Unauthenticated");
     }
 
-    // Check for admin role in org claims
-    const orgRole = identity.orgRole;
-    if (orgRole !== "org:admin") {
-      throw new Error("Unauthorized: Requires admin role");
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
+      throw new Error("Unauthorized: Requires announcement management permission");
     }
 
     const announcement = {
@@ -133,13 +136,11 @@ export const update = mutation({
       throw new Error("Unauthenticated");
     }
 
-    if (!identity.tokenIdentifier.includes("announcements:manage")) {
-      throw new Error(
-        "Unauthorized: Requires announcement management permission"
-      );
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
+      throw new Error("Unauthorized: Requires announcement management permission");
     }
 
-    console.log("Updating announcement with args:", args);
     return await ctx.db.patch(args.id, {
       title: args.title,
       description: args.description,
@@ -154,7 +155,16 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("announcements") },
   handler: async (ctx, args) => {
-    console.log("Removing announcement with id:", args.id);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
+      throw new Error("Unauthorized: Requires announcement management permission");
+    }
+
     return await ctx.db.delete(args.id);
   },
 });
@@ -162,7 +172,16 @@ export const remove = mutation({
 export const archive = mutation({
   args: { id: v.id("announcements") },
   handler: async (ctx, args) => {
-    console.log("Archiving announcement with id:", args.id);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
+
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
+      throw new Error("Unauthorized: Requires announcement management permission");
+    }
+
     return await ctx.db.patch(args.id, {
       isArchived: true,
     });

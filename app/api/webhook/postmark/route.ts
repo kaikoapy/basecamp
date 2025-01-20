@@ -1,6 +1,7 @@
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { NextResponse } from "next/server";
+import { ALLOWED_EMAILS } from "@/app/data/allowed-emails";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -35,6 +36,15 @@ export async function POST(request: Request) {
 
     // Postmark sends JSON directly - no need for formData parsing
     const data = (await request.json()) as PostmarkWebhook;
+
+    // Add email validation
+    if (!ALLOWED_EMAILS.includes(data.From.toLowerCase())) {
+      console.warn(`Unauthorized email attempt from: ${data.From}`);
+      return NextResponse.json(
+        { error: "Unauthorized sender" },
+        { status: 403 }
+      );
+    }
 
     console.log("Webhook data received:", {
       from: data.From,

@@ -77,14 +77,24 @@ import {
 
 import { useDirectoryPermission } from "../hooks/use-directory-permission";
 import { CopyButtonInline } from "@/components/copy-button";
+import { useToast } from "@/hooks/use-toast";
 
 type DirectoryItem = Doc<"directory">;
 
-// Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<DirectoryItem> = (row, filterValue) => {
-  const searchableRowContent =
-    `${row.original.name} ${row.original.nickname || ""} ${row.original.email} ${row.original.department}`.toLowerCase();
-  const searchTerm = (filterValue ?? "").toLowerCase();
+// Update the filter function to handle null/undefined values and be more robust
+const multiColumnFilterFn: FilterFn<DirectoryItem> = (row, columnId, filterValue) => {
+  const searchableRowContent = [
+    row.original.name,
+    row.original.nickname,
+    row.original.email,
+    row.original.department,
+    row.original.position
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const searchTerm = (filterValue as string ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
 
@@ -217,6 +227,7 @@ export default function DirectoryTable() {
   ]);
 
   const hasDirectoryPermission = useDirectoryPermission();
+  const { toast } = useToast();
 
   // Fetch data from Convex
   const rawData = useQuery(api.directory.getAll);
@@ -242,6 +253,9 @@ export default function DirectoryTable() {
     onColumnVisibilityChange: setColumnVisibility,
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    filterFns: {
+      multiColumn: multiColumnFilterFn,
+    },
     state: {
       sorting,
       pagination,
@@ -260,10 +274,26 @@ export default function DirectoryTable() {
   }, [selectedDepartment, table]);
 
   const handleDeleteRows = async () => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const ids = selectedRows.map((row) => row.original._id);
-    await deleteMany({ ids });
-    table.resetRowSelection();
+    try {
+      const selectedRows = table.getSelectedRowModel().rows;
+      const ids = selectedRows.map((row) => row.original._id);
+      await deleteMany({ ids });
+      
+      toast({
+        variant: "success",
+        title: "Contacts Deleted",
+        description: `Successfully deleted ${ids.length} contact${ids.length === 1 ? '' : 's'}.`,
+      });
+      
+      table.resetRowSelection();
+    } catch (error) {
+      console.error("Error deleting contacts:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete contacts. Please try again.",
+      });
+    }
   };
 
   return (
@@ -280,12 +310,10 @@ export default function DirectoryTable() {
                 "peer min-w-64 ps-9",
                 Boolean(table.getColumn("name")?.getFilterValue()) && "pe-9"
               )}
-              value={
-                (table.getColumn("name")?.getFilterValue() ?? "") as string
-              }
-              onChange={(e) =>
-                table.getColumn("name")?.setFilterValue(e.target.value)
-              }
+              value={(table.getColumn("name")?.getFilterValue() ?? "") as string}
+              onChange={(e) => {
+                table.getColumn("name")?.setFilterValue(e.target.value);
+              }}
               placeholder="Filter by name or department..."
               type="text"
               aria-label="Filter by name or department"
@@ -556,12 +584,28 @@ export default function DirectoryTable() {
 }
 
 function RowActions({ row }: { row: Row<DirectoryItem> }) {
+  const { toast } = useToast();
   const hasDirectoryPermission = useDirectoryPermission();
   const [isEditing, setIsEditing] = useState(false);
   const deleteOne = useMutation(api.directory.deleteOne);
 
   const handleDelete = async () => {
-    await deleteOne({ id: row.original._id });
+    try {
+      await deleteOne({ id: row.original._id });
+      
+      toast({
+        variant: "success",
+        title: "Contact Deleted",
+        description: `Successfully deleted ${row.original.name}.`,
+      });
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete contact. Please try again.",
+      });
+    }
   };
 
   if (!hasDirectoryPermission) {
@@ -604,7 +648,9 @@ function RowActions({ row }: { row: Row<DirectoryItem> }) {
       <EditForm
         contact={row.original}
         isOpen={isEditing}
-        onClose={() => setIsEditing(false)}
+        onClose={() => {
+          setIsEditing(false);
+        }}
       />
     </>
   );

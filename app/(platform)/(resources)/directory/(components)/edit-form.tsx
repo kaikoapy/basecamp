@@ -26,6 +26,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -57,6 +58,7 @@ interface EditFormProps {
 export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
   const update = useMutation(api.directory.update);
   const create = useMutation(api.directory.create);
+  const { toast } = useToast();
 
   const {
     register,
@@ -118,8 +120,20 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
       }
       onClose();
       reset();
+      
+      toast({
+        variant: "success",
+        title: "Contact Updated",
+        description: "The directory contact has been successfully updated.",
+      });
     } catch (error) {
       console.error("Error saving contact:", error);
+      
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update contact. Please try again.",
+      });
     }
   };
 

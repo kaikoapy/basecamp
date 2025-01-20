@@ -611,7 +611,7 @@ export function NewAnnouncementDialog({
                 </>
               )
             )}
-            {!hasUserRead && (
+            {!isEditing && !hasUserRead && (
               <Button variant="default" size="sm" onClick={handleMarkAsRead}>
                 Mark as Read
               </Button>
