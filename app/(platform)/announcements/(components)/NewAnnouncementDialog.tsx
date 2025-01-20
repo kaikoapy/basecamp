@@ -10,7 +10,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-import { useUser } from "@clerk/nextjs";
 import { createParser } from "nuqs/server";
 import {
   Tooltip,
@@ -21,6 +20,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQueryState } from "nuqs";
 import TiptapEditor from "./TipTapEditor";
 import { usePermission } from "@/hooks/use-permission";
+import { useUser } from "@clerk/nextjs";
+
 
 
 // Base64 encoding/decoding functions
@@ -65,8 +66,11 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       <DialogPrimitive.Title className="sr-only">
-        Email Content
+        Announcement Details
       </DialogPrimitive.Title>
+      <DialogPrimitive.Description className="sr-only">
+        View and manage announcement details, including title, content, and read status
+      </DialogPrimitive.Description>
       {children}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-muted p-2 focus:outline-none focus:ring-none focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:text-muted-foreground">
         <X className="h-5 w-5" />
@@ -129,7 +133,7 @@ export function NewAnnouncementDialog({
   const readStatus = useQuery(api.announcements.getReadStatus, {
     id: announcement._id,
   }) as Reader[] | undefined;
-  const { user } = useUser();
+    const { user } = useUser();
   const { toast } = useToast();
   const hasPermission = usePermission("org:announcements:manage");
 
