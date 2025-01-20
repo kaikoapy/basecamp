@@ -6,7 +6,7 @@ import {
   BookOpen,
   Command,
   GalleryVerticalEnd,
-  // Settings2,
+
   Bookmark,
   Wrench,
   Tag,
@@ -17,7 +17,6 @@ import {
   Printer,
   Brain,
 } from "lucide-react";
-// import { useClerk } from "@clerk/nextjs";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
 
@@ -31,7 +30,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { DOCUMENT_URLS } from "@/app/config/constants";
+import { DOCUMENT_URLS } from "@/app/data/document-urls";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();

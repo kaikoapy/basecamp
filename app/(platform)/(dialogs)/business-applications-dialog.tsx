@@ -13,7 +13,7 @@ import { FullscreenImage } from "@/components/fullscreen-image";
 import { Printer, ScrollText, FileCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { DOCUMENT_URLS } from "@/app/config/constants";
+import { DOCUMENT_URLS } from "@/app/data/document-urls";
 
 interface BusinessApplicationsDialogProps {
   open: boolean;
