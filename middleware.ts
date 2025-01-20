@@ -29,8 +29,8 @@ export default clerkMiddleware(async (auth, request) => {
   // Protect all other routes
   const signedIn = await auth.protect();
   if (!signedIn) {
-    const home = new URL("/", request.url);
-    return NextResponse.redirect(home);
+    const signIn = new URL("/sign-in", request.url);
+    return NextResponse.redirect(signIn);
   }
 });
 

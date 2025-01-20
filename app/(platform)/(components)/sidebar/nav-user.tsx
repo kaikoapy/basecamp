@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { ChevronsUpDown, LogOut, User } from "lucide-react";
-import { useClerk, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { SignOutButton, useClerk, useUser } from "@clerk/nextjs";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,9 +24,7 @@ import {
 export function NavUser() {
   const { state } = useSidebar();
   const { user } = useUser();
-  const router = useRouter();
-  const { signOut, openUserProfile, closeUserProfile, unmountUserProfile } =
-    useClerk();
+  const { openUserProfile, closeUserProfile, unmountUserProfile } = useClerk();
 
   useEffect(() => {
     // Store original body style
@@ -68,15 +65,6 @@ export function NavUser() {
 
   const handleProfileClick = () => {
     openUserProfile();
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut(() => router.replace("/sign-in"));
-    } catch (error) {
-      console.error("Sign out error:", error);
-      router.replace("/sign-in");
-    }
   };
 
   if (!user) return null;
@@ -147,20 +135,14 @@ export function NavUser() {
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Notifications
-              </DropdownMenuItem> */}
-              {/* <DropdownMenuItem>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </DropdownMenuItem>
+            <SignOutButton redirectUrl="/sign-in/sign-in">
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </SignOutButton>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
