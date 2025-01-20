@@ -1,7 +1,7 @@
 "use client";
 
 import { useMount } from "@/hooks/use-mount";
-import { NavHeader } from "@/components/sidebar/nav-header";
+import { NavHeader } from "@/app/(platform)/(components)/sidebar/nav-header";
 import React, { ReactElement } from "react";
 
 interface WithSearchQuery {

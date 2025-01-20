@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { ProductSection } from "@/components/product-knowledge/product-section";
+import { ProductSection } from "@/app/(platform)/product-knowledge/(components)/product-section";
 import Image from "next/image";
 
 export const metadata = {

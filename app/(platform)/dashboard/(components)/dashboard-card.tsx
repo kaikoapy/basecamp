@@ -11,14 +11,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { AffinityMenu } from "@/components/affinity-menu";
-import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
-import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
-import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
-import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
+import { AffinityMenu } from "@/app/(platform)/dashboard/(components)/affinity-menu";
+import { WireInstructionsDialog } from "@/app/(platform)/(dialogs)/wire-instructions-dialog";
+import { OutOfStateDialog } from "@/app/(platform)/(dialogs)/out-of-state-dialog";
+import { BusinessApplicationsDialog } from "@/app/(platform)/(dialogs)/business-applications-dialog";
+import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(dialogs)/third-party-payoffs-dialog";
 import { NewAnnouncementDialog } from "@/app/(platform)/announcements/(components)/NewAnnouncementDialog";
 import { useDialog } from "@/hooks/use-dialog";
-import { EX90SheetDialog } from "@/app/(platform)/dialogs/ex90-sheet-dialog";
+import { EX90SheetDialog } from "@/app/(platform)/(dialogs)/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";

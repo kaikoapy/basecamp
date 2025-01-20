@@ -256,3 +256,45 @@ export function CopyButtonWithText({
     </Tooltip>
   );
 }
+
+export function CopyButtonInline({
+  value,
+  className,
+  tooltipText = "text",
+}: CopyButtonProps) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return (
+    <div className="flex items-center">
+      <Tooltip delayDuration={500}>
+        <TooltipTrigger asChild>
+          <span
+            onClick={handleCopy}
+            className={cn(
+              "cursor-pointer hover:text-purple-500 transition-colors",
+              className
+            )}
+          >
+            {value}
+            {copied && (
+              <span className="ml-2 text-xs text-emerald-500">Copied!</span>
+            )}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="text-xs">
+          {copied ? "Copied!" : `Click to copy ${tooltipText}`}
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}

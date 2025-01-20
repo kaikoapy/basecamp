@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { DynamicModal } from "@/components/dynamic-modal";
+import { DynamicModal } from "@/app/(platform)/(components)/dynamic-modal";
 import { useEffect, useState } from "react";
 
 interface NavMainItem {

@@ -2,12 +2,12 @@
 
 import React, { useRef } from "react";
 import { CalendarDays, Building, Users, Search } from "lucide-react";
-import { SidebarTrigger } from "../ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
-import { SearchBar, SearchBarHandle } from "../command-search"; // Import SearchBarHandle
-import { DealerInfo } from "../dealer-info";
-import { SpeedDial } from "../speed-dial";
+import { SearchBar, SearchBarHandle } from "@/components/command-search"; // Import SearchBarHandle
+import { DealerInfo } from "@/app/(platform)/(components)/dealer-info";
+import { SpeedDial } from "@/app/(platform)/(components)/speed-dial";
 import { AnimatedBackground } from "@/components/core/animated-background";
 import { Separator } from "@/components/ui/separator";
 

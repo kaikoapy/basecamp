@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Heebo, Geist_Mono, Inter } from "next/font/google";
+import { Heebo, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
@@ -20,10 +20,6 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "DealerHub",
@@ -39,7 +35,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${heebo.variable} ${inter.variable} ${geistMono.variable} antialiased font-sans`}
+          className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
         >
           <TooltipProvider>
             <ConvexClientProvider>

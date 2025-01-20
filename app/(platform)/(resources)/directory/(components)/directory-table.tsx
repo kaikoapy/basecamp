@@ -74,12 +74,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { useDirectoryPermission } from "../hooks/use-directory-permission";
+import { CopyButtonInline } from "@/components/copy-button";
 
 type DirectoryItem = Doc<"directory">;
 
@@ -101,72 +98,6 @@ const departmentIcons = {
   Logistics: Truck,
   Other: HelpCircle,
 } as const;
-
-function PhoneCell({ value }: { value: string }) {
-  const [copied, setCopied] = React.useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
-  return (
-    <div className="flex items-center">
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <span
-            onClick={handleCopy}
-            className="cursor-pointer hover:text-purple-500 transition-colors"
-          >
-            {value}
-            {copied && (
-              <span className="ml-2 text-xs text-emerald-500">Copied!</span>
-            )}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent className="text-xs">Click to copy</TooltipContent>
-      </Tooltip>
-    </div>
-  );
-}
-
-function EmailCell({ value }: { value: string }) {
-  const [copied, setCopied] = React.useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
-  };
-
-  return (
-    <div className="flex items-center">
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <span
-            onClick={handleCopy}
-            className="cursor-pointer hover:text-purple-500 transition-colors"
-          >
-            {value}
-            {copied && (
-              <span className="ml-2 text-xs text-emerald-500">Copied!</span>
-            )}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent className="text-xs">Click to copy</TooltipContent>
-      </Tooltip>
-    </div>
-  );
-}
 
 const columns: ColumnDef<DirectoryItem>[] = [
   {
@@ -236,14 +167,18 @@ const columns: ColumnDef<DirectoryItem>[] = [
   {
     header: "Phone",
     accessorKey: "number",
-    cell: ({ row }) => <PhoneCell value={row.getValue("number")} />,
+    cell: ({ row }) => (
+      <CopyButtonInline value={row.getValue("number")} />
+    ),
     size: 150,
     enableSorting: false,
   },
   {
     header: "Email",
     accessorKey: "email",
-    cell: ({ row }) => <EmailCell value={row.getValue("email")} />,
+    cell: ({ row }) => (
+      <CopyButtonInline value={row.getValue("email")} />
+    ),
     size: 220,
     enableSorting: false,
   },

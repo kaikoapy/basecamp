@@ -1,39 +1,31 @@
 "use client";
 
-import {
-  BusinessApplicationsDialog,
-  OutOfStateDialog,
-  WireInstructionsDialog,
-  ThirdPartyPayoffsDialog,
-  EX90SheetDialog,
-  OnboardingDialog,
-  GasSavingsDialog,
-} from "@/app/(platform)/dialogs";
-import { DialogWrapper } from "@/app/(platform)/dialogs/dialog-wrapper";
+import { DialogWrapper } from "@/app/(platform)/(dialogs)/dialog-wrapper";
+import * as Dialogs from "@/app/(platform)/(dialogs)";
 
 export function DialogProvider() {
   return (
     <>
       <DialogWrapper name="business-applications">
-        {BusinessApplicationsDialog}
+        {Dialogs.BusinessApplicationsDialog}
       </DialogWrapper>
       <DialogWrapper name="out-of-state">
-        {OutOfStateDialog}
+        {Dialogs.OutOfStateDialog}
       </DialogWrapper>
       <DialogWrapper name="wire-instructions">
-        {WireInstructionsDialog}
+        {Dialogs.WireInstructionsDialog}
       </DialogWrapper>
       <DialogWrapper name="third-party-payoffs">
-        {ThirdPartyPayoffsDialog}
+        {Dialogs.ThirdPartyPayoffsDialog}
       </DialogWrapper>
       <DialogWrapper name="ex90-sheet">
-        {EX90SheetDialog}
+        {Dialogs.EX90SheetDialog}
       </DialogWrapper>
       <DialogWrapper name="onboarding">
-        {OnboardingDialog}
+        {Dialogs.OnboardingDialog}
       </DialogWrapper>
       <DialogWrapper name="gas-savings">
-        {GasSavingsDialog}
+        {Dialogs.GasSavingsDialog}
       </DialogWrapper>
     </>
   );

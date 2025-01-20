@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { WireInstructionsDialog } from "@/app/(platform)/dialogs/wire-instructions-dialog";
-import { OutOfStateDialog } from "@/app/(platform)/dialogs/out-of-state-dialog";
-import { BusinessApplicationsDialog } from "@/app/(platform)/dialogs/business-applications-dialog";
-import { ThirdPartyPayoffsDialog } from "@/app/(platform)/dialogs/third-party-payoffs-dialog";
-import { OnboardingDialog } from "@/app/(platform)/dialogs/onboarding-dialog";
+import { WireInstructionsDialog } from "@/app/(platform)/(dialogs)/wire-instructions-dialog";
+import { OutOfStateDialog } from "@/app/(platform)/(dialogs)/out-of-state-dialog";
+import { BusinessApplicationsDialog } from "@/app/(platform)/(dialogs)/business-applications-dialog";
+import { ThirdPartyPayoffsDialog } from "@/app/(platform)/(dialogs)/third-party-payoffs-dialog";
+import { OnboardingDialog } from "@/app/(platform)/(dialogs)/onboarding-dialog";
 interface DynamicModalProps {
   component?: string;
   children: React.ReactNode;
