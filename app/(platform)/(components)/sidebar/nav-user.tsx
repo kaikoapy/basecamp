@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import { ChevronsUpDown, LogOut, User } from "lucide-react";
-import { SignOutButton, useClerk, useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -24,7 +25,8 @@ import {
 export function NavUser() {
   const { state } = useSidebar();
   const { user } = useUser();
-  const { openUserProfile, closeUserProfile, unmountUserProfile } = useClerk();
+  const { signOut, openUserProfile, closeUserProfile, unmountUserProfile } = useClerk();
+  const router = useRouter();
 
   useEffect(() => {
     // Store original body style
@@ -65,6 +67,16 @@ export function NavUser() {
 
   const handleProfileClick = () => {
     openUserProfile();
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+      router.push("/");
+    }
   };
 
   if (!user) return null;
@@ -137,12 +149,10 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <SignOutButton redirectUrl="/">
-              <DropdownMenuItem>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </DropdownMenuItem>
-            </SignOutButton>
+            <DropdownMenuItem onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
