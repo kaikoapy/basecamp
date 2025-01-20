@@ -72,14 +72,10 @@ export function NavUser() {
 
   const handleSignOut = async () => {
     try {
-      await signOut(() => {
-        router.push("/");
-      });
+      await signOut(() => router.replace("/sign-in"));
     } catch (error) {
       console.error("Sign out error:", error);
-      // Fallback sign out if the clean approach fails
-      await signOut();
-      router.push("/");
+      router.replace("/sign-in");
     }
   };
 
