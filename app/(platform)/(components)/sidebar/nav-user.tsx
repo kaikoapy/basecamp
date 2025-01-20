@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { ChevronsUpDown, LogOut, User } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -24,6 +25,7 @@ import {
 export function NavUser() {
   const { state } = useSidebar();
   const { user } = useUser();
+  const router = useRouter();
   const { signOut, openUserProfile, closeUserProfile, unmountUserProfile } =
     useClerk();
 
@@ -66,6 +68,19 @@ export function NavUser() {
 
   const handleProfileClick = () => {
     openUserProfile();
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(() => {
+        router.push("/");
+      });
+    } catch (error) {
+      console.error("Sign out error:", error);
+      // Fallback sign out if the clean approach fails
+      await signOut();
+      router.push("/");
+    }
   };
 
   if (!user) return null;
@@ -146,7 +161,7 @@ export function NavUser() {
               </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </DropdownMenuItem>

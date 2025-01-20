@@ -98,11 +98,6 @@ export const processEmailToAnnouncement = mutation({
 
 export const list = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthenticated");
-    }
-
     const announcements = await ctx.db
       .query("announcements")
       .order("desc")
