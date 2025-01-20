@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
 import { AnnouncementCard } from "../(components)/announcement-card";
-import { useAnnouncementsPermission } from "./hooks/use-announcements-permission";
+import { useUser } from "@clerk/nextjs";
+
+// Type for Clerk user metadata
+interface UserPublicMetadata {
+  permissions?: string[];
+}
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -38,10 +43,14 @@ function extractTextFromHtml(html: string): string {
 }
 
 export default function AnnouncementsPage() {
-  const hasPermission = useAnnouncementsPermission();
+  const { user, isLoaded } = useUser();
   const announcements = useQuery(api.announcements.list);
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
+
+  // Type assertion for user metadata
+  const metadata = user?.publicMetadata as UserPublicMetadata;
+  const hasPermission = isLoaded && metadata?.permissions?.includes("org:announcements:manage");
 
   // Filter announcements based on search query and time filter
   const filteredAnnouncements = announcements?.filter((announcement) => {

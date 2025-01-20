@@ -20,7 +20,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQueryState } from "nuqs";
 import TiptapEditor from "./TipTapEditor";
-import { useAnnouncementsPermission } from "@/app/(platform)/announcements/hooks/use-announcements-permission";
+import { usePermission } from "@/hooks/use-permission";
+
 
 // Base64 encoding/decoding functions
 function encodeId(id: string): string {
@@ -100,6 +101,8 @@ interface Reader {
   readAt: string;
 }
 
+
+
 export function NewAnnouncementDialog({
   announcement,
 }: NewAnnouncementDialogProps) {
@@ -128,7 +131,7 @@ export function NewAnnouncementDialog({
   }) as Reader[] | undefined;
   const { user } = useUser();
   const { toast } = useToast();
-  const hasPermission = useAnnouncementsPermission();
+  const hasPermission = usePermission("org:announcements:manage");
 
   const getClerkUserImageUrl = (userId: string) => {
     return userId === user?.id ? user?.imageUrl : undefined;

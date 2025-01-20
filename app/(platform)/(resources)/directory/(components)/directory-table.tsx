@@ -75,7 +75,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { useDirectoryPermission } from "../hooks/use-directory-permission";
+import { usePermission } from "@/hooks/use-permission";
 import { CopyButtonInline } from "@/components/copy-button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -226,7 +226,7 @@ export default function DirectoryTable() {
     },
   ]);
 
-  const hasDirectoryPermission = useDirectoryPermission();
+  const hasPermission = usePermission("org:directory:manage");
   const { toast } = useToast();
 
   // Fetch data from Convex
@@ -388,7 +388,7 @@ export default function DirectoryTable() {
         </div>
         <div className="flex items-center gap-3">
           {/* Delete button */}
-          {hasDirectoryPermission &&
+          {hasPermission &&
             table.getSelectedRowModel().rows.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -442,7 +442,7 @@ export default function DirectoryTable() {
               </AlertDialog>
             )}
           {/* Add user button */}
-          {hasDirectoryPermission && (
+          {hasPermission && (
             <Button
               className="ml-auto"
               variant="outline"
@@ -585,7 +585,7 @@ export default function DirectoryTable() {
 
 function RowActions({ row }: { row: Row<DirectoryItem> }) {
   const { toast } = useToast();
-  const hasDirectoryPermission = useDirectoryPermission();
+  const hasPermission = usePermission("org:directory:manage");
   const [isEditing, setIsEditing] = useState(false);
   const deleteOne = useMutation(api.directory.deleteOne);
 
@@ -608,7 +608,7 @@ function RowActions({ row }: { row: Row<DirectoryItem> }) {
     }
   };
 
-  if (!hasDirectoryPermission) {
+  if (!hasPermission) {
     return null;
   }
 

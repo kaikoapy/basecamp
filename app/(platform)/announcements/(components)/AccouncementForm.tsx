@@ -1,7 +1,7 @@
 // app/(platform)/dashboard/announcements/(components)/AccouncementForm.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -12,8 +12,12 @@ import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { useAnnouncementsPermission } from "@/app/(platform)/announcements/hooks/use-announcements-permission";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+
+interface UserPublicMetadata {
+  permissions?: string[];
+}
 
 const AnnouncementForm = () => {
   const [title, setTitle] = useState("");
@@ -25,18 +29,18 @@ const AnnouncementForm = () => {
   const createAnnouncement = useMutation(api.announcements.create);
   const getUploadUrls = useMutation(api.files.generateUploadUrls);
   const { toast } = useToast();
-  const hasPermission = useAnnouncementsPermission();
+  const { user } = useUser();
+  const metadata = user?.publicMetadata as UserPublicMetadata;
+  const hasPermission = metadata?.permissions?.includes("org:announcements:manage");
   const router = useRouter();
 
-  useEffect(() => {
-    if (!hasPermission) {
+  React.useEffect(() => {
+    if (user && !hasPermission) {
       router.push("/announcements");
     }
-  }, [hasPermission, router]);
+  }, [user, hasPermission, router]);
 
-  if (!hasPermission) {
-    return null;
-  }
+  if (!hasPermission) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
