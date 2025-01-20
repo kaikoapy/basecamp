@@ -137,7 +137,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <SignOutButton redirectUrl="/sign-in/sign-in">
+            <SignOutButton redirectUrl="/">
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign out
