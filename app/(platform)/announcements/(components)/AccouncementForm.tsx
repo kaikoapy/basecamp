@@ -12,12 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-
-interface UserPublicMetadata {
-  permissions?: string[];
-}
+import { Protect } from "@clerk/nextjs";
 
 const AnnouncementForm = () => {
   const [title, setTitle] = useState("");
@@ -29,18 +24,6 @@ const AnnouncementForm = () => {
   const createAnnouncement = useMutation(api.announcements.create);
   const getUploadUrls = useMutation(api.files.generateUploadUrls);
   const { toast } = useToast();
-  const { user } = useUser();
-  const metadata = user?.publicMetadata as UserPublicMetadata;
-  const hasPermission = metadata?.permissions?.includes("org:announcements:manage");
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (user && !hasPermission) {
-      router.push("/announcements");
-    }
-  }, [user, hasPermission, router]);
-
-  if (!hasPermission) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -108,80 +91,91 @@ const AnnouncementForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Create New Announcement</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Announcement Title"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter announcement details..."
-              rows={4}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="image">Images (Optional)</Label>
-            <div className="flex items-center gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => document.getElementById("image-upload")?.click()}
-                className="w-full"
-                disabled={isSubmitting}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Images
-              </Button>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-                multiple
+    <Protect role="org:admin">
+      fallback={
+        <Card className="w-full max-w-2xl mx-auto">
+          <CardContent className="p-6">
+            <p className="text-center text-muted-foreground">
+              You need admin access to create announcements.
+            </p>
+          </CardContent>
+        </Card>
+      }
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Create New Announcement</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Announcement Title"
+                required
               />
             </div>
-            {imagePreview.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {imagePreview.map((preview, index) => (
-                  <div key={index} className="relative aspect-video">
-                    <Image
-                      src={preview}
-                      alt={`Preview ${index + 1}`}
-                      className="rounded-md object-cover w-full h-full"
-                      width={300}
-                      height={300}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Post Announcement"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter announcement details..."
+                rows={4}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image">Images (Optional)</Label>
+              <div className="flex items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById("image-upload")?.click()}
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Images
+                </Button>
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  multiple
+                />
+              </div>
+              {imagePreview.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  {imagePreview.map((preview, index) => (
+                    <div key={index} className="relative aspect-video">
+                      <Image
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="rounded-md object-cover w-full h-full"
+                        width={300}
+                        height={300}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Post Announcement"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </Protect>
   );
 };
 

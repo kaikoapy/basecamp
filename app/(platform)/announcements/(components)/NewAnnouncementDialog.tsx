@@ -19,10 +19,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQueryState } from "nuqs";
 import TiptapEditor from "./TipTapEditor";
-import { usePermission } from "@/hooks/use-permission";
 import { useUser } from "@clerk/nextjs";
-
-
+import { Protect } from "@clerk/nextjs";
 
 // Base64 encoding/decoding functions
 function encodeId(id: string): string {
@@ -105,8 +103,6 @@ interface Reader {
   readAt: string;
 }
 
-
-
 export function NewAnnouncementDialog({
   announcement,
 }: NewAnnouncementDialogProps) {
@@ -133,9 +129,21 @@ export function NewAnnouncementDialog({
   const readStatus = useQuery(api.announcements.getReadStatus, {
     id: announcement._id,
   }) as Reader[] | undefined;
-    const { user } = useUser();
+  const { user } = useUser();
   const { toast } = useToast();
-  const hasPermission = usePermission("org:announcements:manage");
+  const hasUserRead = readStatus?.some((reader) => reader.userId === user?.id);
+  const readCount = readStatus?.length || 0;
+
+  // Add logging for user role
+  React.useEffect(() => {
+    if (user) {
+      console.log("User Metadata:", {
+        publicMetadata: user.publicMetadata,
+        role: user.publicMetadata?.role,
+        userId: user.id,
+      });
+    }
+  }, [user]);
 
   const getClerkUserImageUrl = (userId: string) => {
     return userId === user?.id ? user?.imageUrl : undefined;
@@ -258,9 +266,6 @@ export function NewAnnouncementDialog({
     }
   };
 
-  const hasUserRead = readStatus?.some((reader) => reader.userId === user?.id);
-  const readCount = readStatus?.length || 0;
-
   // Add helper function to get correct download URL
   const getDownloadUrl = (fileUrl: string) => {
     // If URL already contains /api/storage/, it's in the correct format
@@ -278,12 +283,14 @@ export function NewAnnouncementDialog({
         {/* Header with title */}
         <div className="border-b pb-4">
           {isEditing ? (
-            <Input
-              value={editedTitle}
-              onChange={(e) => setEditedTitle(e.target.value)}
-              className="text-xl font-bold mb-3 h-auto py-2 px-3 max-w-3xl"
-              placeholder="Enter title..."
-            />
+          <Protect role="org:admin">
+              <Input
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="text-xl font-bold mb-3 h-auto py-2 px-3 max-w-3xl"
+                placeholder="Enter title..."
+              />
+            </Protect>
           ) : (
             <h2 className="text-xl font-bold mb-3">{announcement.title}</h2>
           )}
@@ -299,10 +306,12 @@ export function NewAnnouncementDialog({
         {/* Main content */}
         <div className="flex-1 overflow-y-auto py-4 focus:outline-none">
           {isEditing ? (
-            <TiptapEditor
-              content={editedDescription}
-              onChange={setEditedDescription}
-            />
+          <Protect role="org:admin">
+              <TiptapEditor
+                content={editedDescription}
+                onChange={setEditedDescription}
+              />
+            </Protect>
           ) : (
             <div
               dangerouslySetInnerHTML={{
@@ -588,8 +597,8 @@ export function NewAnnouncementDialog({
           </div>
 
           <div className="flex items-center gap-2">
-            {hasPermission && (
-              !isEditing ? (
+          <Protect role="org:admin">
+              {!isEditing ? (
                 <Button
                   variant="outline"
                   size="sm"
@@ -616,8 +625,8 @@ export function NewAnnouncementDialog({
                     Save
                   </Button>
                 </>
-              )
-            )}
+              )}
+            </Protect>
             {!isEditing && !hasUserRead && (
               <Button variant="default" size="sm" onClick={handleMarkAsRead}>
                 Mark as Read

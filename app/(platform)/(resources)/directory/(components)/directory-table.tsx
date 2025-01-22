@@ -26,6 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Protect } from "@clerk/nextjs";
+import { CopyButtonInline } from "@/components/copy-button";
 
 import {
   Table,
@@ -75,8 +77,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { usePermission } from "@/hooks/use-permission";
-import { CopyButtonInline } from "@/components/copy-button";
 import { useToast } from "@/hooks/use-toast";
 
 type DirectoryItem = Doc<"directory">;
@@ -226,7 +226,6 @@ export default function DirectoryTable() {
     },
   ]);
 
-  const hasPermission = usePermission("org:directory:manage");
   const { toast } = useToast();
 
   // Fetch data from Convex
@@ -388,8 +387,8 @@ export default function DirectoryTable() {
         </div>
         <div className="flex items-center gap-3">
           {/* Delete button */}
-          {hasPermission &&
-            table.getSelectedRowModel().rows.length > 0 && (
+          <Protect role="org:admin">
+            {table.getSelectedRowModel().rows.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button className="ml-auto" variant="outline">
@@ -441,8 +440,9 @@ export default function DirectoryTable() {
                 </AlertDialogContent>
               </AlertDialog>
             )}
+          </Protect>
           {/* Add user button */}
-          {hasPermission && (
+          <Protect role="org:admin">
             <Button
               className="ml-auto"
               variant="outline"
@@ -456,7 +456,7 @@ export default function DirectoryTable() {
               />
               Add Contact
             </Button>
-          )}
+          </Protect>
         </div>
       </div>
 
@@ -585,9 +585,8 @@ export default function DirectoryTable() {
 
 function RowActions({ row }: { row: Row<DirectoryItem> }) {
   const { toast } = useToast();
-  const hasPermission = usePermission("org:directory:manage");
-  const [isEditing, setIsEditing] = useState(false);
   const deleteOne = useMutation(api.directory.deleteOne);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleDelete = async () => {
     try {
@@ -608,12 +607,11 @@ function RowActions({ row }: { row: Row<DirectoryItem> }) {
     }
   };
 
-  if (!hasPermission) {
-    return null;
-  }
-
   return (
-    <>
+    <Protect 
+      role="org:admin"
+      fallback={null}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex justify-end">
@@ -652,6 +650,6 @@ function RowActions({ row }: { row: Row<DirectoryItem> }) {
           setIsEditing(false);
         }}
       />
-    </>
+    </Protect>
   );
 }

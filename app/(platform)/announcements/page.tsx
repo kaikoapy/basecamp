@@ -15,12 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
 import { AnnouncementCard } from "../(components)/announcement-card";
-import { useUser } from "@clerk/nextjs";
-
-// Type for Clerk user metadata
-interface UserPublicMetadata {
-  permissions?: string[];
-}
+import { Protect } from "@clerk/nextjs";
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -43,14 +38,10 @@ function extractTextFromHtml(html: string): string {
 }
 
 export default function AnnouncementsPage() {
-  const { user, isLoaded } = useUser();
+
   const announcements = useQuery(api.announcements.list);
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
-
-  // Type assertion for user metadata
-  const metadata = user?.publicMetadata as UserPublicMetadata;
-  const hasPermission = isLoaded && metadata?.permissions?.includes("org:announcements:manage");
 
   // Filter announcements based on search query and time filter
   const filteredAnnouncements = announcements?.filter((announcement) => {
@@ -79,14 +70,14 @@ export default function AnnouncementsPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Announcements 📰</h1>
-        {hasPermission && (
+        <Protect role="admin">
           <Link href="/announcements/new">
             <Button>
               <Plus className="w-4 h-4 mr-2" />
               New Announcement
             </Button>
           </Link>
-        )}
+        </Protect>
       </div>
 
       {/* Search and Filter Bar */}
@@ -122,14 +113,14 @@ export default function AnnouncementsPage() {
           <p className="text-muted-foreground mb-4">
             Create your first announcement to get started
           </p>
-          {hasPermission && (
+          <Protect role="org:admin">
             <Link href="/announcements/new">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Announcement
               </Button>
             </Link>
-          )}
+          </Protect>
         </div>
       ) : (
         // Announcements grid
