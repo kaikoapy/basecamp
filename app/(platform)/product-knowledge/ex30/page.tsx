@@ -1,21 +1,33 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
 import { ProductSection } from "@/app/(platform)/product-knowledge/(components)/product-section";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
-export const metadata = {
-  title: "EX30 | Product Knowledge",
-  description: "Product knowledge details for the Volvo EX30",
-};
+const EX30_ORDER_GUIDE =
+  "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yTvJ3xDnGbBNuXoz28xEAanF4tU06PVfZL7y1";
 
 export default function EX30Page() {
   return (
     <div className="h-full p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Volvo EX30</h1>
-          <p className="text-muted-foreground">
-            The Future of Compact Electric SUVs
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold">Volvo EX30</h1>
+            <p className="text-muted-foreground">
+              The Future of Compact Electric SUVs
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(EX30_ORDER_GUIDE, "_blank")}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download Order Guide
+          </Button>
         </div>
 
         <Separator />

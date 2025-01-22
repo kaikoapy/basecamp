@@ -8,7 +8,7 @@ const EX90_SHEET_IMAGE =
   "https://utfs.io/f/WTe1MV8FTP1yIDOOqYvkUzZSeqajA682byYFBfWmhDPKXOQE";
 
 const EX90_SHEET_PDF =
-  "https://utfs.io/f/WTe1MV8FTP1ybbLKBeY7a9wYoCTzdmeAphWyXuG0RsMUniqt";
+  "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yOKuo2HpvrsXpeiu26yZTBnadAzhLNKxb95WI";
 
 export default function EX90Page() {
   return (

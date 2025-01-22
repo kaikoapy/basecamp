@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AnnouncementCard } from "../../(components)/announcement-card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface DashboardContentProps {
   searchQuery?: string;
@@ -106,7 +107,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   };
 
   return (
-    <main className="flex-1 p-6 max-w-[1600px] mx-auto bg-[rgb(250,250,252)]">
+    <main className="flex-1 p-6 max-w-full mx-auto bg-[rgb(250,250,252)]">
       {filteredContent.announcements.length > 0 && (
         <section id="announcements" className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -132,29 +133,33 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-            {filteredContent.announcements.map((announcement) => (
-              <AnnouncementCard
-                key={announcement._id}
-                id={announcement._id}
-                title={announcement.title}
-                description={
-                  announcement.htmlDescription
-                    ? extractTextFromHtml(announcement.htmlDescription)
-                    : announcement.description
-                }
-                content={
-                  announcement.htmlDescription || announcement.description
-                }
-                postedAt={announcement.postedAt}
-                formattedDate={formatDate(announcement.postedAt)}
-                createdBy={announcement.createdBy}
-                isEmail={announcement.isEmailGenerated}
-                files={announcement.files}
-                readBy={announcement.readBy}
-              />
-            ))}
-          </div>
+          <ScrollArea className="w-full rounded-md">
+            <div className="flex w-max space-x-6 p-4">
+              {filteredContent.announcements.map((announcement) => (
+                <div key={announcement._id} className="shrink-0 w-[440px]">
+                  <AnnouncementCard
+                    id={announcement._id}
+                    title={announcement.title}
+                    description={
+                      announcement.htmlDescription
+                        ? extractTextFromHtml(announcement.htmlDescription)
+                        : announcement.description
+                    }
+                    content={
+                      announcement.htmlDescription || announcement.description
+                    }
+                    postedAt={announcement.postedAt}
+                    formattedDate={formatDate(announcement.postedAt)}
+                    createdBy={announcement.createdBy}
+                    isEmail={announcement.isEmailGenerated}
+                    files={announcement.files}
+                    readBy={announcement.readBy}
+                  />
+                </div>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </section>
       )}
 

@@ -108,13 +108,13 @@ export function AnnouncementCard({
         )}
 
         {/* Main content */}
-        <div className="p-4 flex flex-col gap-2">
+        <div className="p-5 flex flex-col gap-3">
           {/* Title */}
           <h3 className="text-lg font-medium leading-tight tracking-tight truncate pr-10">
             {title}
           </h3>
           {/* Category & Date */}
-          <div className="flex items-center gap-2 pb-2 text-xs tracking-wide">
+          <div className="flex items-center gap-2 text-xs tracking-wide">
             {isEmail && <Mail className="w-3.5 h-3.5 text-gray-500" />}
             <span className="text-gray-500 -mr-1">
               {isEmail ? "Emailed by" : "Posted by"}
@@ -126,7 +126,7 @@ export function AnnouncementCard({
 
           {/* Description */}
           {description && (
-            <p className="text-gray-600 line-clamp-2 text-sm leading-relaxed">
+            <p className="text-gray-600 whitespace-normal line-clamp-2 text-sm leading-relaxed">
               {formatDescription(description)}
             </p>
           )}
