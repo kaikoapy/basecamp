@@ -39,10 +39,10 @@ export function ScheduleImage() {
           }}
         >
           <Image
-            src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1ypQnYZBDhlLAq79zRfNpovKaWb2xCsrUuM4dj"
+            src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yVQQDnMcSuK4t9LmXyGPHapJfoWbeqcrSTOv2"
             alt="Schedule"
             className="max-w-full h-auto"
-            width={1000}
+            width={2000}
             height={1000}
           />
         </div>

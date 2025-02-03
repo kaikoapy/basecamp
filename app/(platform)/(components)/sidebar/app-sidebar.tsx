@@ -196,6 +196,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Contact Directory",
             url: "/directory",
           },
+          {
+            title: "VCFS Stipulations",
+            url: "/vcfs-stipulations",
+          },
           // {
           //   title: "Overseas Delivery",
           //   url: "#",

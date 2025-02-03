@@ -31,7 +31,7 @@ export const speedDialContacts: SpeedDialContacts = {
       phone: "(954) 478-0068",
     },
     {
-      name: "Marlon (also a manager)",
+      name: "Marlon",
       phone: "(305) 495-6700",
     },
     {
@@ -57,7 +57,6 @@ export const speedDialContacts: SpeedDialContacts = {
     { name: "Steven", phone: "(310) 621-2905" },
   ],
   deliverySpecialists: [
-    { name: "Nicolas Meek", phone: "(305) 907-6871" },
     { name: "Josh Sadov", phone: "(305) 690-6116" },
   ],
   external: {
