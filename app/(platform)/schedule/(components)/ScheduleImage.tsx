@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
-
+import Image from "next/image";
 export function ScheduleImage() {
   const [zoom, setZoom] = useState(1);
 
@@ -38,10 +38,12 @@ export function ScheduleImage() {
             transformOrigin: "top left",
           }}
         >
-          <img
-            src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yOvF8BypvrsXpeiu26yZTBnadAzhLNKxb95WI"
+          <Image
+            src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1ypQnYZBDhlLAq79zRfNpovKaWb2xCsrUuM4dj"
             alt="Schedule"
             className="max-w-full h-auto"
+            width={1000}
+            height={1000}
           />
         </div>
       </div>
