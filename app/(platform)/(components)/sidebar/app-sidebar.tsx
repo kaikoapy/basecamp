@@ -200,6 +200,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "VCFS Stipulations",
             url: "/vcfs-stipulations",
           },
+          {
+            title: "Ad Breakdown",
+            url: "/ad-breakdown",
+          },
           // {
           //   title: "Overseas Delivery",
           //   url: "#",
