@@ -1,42 +1,20 @@
-import React, { useState } from "react";
+"use client";
 
-interface LeaseDisclosure {
-  advertisementOverview: {
-    vehicleModel: string;
-    advertisedMonthlyPayment: string;
-    advertisedDownPayment: string;
-  };
-  finePrintSummary: {
-    actuallyDueAtSigning: string;
-    difference: string;
-    monthlyPaymentDetail: string;
-  };
-  fullPaymentDetails: {
-    paymentDetails: {
-      monthlyPayment: string;
-      downPayment: string;
-      firstMonthPayment: string;
-    };
-    additionalFees: {
-      bankAcquisitionFee: string;
-      dealerFee: string;
-      tagFees: string;
-      electronicFee: string;
-    };
-    requiredDiscounts: {
-      volvoLoyalty: string;
-      affinityAplan: string;
-      fwdToAwdAllowance: string;
-    };
-    vehicleRequirements: {
-      model: string;
-      msrp: string;
-    };
-  };
-}
+import React, { useState } from "react";
+import LeaseDisclosureCard, { LeaseDisclosure } from "./LeaseDisclosureCard"; // adjust the import path as needed
+import { Button } from "@/components/ui/button";
+
+const LoadingText = () => (
+  <span className="inline-flex items-center">
+    Decoding
+    <span className="ml-1 animate-pulse">.</span>
+    <span className="ml-0.5 animate-pulse delay-150">.</span>
+    <span className="ml-0.5 animate-pulse delay-300">.</span>
+  </span>
+);
 
 const LeaseDisclosureParser: React.FC = () => {
-  const [disclosure, setDisclosure] = useState<string>("");
+  const [disclosureText, setDisclosureText] = useState<string>("");
   const [parsedResult, setParsedResult] = useState<LeaseDisclosure | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -51,7 +29,7 @@ const LeaseDisclosureParser: React.FC = () => {
       const response = await fetch("/api/parse-disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disclosure }),
+        body: JSON.stringify({ disclosure: disclosureText }),
       });
 
       if (!response.ok) {
@@ -60,7 +38,13 @@ const LeaseDisclosureParser: React.FC = () => {
       }
 
       const data = await response.json();
-      setParsedResult(data.structuredOutput);
+      setParsedResult({
+        ...data.structuredOutput,
+        finePrintSummary: {
+          ...data.structuredOutput.finePrintSummary,
+          originalDisclosure: disclosureText
+        }
+      });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
@@ -69,39 +53,45 @@ const LeaseDisclosureParser: React.FC = () => {
   };
 
   return (
-    <div style={{ margin: "2rem auto", maxWidth: "800px", padding: "1rem" }}>
-      <h1>Lease Disclosure Parser</h1>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <label htmlFor="disclosure">Enter Lease Disclosure Text:</label>
+    <div className="container mx-auto p-4 max-w-3xl">
+      <h1 className="text-3xl font-bold mb-6 text-center">Lease Disclosure Decoder</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-8">
+        <label htmlFor="disclosure" className="font-semibold">
+          Paste Lease Disclosure Text:
+        </label>
         <textarea
           id="disclosure"
-          value={disclosure}
-          onChange={(e) => setDisclosure(e.target.value)}
+          value={disclosureText}
+          onChange={(e) => setDisclosureText(e.target.value)}
           placeholder="Paste the lease disclosure text here..."
           rows={10}
-          style={{ width: "100%", padding: "0.5rem", fontFamily: "monospace" }}
+          className="w-full p-3 border border-gray-300 rounded-md font-mono"
         />
-        <button type="submit" disabled={isLoading} style={{ padding: "0.75rem", fontSize: "1rem" }}>
-          {isLoading ? "Parsing..." : "Parse Disclosure"}
-        </button>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="py-3 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+        >
+          {isLoading ? <LoadingText /> : "Decode Disclosure"}
+        </Button>
       </form>
 
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {error && <p className="text-red-500 mb-4">Error: {error}</p>}
 
       {parsedResult && (
-        <div style={{ marginTop: "2rem" }}>
-          <h2>Parsed Result:</h2>
-          <pre
-            style={{
-              backgroundColor: "#f4f4f4",
-              padding: "1rem",
-              borderRadius: "5px",
-              overflowX: "auto",
-            }}
-          >
-            {JSON.stringify(parsedResult, null, 2)}
-          </pre>
-        </div>
+        <>
+     
+          {/* Render the visual card component */}
+          <LeaseDisclosureCard disclosure={parsedResult} />
+
+          {/* Raw JSON Output */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Raw JSON Output</h2>
+            <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+              {JSON.stringify(parsedResult, null, 2)}
+            </pre>
+          </div>
+        </>
       )}
     </div>
   );

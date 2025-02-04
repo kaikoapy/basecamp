@@ -1,228 +1,115 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { AlertTriangle, Search } from "lucide-react";
+import AdComparisonCard from './ad-comparison-card'
 
-export interface LeaseDisclosure {
-  advertisementOverview: {
-    vehicleModel: string;
-    advertisedMonthlyPayment: string;
-    advertisedDownPayment: string;
-  };
-  finePrintSummary: {
-    actuallyDueAtSigning: string;
-    difference: string;
-    monthlyPaymentDetail: string;
-  };
-  fullPaymentDetails: {
-    paymentDetails: {
-      monthlyPayment: string;
-      downPayment: string;
-      firstMonthPayment: string;
-    };
-    additionalFees: {
-      bankAcquisitionFee: string;
-      dealerFee: string;
-      tagFees: string;
-      electronicFee: string;
-    };
-    requiredDiscounts: {
-      volvoLoyalty: string;
-      affinityAplan: string;
-      fwdToAwdAllowance: string;
-    };
-    vehicleRequirements: {
-      model: string;
-      msrp: string;
-    };
-  };
-}
+const ads = [
+  {
+    model: "2025 XC40 Core",
+    originalAd: {
+      monthlyPayment: "$449/month",
+      downPayment: "$1995 down",
+      details: "Please note the following important details regarding the lease offer for the 2025 Volvo XC40 B5 Core: The advertised monthly payment of $449 is based on the Manufacturer's Suggested Retail Price (MSRP) of $43,665. This includes First payment, Bank Acquisition Fee $995, Dealer Fee $999, Tag Fees $250, Electronic Fee $399. Must qualify for Volvo Loyalty $1,000 Affinity/A-plan $500 and FWD to AWD Allowance of $1,000. The lease is for a term of 36 months, $1,995 Down Payment. Lessees are responsible for any excess wear and tear on the vehicle, as well as any mileage over 7,500 miles per year at a rate of $0.25 per mile. This offer is available only at Bomnin Volvo Cars Dadeland and is subject to vehicle availability. The vehicle shown in the advertisement may include optional equipment that is not included in the lease offer. Not all customers will qualify for this offer, and it is subject to change or cancellation at any time. Please see your Bomnin Volvo dealer for complete details. The offer is valid until 1/31/2025, and applicable vehicles may need to be ordered."
+    },
+    actualMeaning: {
+      monthlyPayment: "$449/month + Tax",
+      dueAtSigning: "$5,087 due at signing",
+      details: [
+        "Advertised Monthly Payment: $449 (DOES NOT INCLUDE TAXES)",
+        "Required Model: Must be XC40 B5 Core trim specifically",
+        "MSRP Requirement: $43,665 (any options or higher trim levels will increase payment)",
+        "Due at Signing: $5,087 (DOES NOT INCLUDE TAXES)",
+        "Down Payment: $1,995",
+        "First Month Payment: $449",
+        "Bank Acquisition Fee: $995",
+        "Dealer Fee: $999",
+        "Tag Fees: $250",
+        "Electronic Fee: $399",
+        "Required Discounts (must qualify for ALL to get advertised payment):",
+        "Volvo Loyalty: $1,000 (must be current Volvo owner)",
+        "Affinity/A-plan: $500",
+        "FWD to AWD Allowance: $1,000"
+      ]
+    }
+  },
+  {
+    model: "2025 XC60 Core",
+    originalAd: {
+      monthlyPayment: "$489/month",
+      downPayment: "$1995 down",
+      details: "Please note the following important details regarding the lease offer for the 2025 Volvo XC60 B5 Core: The advertised monthly payment of $489 is based on the Manufacturer's Suggested Retail Price (MSRP) of $48,345. This includes First payment, Bank Acquisition Fee $995, Dealer Fee $999, Tag Fees $250, Electronic Fee $399. Must qualify for Volvo Loyalty $1,000 Affinity / A-plan $500 and FWD to AWD Allowance of $1,000. The lease is for a term of 36 months, $1,995 Down Payment. Lessees are responsible for any excess wear and tear on the vehicle, as well as any mileage over 7,500 miles per year at a rate of $0.25 per mile. This offer is available only at Bomnin Volvo Cars Dadeland and is subject to vehicle availability. The vehicle shown in the advertisement may include optional equipment that is not included in the lease offer. Not all customers will qualify for this offer, and it is subject to change or cancellation at any time. Please see your Bomnin Volvo dealer for complete details. The offer is valid until 1/31/2025, and applicable vehicles may need to be ordered."
+    },
+    actualMeaning: {
+      monthlyPayment: "$489/month + Tax",
+      dueAtSigning: "$5,127 due at signing",
+      details: [
+        "Advertised Monthly Payment: $489 (DOES NOT INCLUDE TAXES)",
+        "Required Model: Must be XC60 B5 Core trim specifically",
+        "MSRP Requirement: $48,345 (any options or higher trim levels will increase payment)",
+        "Due at Signing: $5,127 (DOES NOT INCLUDE TAXES)",
+        "Down Payment: $1,995",
+        "First Month Payment: $489",
+        "Bank Acquisition Fee: $995",
+        "Dealer Fee: $999",
+        "Tag Fees: $250",
+        "Electronic Fee: $399",
+        "Required Discounts (must qualify for ALL to get advertised payment):",
+        "Volvo Loyalty: $1,000 (must be current Volvo owner)",
+        "Affinity/A-plan: $500",
+        "FWD to AWD Allowance: $1,000"
+      ]
+    }
+  },
+  {
+    model: "2025 XC90 Core",
+    originalAd: {
+      monthlyPayment: "$549/month",
+      downPayment: "$1995 down",
+      details: "Please note the following important details regarding the lease offer for the 2025 Volvo XC90 B5 Core: The advertised monthly payment of $549 is based on the Manufacturer's Suggested Retail Price (MSRP) of $59,565. This includes First payment, Bank Acquisition Fee $995, Dealer Fee $999, Tag Fees $250, Electronic Fee $399. Must qualify for Volvo Loyalty $1,000 Affinity / A-plan $500 and FWD to AWD Allowance of $1,000. The lease is for a term of 24 months, $995 Down Payment. Lessees are responsible for any excess wear and tear on the vehicle, as well as any mileage over 7,500 miles per year at a rate of $0.25 per mile. This offer is available only at Bomnin Volvo Cars Dadeland and is subject to vehicle availability. The vehicle shown in the advertisement may include optional equipment that is not included in the lease offer. Not all customers will qualify for this offer, and it is subject to change or cancellation at any time. Please see your Bomnin Volvo dealer for complete details. The offer is valid until 1/31/2025, and applicable vehicles may need to be ordered."
+    },
+    actualMeaning: {
+      monthlyPayment: "$549/month + Tax",
+      dueAtSigning: "$4,187 due at signing",
+      details: [
+        "Advertised Monthly Payment: $549 (DOES NOT INCLUDE TAXES)",
+        "Required Model: Must be XC90 B5 Core trim specifically",
+        "MSRP Requirement: $59,565 (any options or higher trim levels will increase payment)",
+        "Due at Signing: $4,187 (DOES NOT INCLUDE TAXES)",
+        "Down Payment: $995 (lower than other models)",
+        "First Month Payment: $549",
+        "Bank Acquisition Fee: $995",
+        "Dealer Fee: $999",
+        "Tag Fees: $250",
+        "Electronic Fee: $399",
+        "Required Discounts (must qualify for ALL to get advertised payment):",
+        "Volvo Loyalty: $1,000 (must be current Volvo owner)",
+        "Affinity/A-plan: $500",
+        "FWD to AWD Allowance: $1,000"
+      ]
+    }
+  }
+]
 
-interface AdComparisonCardProps {
-  ad: LeaseDisclosure;
-}
-
-export default function AdComparisonCard({ ad }: AdComparisonCardProps) {
-  // Calculate difference between the "advertised down payment" and the "actually due at signing"
-  const advertisedDownPaymentValue = Number(
-    ad.advertisementOverview.advertisedDownPayment.replace(/[^0-9.]/g, "")
-  );
-  const actuallyDueAtSigningValue = Number(
-    ad.finePrintSummary.actuallyDueAtSigning.replace(/[^0-9.]/g, "")
-  );
-  const difference = actuallyDueAtSigningValue - advertisedDownPaymentValue;
-
+export default function Home() {
   return (
-    <Card className="w-full transition-all duration-300 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] rounded-[24px] border-gray-100">
-      <CardHeader className="px-8 pt-8">
-        <CardTitle className="text-3xl font-bold">
-          {ad.advertisementOverview.vehicleModel}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="px-8 pb-8">
-        <div className="space-y-8">
-          {/* Advertisement Section */}
-          <div className="rounded-2xl bg-[rgb(240,245,255)] p-8">
-            <h3 className="font-semibold text-2xl text-gray-900 mb-4">Advertisement Shows</h3>
-            <div className="space-y-2">
-              <p className="text-2xl font-medium">
-                {ad.advertisementOverview.advertisedMonthlyPayment}
-              </p>
-              <p className="text-xl text-gray-600">
-                {ad.advertisementOverview.advertisedDownPayment}
-              </p>
-            </div>
-            <Accordion type="single" collapsible className="mt-6">
-              <AccordionItem value="details" className="border-t border-gray-200">
-                <AccordionTrigger className="text-base text-gray-600 hover:text-gray-900 group">
-                  <span className="flex items-center">
-                    <Search className="w-4 h-4 mr-2 text-gray-400 group-hover:text-gray-600" />
-                    View Fine Print
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="text-sm text-gray-600 leading-relaxed bg-white p-4 rounded-lg">
-                    {ad.finePrintSummary.monthlyPaymentDetail}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-
-          {/* Actual Payment Section */}
-          <div className="rounded-2xl bg-white border-2 border-red-100 p-8">
-            <div className="flex items-start gap-4 mb-6">
-              <AlertTriangle className="w-6 h-6 text-red-500 mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="font-semibold text-2xl text-gray-900">Actually Due at Signing</h3>
-                <p className="text-4xl font-bold text-red-500 mt-4">
-                  {ad.finePrintSummary.actuallyDueAtSigning}
-                </p>
-                {difference > 0 && (
-                  <p className="text-red-500 font-medium text-lg mt-2">
-                    {difference.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}{" "}
-                    more than advertised
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <p className="text-xl text-gray-900">
-                {ad.fullPaymentDetails.paymentDetails.monthlyPayment}
-              </p>
-            </div>
-
-            {/* Full Details Section */}
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <h4 className="font-semibold text-xl mb-4">Full Details</h4>
-              <div className="grid gap-4">
-                {/* Payment Details */}
-                <div className="rounded-xl py-4 border-b border-gray-200 last:border-b-0">
-                  <h5 className="font-medium mb-3">Payment Details</h5>
-                  <ul className="space-y-2.5 text-gray-700">
-                    <li className="flex justify-between">
-                      <span>Monthly Payment</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.paymentDetails.monthlyPayment}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Down Payment</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.paymentDetails.downPayment}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>First Month Payment</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.paymentDetails.firstMonthPayment}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Additional Fees */}
-                <div className="rounded-xl py-4 border-b border-gray-200 last:border-b-0">
-                  <h5 className="font-medium mb-3">Additional Fees</h5>
-                  <ul className="space-y-2.5 text-gray-700">
-                    <li className="flex justify-between">
-                      <span>Bank Acquisition Fee</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.additionalFees.bankAcquisitionFee}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Dealer Fee</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.additionalFees.dealerFee}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Tag Fees</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.additionalFees.tagFees}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Electronic Fee</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.additionalFees.electronicFee}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Required Discounts */}
-                <div className="rounded-xl py-4 border-b border-gray-200 last:border-b-0">
-                  <h5 className="font-medium mb-3">Required Discounts</h5>
-                  <ul className="space-y-2.5 text-gray-700">
-                    <li className="flex justify-between">
-                      <span>Volvo Loyalty</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.requiredDiscounts.volvoLoyalty}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Affinity/A-plan</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.requiredDiscounts.affinityAplan}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>FWD to AWD Allowance</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.requiredDiscounts.fwdToAwdAllowance}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Vehicle Requirements */}
-                <div className="rounded-xl py-4 border-b border-gray-200 last:border-b-0">
-                  <h5 className="font-medium mb-3">Vehicle Requirements</h5>
-                  <ul className="space-y-2.5 text-gray-700">
-                    <li className="flex justify-between">
-                      <span>Model</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.vehicleRequirements.model} specifically
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>MSRP</span>
-                      <span className="font-medium">
-                        {ad.fullPaymentDetails.vehicleRequirements.msrp}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+    <main className="min-h-screen bg-[rgb(250,250,252)] py-20 px-4">
+      <div className="container mx-auto max-w-7xl">
+        <div className="max-w-4xl mx-auto text-center mb-20">
+          <h1 className="text-6xl font-bold mb-6">
+            Finally.
+          </h1>
+          <h2 className="text-4xl font-bold mb-6">
+            See what car lease ads really mean,<br />without the confusing fine print.
+          </h2>
+          <p className="text-xl text-gray-600">
+            We break down the actual costs and requirements hidden in the fine print,<br />
+            saving you from unexpected expenses.
+          </p>
         </div>
-      </CardContent>
-    </Card>
-  );
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {ads.map((ad, index) => (
+            <AdComparisonCard key={index} ad={ad} />
+          ))}
+        </div>
+      </div>
+    </main>
+  )
 }
+
