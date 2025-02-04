@@ -83,8 +83,8 @@ ${isActuallyTransparent
   ? `While all fees are included in the advertised amount, these prices are only available if you:
   • Qualify for all stipulations listed above
   • Choose a vehicle at or below ${disclosure.fullPaymentDetails.vehicleRequirements.msrp}
-  • Are comfortable with ${disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit.annualMiles} miles per year`
-  : `These extras add up to ${difference} and that's if you qualify for all the stipulations and only need ${disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit.annualMiles} miles per year.`}
+  • Are comfortable with ${disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit} miles per year`
+  : `These extras add up to ${difference} and that's if you qualify for all the stipulations and only need ${disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit} miles per year.`}
 
 One more thing - the cars in the ad are usually not even available; they could be sold, loaners, or otherwise unavailable.
 

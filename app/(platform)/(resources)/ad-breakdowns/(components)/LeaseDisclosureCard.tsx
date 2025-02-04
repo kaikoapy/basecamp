@@ -41,9 +41,7 @@ export interface LeaseDisclosure {
     vehicleRequirements: {
       model: string;
       msrp: string;
-      mileageLimit: {
-        annualMiles: string;
-      };
+      mileageLimit: string;
     };
   };
 }
@@ -273,7 +271,7 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
                     <li className="flex justify-between">
                       <span>Annual Mileage Limit</span>
                       <span className="font-medium">
-                        {disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit.annualMiles}
+                        {disclosure.fullPaymentDetails.vehicleRequirements.mileageLimit}
                       </span>
                     </li>
                   </ul>

@@ -46,9 +46,7 @@ const LeaseDisclosureSchema = z.object({
     vehicleRequirements: z.object({
       model: z.string(),
       msrp: z.string(),
-      mileageLimit: z.object({
-        annualMiles: z.string(),
-      }),
+      mileageLimit: z.string(),
     }),
   }),
 });
@@ -140,9 +138,7 @@ The required JSON schema is:
     "vehicleRequirements": {
       "model": string,
       "msrp": string,
-      "mileageLimit": {
-        "annualMiles": string
-      }
+      "mileageLimit": string
     }
   }
 }
