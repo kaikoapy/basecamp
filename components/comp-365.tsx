@@ -15,7 +15,7 @@ export default function HoverCardDemo() {
             />
           </a>
         </HoverCardTrigger>
-        <HoverCardContent className="w-[320px]" showArrow>
+        <HoverCardContent className="w-[320px]">
           <div className="space-y-3">
             <div className="space-y-1">
               <h2 className="font-semibold">
