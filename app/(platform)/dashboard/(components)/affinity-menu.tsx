@@ -58,15 +58,19 @@ interface AffinityOption {
 const regularOptions: AffinityOption[] = [
   {
     label: "Medical Professional",
-    url: "https://volvoaffinity.com/programs/medical-professional",
+    url: "https://volvoaffinity.com/healthcare",
+  },
+  {
+    label: "Teacher",
+    url: "https://volvoaffinity.com/teachers",
   },
   {
     label: "First Responder",
-    url: "https://volvoaffinity.com/programs/first-responder",
+    url: "https://volvoaffinity.com/firstresponders",
   },
   {
-    label: "Hospital Employee",
-    url: "https://volvoaffinity.com/programs/hospital-employee",
+    label: "Military",
+    url: "https://volvoaffinity.com/usmilitary",
   },
 ];
 
