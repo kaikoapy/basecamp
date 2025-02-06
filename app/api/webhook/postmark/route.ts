@@ -61,16 +61,17 @@ export async function POST(request: Request) {
     if (data.Attachments?.length) {
       for (const attachment of data.Attachments) {
         // Only process PDFs for now
-        if (attachment.ContentType === "application/pdf") {
+        if (attachment.ContentType === "application/pdf" || 
+          attachment.ContentType.startsWith("image/")) {
           try {
             const content = Buffer.from(attachment.Content, "base64");
 
-            // Check size (5MB limit)
-            const MAX_SIZE = 5 * 1024 * 1024;
-            if (content.length > MAX_SIZE) {
-              console.warn(`Attachment too large: ${content.length} bytes`);
-              continue;
-            }
+            // // Check size (5MB limit)
+            // const MAX_SIZE = 5 * 1024 * 1024;
+            // if (content.length > MAX_SIZE) {
+            //   console.warn(`Attachment too large: ${content.length} bytes`);
+            //   continue;
+            // }
 
             const uploadUrl = await convex.mutation(
               api.announcements.generateUploadUrl,
