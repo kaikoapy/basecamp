@@ -48,6 +48,7 @@ export default defineSchema({
     email: v.string(),
     clerkId: v.string(),
     isManager: v.boolean(),
+    hasCompletedOnboarding: v.boolean(),
     // Add any other user fields you need
   }).index("by_clerk_id", ["clerkId"]),
 
@@ -109,4 +110,55 @@ export default defineSchema({
     changes: v.string(),
     timestamp: v.number(),
   }).index("by_record_id", ["recordId"]),
+
+  // Lease Advertisements table
+  leaseAds: defineTable({
+    dealershipInfo: v.object({
+      name: v.string(),
+      location: v.string(),
+    }),
+    advertisementOverview: v.object({
+      vehicleModel: v.string(),
+      advertisedMonthlyPayment: v.string(),
+      advertisedDownPayment: v.string(),
+      isTransparent: v.boolean(),
+    }),
+    finePrintSummary: v.object({
+      actuallyDueAtSigning: v.string(),
+      difference: v.string(),
+      monthlyPaymentDetail: v.string(),
+      originalDisclosure: v.string(),
+      includedFeesInAdvertised: v.array(v.string()),
+    }),
+    fullPaymentDetails: v.object({
+      paymentDetails: v.object({
+        monthlyPayment: v.string(),
+        downPayment: v.string(),
+        firstMonthPayment: v.string(),
+        leaseTerm: v.string(),
+      }),
+      additionalFees: v.object({
+        bankAcquisitionFee: v.string(),
+        dealerFee: v.string(),
+        tagFees: v.string(),
+        electronicFee: v.string(),
+      }),
+      requiredDiscounts: v.object({
+        volvoLoyalty: v.string(),
+        affinityAplan: v.string(),
+        fwdToAwdAllowance: v.string(),
+      }),
+      vehicleRequirements: v.object({
+        model: v.string(),
+        msrp: v.string(),
+        mileageLimit: v.string(),
+      }),
+    }),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    isActive: v.boolean(),
+    expiresAt: v.optional(v.number()),
+  }).index("by_dealership", ["dealershipInfo.name"])
+    .index("by_model", ["advertisementOverview.vehicleModel"])
+    .index("by_active", ["isActive"]),
 });

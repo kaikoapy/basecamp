@@ -1,9 +1,8 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import Navbar from "./(components)/Navbar";
 import Image from "next/image";
 import { HighlightedOne } from "./(components)/HighlightedOne";
+import { StartNowButton } from "./(components)/StartNowButton";
 
 export default function Home() {
   return (
@@ -37,14 +36,7 @@ export default function Home() {
             </p>
 
             {/* Strong CTA that Handles Objections */}
-            <div className="flex flex-col items-center gap-4">
-              <Button size="lg" className="gap-2">
-                Start Now <ArrowRight className="h-4 w-4" />
-              </Button>
-              <span className="text-sm text-gray-500">
-                This button doesn&apos;t do anything • yet
-              </span>
-            </div>
+            <StartNowButton />
           </div>
 
           {/* Visual Proof */}
@@ -67,13 +59,6 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Image
-                src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yshxp8S1UoIShzARj4Eer1uOngfm9tc72CvHq"
-                alt="DealerHub Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
               <span className="font-semibold">DealerHub</span>
             </div>
             <p className="text-sm text-gray-500">

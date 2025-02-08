@@ -52,22 +52,12 @@ interface LeaseDisclosureCardProps {
 
 const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure }) => {
   // Calculate if the ad is actually transparent by checking if fees are mentioned separately
-  const determineTransparency = () => {
-    const hasAdditionalFees = 
-      Number(disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee.replace(/[^0-9.-]+/g, '')) > 0 ||
-      Number(disclosure.fullPaymentDetails.additionalFees.dealerFee.replace(/[^0-9.-]+/g, '')) > 0 ||
-      Number(disclosure.fullPaymentDetails.additionalFees.tagFees.replace(/[^0-9.-]+/g, '')) > 0 ||
-      Number(disclosure.fullPaymentDetails.additionalFees.electronicFee.replace(/[^0-9.-]+/g, '')) > 0;
-
-    // If there are additional fees listed, it's not transparent
-    return !hasAdditionalFees;
-  };
+  
 
   const {
     advertisementOverview: { advertisedDownPayment },
   } = disclosure;
 
-  const isActuallyTransparent = determineTransparency();
 
   // Calculate the monthly payment with tax
   const monthlyWithTax = (() => {
@@ -78,12 +68,20 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
 
   // Calculate total due at signing including first month's payment and all fees
   const totalDueAtSigning = (() => {
-    const downPayment = Number(disclosure.fullPaymentDetails.paymentDetails.downPayment.replace(/[^0-9.-]+/g, '')); // $1,995
-    const firstMonth = Number(disclosure.fullPaymentDetails.paymentDetails.firstMonthPayment.replace(/[^0-9.-]+/g, '')); // $449
-    const bankFee = Number(disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee.replace(/[^0-9.-]+/g, '')); // $995
-    const dealerFee = Number(disclosure.fullPaymentDetails.additionalFees.dealerFee.replace(/[^0-9.-]+/g, '')); // $999
-    const tagFees = Number(disclosure.fullPaymentDetails.additionalFees.tagFees.replace(/[^0-9.-]+/g, '')); // $250
-    const electronicFee = Number(disclosure.fullPaymentDetails.additionalFees.electronicFee.replace(/[^0-9.-]+/g, '')); // $399
+    const downPayment = Number(disclosure.fullPaymentDetails.paymentDetails.downPayment.replace(/[^0-9.-]+/g, '')); 
+    const firstMonth = Number(disclosure.fullPaymentDetails.paymentDetails.firstMonthPayment.replace(/[^0-9.-]+/g, '')); 
+
+    if (disclosure.advertisementOverview.isTransparent) {
+      // For transparent ads, only include down payment and first month
+      const total = downPayment + firstMonth;
+      return `$${total.toLocaleString()}`;
+    }
+
+    // For non-transparent ads, include all fees
+    const bankFee = Number(disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee.replace(/[^0-9.-]+/g, '')); 
+    const dealerFee = Number(disclosure.fullPaymentDetails.additionalFees.dealerFee.replace(/[^0-9.-]+/g, '')); 
+    const tagFees = Number(disclosure.fullPaymentDetails.additionalFees.tagFees.replace(/[^0-9.-]+/g, '')); 
+    const electronicFee = Number(disclosure.fullPaymentDetails.additionalFees.electronicFee.replace(/[^0-9.-]+/g, '')); 
 
     const total = downPayment + firstMonth + bankFee + dealerFee + tagFees + electronicFee;
     return `$${total.toLocaleString()}`;
@@ -91,18 +89,19 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
 
   // Calculate the difference between advertised and actual amount
   const calculateDifference = () => {
-    const advertised = Number(advertisedDownPayment.replace(/[^0-9.-]+/g, '')); // $1,995
-    const downPayment = Number(disclosure.fullPaymentDetails.paymentDetails.downPayment.replace(/[^0-9.-]+/g, '')); // $1,995
-    const firstMonth = Number(disclosure.fullPaymentDetails.paymentDetails.firstMonthPayment.replace(/[^0-9.-]+/g, '')); // $449
-    const bankFee = Number(disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee.replace(/[^0-9.-]+/g, '')); // $995
-    const dealerFee = Number(disclosure.fullPaymentDetails.additionalFees.dealerFee.replace(/[^0-9.-]+/g, '')); // $999
-    const tagFees = Number(disclosure.fullPaymentDetails.additionalFees.tagFees.replace(/[^0-9.-]+/g, '')); // $250
-    const electronicFee = Number(disclosure.fullPaymentDetails.additionalFees.electronicFee.replace(/[^0-9.-]+/g, '')); // $399
+    if (disclosure.advertisementOverview.isTransparent) {
+      return ''; // No difference for transparent ads
+    }
 
-    // Total actual amount due
+    const advertised = Number(advertisedDownPayment.replace(/[^0-9.-]+/g, '')); 
+    const downPayment = Number(disclosure.fullPaymentDetails.paymentDetails.downPayment.replace(/[^0-9.-]+/g, '')); 
+    const firstMonth = Number(disclosure.fullPaymentDetails.paymentDetails.firstMonthPayment.replace(/[^0-9.-]+/g, '')); 
+    const bankFee = Number(disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee.replace(/[^0-9.-]+/g, '')); 
+    const dealerFee = Number(disclosure.fullPaymentDetails.additionalFees.dealerFee.replace(/[^0-9.-]+/g, '')); 
+    const tagFees = Number(disclosure.fullPaymentDetails.additionalFees.tagFees.replace(/[^0-9.-]+/g, '')); 
+    const electronicFee = Number(disclosure.fullPaymentDetails.additionalFees.electronicFee.replace(/[^0-9.-]+/g, '')); 
+
     const totalActual = downPayment + firstMonth + bankFee + dealerFee + tagFees + electronicFee;
-    
-    // Calculate difference between total actual and advertised
     const difference = totalActual - advertised;
     
     return difference > 0 ? `$${difference.toLocaleString()} more than advertised` : '';
@@ -117,7 +116,6 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
           <CardTitle className="text-3xl font-bold">
             {disclosure.advertisementOverview.vehicleModel}
           </CardTitle>
-          <LeaseTemplateButton disclosure={disclosure} />
         </div>
       </CardHeader>
       <CardContent className="px-8 pb-8">
@@ -153,13 +151,15 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
           {/* Payment & Fine Print Section */}
           <div className="rounded-2xl bg-white border-2 border-red-100 p-8">
             <div className="flex items-start gap-4 mb-6">
-              <AlertTriangle className="w-6 h-6 text-red-500 mt-1 flex-shrink-0" />
+              <AlertTriangle className={`w-6 h-6 ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-1 flex-shrink-0`} />
               <div>
-                <h3 className="font-semibold text-2xl text-gray-900">The Real Price</h3>
-                <p className="text-4xl font-bold text-red-500 mt-4">
+                <h3 className="font-semibold text-2xl text-gray-900">
+                  {disclosure.advertisementOverview.isTransparent ? 'Transparent Advertisement' : 'The Real Price'}
+                </h3>
+                <p className={`text-4xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-4`}>
                   ${monthlyWithTax}/Month (w/ tax)
                 </p>
-                <p className="text-4xl font-bold text-red-500 mt-4">
+                <p className={`text-4xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-4`}>
                   {totalDueAtSigning} due at signing
                 </p>
                 {difference && (
@@ -193,39 +193,37 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
                 </div>
 
                 {/* Additional Fees */}
-                <div className="rounded-xl py-4 ">
-                  <h5 className="font-medium mb-3">
-                    {isActuallyTransparent 
-                      ? "Included in Due at Signing" 
-                      : "+ Additional Fees"}
-                  </h5>
-                  <ul className="space-y-2.5 text-gray-700">
-                    <li className="flex justify-between">
-                      <span>Bank Acquisition Fee</span>
-                      <span className={`font-medium ${isActuallyTransparent ? 'text-green-600' : ''}`}>
-                        {disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Dealer Fee</span>
-                      <span className={`font-medium ${isActuallyTransparent ? 'text-green-600' : ''}`}>
-                        {disclosure.fullPaymentDetails.additionalFees.dealerFee}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Tag Fees</span>
-                      <span className={`font-medium ${isActuallyTransparent ? 'text-green-600' : ''}`}>
-                        {disclosure.fullPaymentDetails.additionalFees.tagFees}
-                      </span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Electronic Fee</span>
-                      <span className={`font-medium ${isActuallyTransparent ? 'text-green-600' : ''}`}>
-                        {disclosure.fullPaymentDetails.additionalFees.electronicFee}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
+                {!disclosure.advertisementOverview.isTransparent && (
+                  <div className="rounded-xl py-4 ">
+                    <h5 className="font-medium mb-3">+ Additional Fees</h5>
+                    <ul className="space-y-2.5 text-gray-700">
+                      <li className="flex justify-between">
+                        <span>Bank Acquisition Fee</span>
+                        <span className="font-medium">
+                          {disclosure.fullPaymentDetails.additionalFees.bankAcquisitionFee}
+                        </span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Dealer Fee</span>
+                        <span className="font-medium">
+                          {disclosure.fullPaymentDetails.additionalFees.dealerFee}
+                        </span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Tag Fees</span>
+                        <span className="font-medium">
+                          {disclosure.fullPaymentDetails.additionalFees.tagFees}
+                        </span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Electronic Fee</span>
+                        <span className="font-medium">
+                          {disclosure.fullPaymentDetails.additionalFees.electronicFee}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
 
                 {/* Required Discounts */}
                 <div className="rounded-xl py-4 ">
@@ -284,6 +282,11 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Move the button to the bottom */}
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <LeaseTemplateButton disclosure={disclosure} />
         </div>
       </CardContent>
     </Card>

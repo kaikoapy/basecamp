@@ -11,6 +11,10 @@ const openai = new OpenAI({
 
 // Define a Zod schema for the lease disclosure structure.
 const LeaseDisclosureSchema = z.object({
+  dealershipInfo: z.object({
+    name: z.string(),
+    location: z.string().optional(),
+  }),
   advertisementOverview: z.object({
     vehicleModel: z.string(),
     advertisedMonthlyPayment: z.string(),
@@ -53,8 +57,7 @@ const LeaseDisclosureSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    // Parse the incoming JSON body to extract the lease disclosure text.
-    const { disclosure } = await request.json();
+    const { disclosure, isTransparent } = await request.json();
     if (!disclosure || typeof disclosure !== "string") {
       return NextResponse.json(
         { error: "Missing or invalid disclosure text." },
@@ -62,48 +65,29 @@ export async function POST(request: Request) {
       );
     }
 
-    // Construct a prompt that instructs the model on which details to extract
-    // and how to infer missing values based on related data.
     const prompt = `
-You are an expert at analyzing lease disclosures for transparency and extracting detailed payment information in a structured JSON format.
+You are an expert at analyzing lease disclosures and extracting detailed payment information in a structured JSON format.
 
 Key Analysis Tasks:
-1. Determine if the advertisement is transparent:
-   - Set isTransparent to true when BOTH of these conditions are met:
-     A. Uses clear "total due" language:
-        * "Total of $X due at inception/signing"
-        * States a total amount first, then breaks it down
-     
-     B. AND Explicitly itemizes all components that sum to that total:
-        * "this includes [list where amounts sum to total]"
-        * Lists every fee and amount that makes up the total
-        * No mention of additional fees beyond the itemized amounts
-   
-   Example of a Transparent Ad:
-   "Total of $3,995.00 due at Inception, this includes: $1,427.00 Cap Cost Reduction, Dealer Fee $999, Bank Acquisition Fee $995, Tag Fee $175, Electronic Filing Fee $399 (where these components sum to $3,995)"
-
-   NOT Transparent when:
-   - States a total but doesn't break down all components
-   - Lists fees separately from the "due at signing" amount
-   - Uses "down payment" instead of "total due"
-   - Mentions additional fees in disclaimers
-   - When components don't sum to the advertised total
-
-2. Extract all standard lease details with special attention to:
-   - Verify that itemized amounts actually sum to the advertised total
-   - Look for any fees mentioned outside the main breakdown
+1. Extract the dealership name and location from the disclosure
+2. The transparency has already been determined by the user: ${isTransparent}
+3. Extract all standard lease details with special attention to:
+   - For transparent ads: fees are already included in the advertised due at signing amount
+   - For non-transparent ads: fees are additional to the advertised amount
    - Required discounts and qualifications
    - Vehicle requirements
 
-Note: For the XC90 example ($3,995 total with itemized fees that sum correctly), 
-this should be marked as transparent because it:
-1. States "Total of $3,995.00 due at Inception"
-2. Uses "this includes" followed by complete itemization
-3. Lists all components that sum to $3,995
-4. Has no mention of additional fees beyond those listed
+Important Note for Transparent Ads:
+- When isTransparent is true, the actuallyDueAtSigning should be the advertised down payment plus first month's payment
+- The difference should be "0" for transparent ads
+- Fees listed are informational only and are already included in the advertised amount
 
 The required JSON schema is:
 {
+  "dealershipInfo": {
+    "name": string,
+    "location": string
+  },
   "advertisementOverview": {
     "vehicleModel": string,
     "advertisedMonthlyPayment": string,
@@ -143,40 +127,20 @@ The required JSON schema is:
   }
 }
 
-Example for a transparent ad:
-{
-  "advertisementOverview": {
-    "isTransparent": true,
-    "advertisedDownPayment": "$3,995",
-    ...
-  },
-  "finePrintSummary": {
-    "includedFeesInAdvertised": [
-      "Cap Cost Reduction",
-      "Dealer Fee",
-      "Bank Acquisition Fee",
-      "Tag Fee",
-      "Electronic Filing Fee"
-    ],
-    ...
-  }
-}
-
 Below is the lease disclosure text to process:
 ------------------------------------------------
 ${disclosure}
 ------------------------------------------------
 
-Return your answer as a JSON object matching the provided schema.
+Return your answer as a JSON object matching the provided schema. Extract the dealership name and location from the text. Use the provided isTransparent value (${isTransparent}) in the advertisementOverview.isTransparent field. Remember that for transparent ads, the actuallyDueAtSigning should only be the advertised down payment plus first month's payment, and the difference should be "0".
     `;
 
-    // Call OpenAI's chat completion endpoint using the structured output support.
     const completion = await openai.beta.chat.completions.parse({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are an expert at analyzing lease disclosures for transparency and extracting detailed payment information.",
+          content: "You are an expert at analyzing lease disclosures and extracting detailed payment information.",
         },
         {
           role: "user",
@@ -187,7 +151,6 @@ Return your answer as a JSON object matching the provided schema.
       response_format: zodResponseFormat(LeaseDisclosureSchema, "lease_disclosure"),
     });
 
-    // The parsed output is available as:
     const structuredOutput = completion.choices[0].message.parsed;
     return NextResponse.json({ structuredOutput });
   } catch (error: unknown) {

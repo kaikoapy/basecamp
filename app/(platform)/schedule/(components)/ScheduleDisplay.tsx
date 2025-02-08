@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { generateMonthlySchedule, DaySchedule } from "../lib/scheduling";
+import { DaySchedule } from "../lib/scheduling"; // types remain the same
 import { ScheduleInfoDialog } from "./ScheduleInfoDialog";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
@@ -14,7 +14,8 @@ export default function ScheduleDisplay() {
   const [data, setData] = useState<DaySchedule[]>([]);
   const [zoom, setZoom] = useState(1); // 1 is default, < 1 is zoomed out, > 1 is zoomed in
 
-  useEffect(() => {
+  // Set the initial date to the current month/year.
+  useEffect(() => { 
     const now = new Date();
     setCurrentDate({
       year: now.getFullYear(),
@@ -22,13 +23,23 @@ export default function ScheduleDisplay() {
     });
   }, []);
 
+  // Instead of generating the schedule locally with generateMonthlySchedule,
+  // fetch it from an API that reads from the database or runs your backend logic.
   useEffect(() => {
     if (currentDate) {
-      const schedule = generateMonthlySchedule(
-        currentDate.year,
-        currentDate.month
-      );
-      setData(schedule);
+      fetch(`/api/schedule?year=${currentDate.year}&month=${currentDate.month}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((fetchedData: DaySchedule[]) => {
+          setData(fetchedData);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch schedule:", err);
+        });
     }
   }, [currentDate]);
 
@@ -54,8 +65,7 @@ export default function ScheduleDisplay() {
   const goToNextMonth = () => {
     if (currentDate) {
       const newMonth = currentDate.month === 11 ? 0 : currentDate.month + 1;
-      const newYear =
-        currentDate.month === 11 ? currentDate.year + 1 : currentDate.year;
+      const newYear = currentDate.month === 11 ? currentDate.year + 1 : currentDate.year;
       setCurrentDate({ year: newYear, month: newMonth });
     }
   };
@@ -63,8 +73,7 @@ export default function ScheduleDisplay() {
   const goToPreviousMonth = () => {
     if (currentDate) {
       const newMonth = currentDate.month === 0 ? 11 : currentDate.month - 1;
-      const newYear =
-        currentDate.month === 0 ? currentDate.year - 1 : currentDate.year;
+      const newYear = currentDate.month === 0 ? currentDate.year - 1 : currentDate.year;
       setCurrentDate({ year: newYear, month: newMonth });
     }
   };
@@ -126,13 +135,13 @@ export default function ScheduleDisplay() {
         >
           {data.map((day, idx) => {
             const d = day.date;
-            const dayOfMonth = d.getDate();
+            const dayOfMonth = new Date(d).getDate(); // ensure date object
             const today = new Date();
             const isToday =
-              d.getDate() === today.getDate() &&
-              d.getMonth() === today.getMonth() &&
-              d.getFullYear() === today.getFullYear();
-            const isPastDay = d < new Date(today.setHours(0, 0, 0, 0));
+              new Date(d).getDate() === today.getDate() &&
+              new Date(d).getMonth() === today.getMonth() &&
+              new Date(d).getFullYear() === today.getFullYear();
+            const isPastDay = new Date(d) < new Date(today.setHours(0, 0, 0, 0));
 
             // Base classes for the cell
             let cellClasses = "border p-2 rounded-lg text-sm relative";
@@ -149,7 +158,6 @@ export default function ScheduleDisplay() {
               cellClasses += " border-2 border-blue-500"; // Highlight current day
             }
 
-            // Add overlay for past days with darker background
             const pastDayOverlay = isPastDay ? (
               <div className="absolute inset-0 bg-gray-600/30 rounded-lg pointer-events-none" />
             ) : null;
@@ -178,14 +186,13 @@ export default function ScheduleDisplay() {
                   <div className="font-bold text-red-600">
                     {day.holiday === "New Year's Day" && "🎉 Happy New Year!"}
                     {day.holiday === "Christmas" && "🎄 Merry Christmas!"}
-                    {day.holiday === "Thanksgiving" && "�� Happy Thanksgiving!"}
+                    {day.holiday === "Thanksgiving" && "🦃 Happy Thanksgiving!"}
                   </div>
                   <div className="text-red-600 font-semibold">Closed</div>
                 </div>
               );
             }
 
-            // Function to render the header with indicators
             const renderDateHeader = () => (
               <div className="font-bold flex items-center justify-between gap-1">
                 <span>
@@ -216,7 +223,6 @@ export default function ScheduleDisplay() {
               </div>
             );
 
-            // Sunday schedule
             if (day.weekday === 0) {
               return (
                 <div key={idx} className={cellClasses}>
@@ -258,7 +264,6 @@ export default function ScheduleDisplay() {
               );
             }
 
-            // Mon-Sat schedule
             return (
               <div key={idx} className={cellClasses}>
                 {pastDayOverlay}

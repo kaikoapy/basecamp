@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import LeaseDisclosureCard, { LeaseDisclosure } from "./LeaseDisclosureCard"; // adjust the import path as needed
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const LoadingText = () => (
   <span className="inline-flex items-center">
@@ -18,6 +20,7 @@ const LeaseDisclosureParser: React.FC = () => {
   const [parsedResult, setParsedResult] = useState<LeaseDisclosure | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [isTransparent, setIsTransparent] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +32,10 @@ const LeaseDisclosureParser: React.FC = () => {
       const response = await fetch("/api/parse-disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disclosure: disclosureText }),
+        body: JSON.stringify({ 
+          disclosure: disclosureText,
+          isTransparent 
+        }),
       });
 
       if (!response.ok) {
@@ -67,6 +73,18 @@ const LeaseDisclosureParser: React.FC = () => {
           rows={10}
           className="w-full p-3 border border-gray-300 rounded-md font-mono"
         />
+        
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="transparency-mode"
+            checked={isTransparent}
+            onCheckedChange={setIsTransparent}
+          />
+          <Label htmlFor="transparency-mode">
+            Mark as Transparent Advertisement
+          </Label>
+        </div>
+
         <Button
           type="submit"
           disabled={isLoading}
@@ -80,7 +98,6 @@ const LeaseDisclosureParser: React.FC = () => {
 
       {parsedResult && (
         <>
-     
           {/* Render the visual card component */}
           <LeaseDisclosureCard disclosure={parsedResult} />
 

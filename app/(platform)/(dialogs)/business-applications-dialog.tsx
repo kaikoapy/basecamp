@@ -20,6 +20,7 @@ interface BusinessApplicationsDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+
 const GUIDELINES_IMAGE =
   "https://utfs.io/f/WTe1MV8FTP1ymwKBBnyKv3dxk5GC76MncbHBIJiVoQqgsUR1";
 
@@ -101,7 +102,7 @@ export function BusinessApplicationsDialog({
                   <ul className="list-disc pl-5 text-sm text-foreground/80">
                     <li>The business application form is fully completed.</li>
                     <li>
-                      A printout of the business’s Sunbiz record is included.
+                      A printout of the business&apos;s Sunbiz record is included.
                       You can retrieve this record from{" "}
                       <a
                         href="https://search.sunbiz.org/Inquiry/CorporationSearch/ByName"
@@ -124,6 +125,7 @@ export function BusinessApplicationsDialog({
                     <FullscreenImage
                       src={GUIDELINES_IMAGE}
                       alt="Business Applications Guidelines"
+                      showExternalLink={false}
                     />
                   </div>
                 </div>
@@ -150,6 +152,7 @@ export function BusinessApplicationsDialog({
                     <FullscreenImage
                       src={BUSINESS_APP_PREVIEW}
                       alt="Business Application Form Preview"
+                      showExternalLink={false}
                     />
                   </div>
                 </div>

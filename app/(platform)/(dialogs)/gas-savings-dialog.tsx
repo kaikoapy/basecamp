@@ -18,172 +18,178 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useState, useEffect, useCallback } from "react";
-
-interface CalcResult {
-  annualGallons: number;
-  annualCost: number;
-  monthlyCost: number;
-  savings: number;
-}
+import { useGasSavings } from "./hooks/use-gas-savings";
+import { cn } from "@/lib/utils";
 
 interface GasSavingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function GasSavingsDialog({
-  open,
-  onOpenChange,
-}: GasSavingsDialogProps) {
-  const [annualMiles, setAnnualMiles] = useState("12000");
-  const [gasPrice, setGasPrice] = useState("3.50");
-  const [vehicle1, setVehicle1] = useState({ mpg: "" });
-  const [vehicle2, setVehicle2] = useState({ mpg: "" });
-  const [result, setResult] = useState<CalcResult | null>(null);
+// Add this interface for the icon prop type
+interface IconType {
+  // Lucide icon properties
+  className?: string;
+}
 
-  const calculateSavings = useCallback(() => {
-    const miles = parseFloat(annualMiles);
-    const mpg1 = parseFloat(vehicle1.mpg);
-    const mpg2 = parseFloat(vehicle2.mpg);
-    const price = parseFloat(gasPrice);
+function InputWithLabel({
+  label,
+  icon: Icon,
+  id,
+  value,
+  onChange,
+  description,
+  placeholder,
+  type = "number",
+  startIcon,
+  step,
+}: {
+  label: string;
+  icon: React.ComponentType<IconType>;
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  description?: string;
+  placeholder?: string;
+  type?: string;
+  startIcon?: React.ReactNode;
+  step?: string;
+}) {
+  return (
+    <div className="grid gap-3">
+      <div className="space-y-1">
+        <Label htmlFor={id} className="flex items-center gap-2">
+          <Icon className="h-4 w-4" />
+          {label}
+        </Label>
+        {description && (
+          <p className="text-sm text-muted-foreground">{description}</p>
+        )}
+      </div>
+      <div className="relative">
+        {startIcon}
+        <Input
+          id={id}
+          type={type}
+          step={step}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn("p-3", startIcon && "pl-8")}
+        />
+      </div>
+    </div>
+  );
+}
 
-    if (!miles || !mpg1 || !mpg2 || !price) {
-      setResult(null);
-      return;
-    }
-
-    const annualGallons1 = miles / mpg1;
-    const annualGallons2 = miles / mpg2;
-    const annualCost1 = annualGallons1 * price;
-    const annualCost2 = annualGallons2 * price;
-    const annualSavings = Math.abs(annualCost1 - annualCost2);
-
-    setResult({
-      annualGallons: Math.abs(annualGallons1 - annualGallons2),
-      annualCost: annualSavings,
-      monthlyCost: annualSavings / 12,
-      savings: annualCost1 > annualCost2 ? 2 : 1,
-    });
-  }, [annualMiles, gasPrice, vehicle1.mpg, vehicle2.mpg]);
-
-  useEffect(() => {
-    calculateSavings();
-  }, [calculateSavings]);
+export function GasSavingsDialog({ open, onOpenChange }: GasSavingsDialogProps) {
+  const {
+    annualMiles,
+    setAnnualMiles,
+    gasPrice,
+    setGasPrice,
+    vehicleA,
+    setVehicleA,
+    vehicleB,
+    setVehicleB,
+    result,
+  } = useGasSavings();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="mb-4">
-          <DialogTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-2xl">
+            <Calculator className="h-6 w-6" />
             Gas Savings Calculator
           </DialogTitle>
-          <DialogDescription>
-            Compare annual fuel costs between two vehicles.
+          <DialogDescription className="text-base">
+            Compare annual fuel costs between two vehicles to see potential savings.
           </DialogDescription>
         </DialogHeader>
-        <Card className="w-full">
-          <CardContent className="grid gap-6 p-6">
+
+        <Card className="w-full border-2">
+          <CardContent className="grid gap-8 p-6">
+            {/* Input Section */}
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="grid gap-3">
-                <Label
-                  htmlFor="annual-miles"
-                  className="flex items-center gap-2"
-                >
-                  <Road className="h-4 w-4" />
-                  Annual Miles
-                </Label>
-                <Input
-                  id="annual-miles"
-                  type="number"
-                  placeholder="12000"
-                  value={annualMiles}
-                  onChange={(e) => setAnnualMiles(e.target.value)}
-                  className="p-3"
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="gas-price" className="flex items-center gap-2">
-                  <Fuel className="h-4 w-4" />
-                  Gas Price per Gallon
-                </Label>
-                <div className="relative">
+              <InputWithLabel
+                label="Annual Miles"
+                icon={Road}
+                id="annual-miles"
+                value={annualMiles}
+                onChange={setAnnualMiles}
+                placeholder="12000"
+                description="How many miles do you drive a year?"
+              />
+              
+              <InputWithLabel
+                label="Gas Price per Gallon"
+                icon={Fuel}
+                id="gas-price"
+                value={gasPrice}
+                onChange={setGasPrice}
+                placeholder="3.50"
+                step="0.01"
+                startIcon={
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                  <Input
-                    id="gas-price"
-                    type="number"
-                    step="0.01"
-                    style={{ paddingLeft: "2rem" }}
-                    className="p-3"
-                    value={gasPrice}
-                    onChange={(e) => setGasPrice(e.target.value)}
-                  />
-                </div>
-              </div>
+                }
+                description="How much does a gallon of gas for this car cost?"
+              />
             </div>
 
+            {/* Vehicle Comparison Section */}
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="grid gap-4">
-                <div className="flex items-center gap-2">
-                  <Car className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Vehicle 1</h3>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="v1-mpg">MPG</Label>
-                  <Input
-                    id="v1-mpg"
-                    type="number"
-                    placeholder="25"
-                    value={vehicle1.mpg}
-                    onChange={(e) =>
-                      setVehicle1({ ...vehicle1, mpg: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="flex items-center gap-2">
-                  <Car className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Vehicle 2</h3>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="v2-mpg">MPG</Label>
-                  <Input
-                    id="v2-mpg"
-                    type="number"
-                    placeholder="25"
-                    value={vehicle2.mpg}
-                    onChange={(e) =>
-                      setVehicle2({ ...vehicle2, mpg: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
+              {[
+                { letter: 'A', data: vehicleA, setData:  setVehicleA },
+                { letter: 'B', data: vehicleB, setData: setVehicleB },
+              ].map((vehicle) => (
+                <Card key={vehicle.letter} className="border-2">
+                  <CardContent className="p-4">
+                    <div className="mb-4 flex items-center gap-2">
+                      <Car className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">
+                        Vehicle {vehicle.letter}
+                      </h3>
+                    </div>
+                    <InputWithLabel
+                      label="Miles Per Gallon (MPG)"
+                      icon={Fuel}
+                      id={`v${vehicle.letter}-mpg`}
+                      value={vehicle.data.mpg}
+                      onChange={(value) =>
+                        vehicle.setData({ ...vehicle.data, mpg: value })
+                      }
+                      placeholder="Enter MPG"
+                      description="How many miles per gallon does the vehicle get?"
+                    />
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             <Separator className="my-2" />
 
-            <div className="grid gap-6">
+            {/* Results Section */}
+            <div className="rounded-lg bg-muted/50 p-6">
               {result ? (
-                <>
-                  <div className="grid gap-4 text-center">
-                    <h3 className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">
-                      Vehicle {result.savings} saves you $
-                      {result.monthlyCost.toFixed(2)} per month
-                    </h3>
-                    <div className="space-y-2">
-                      <p className="text-lg text-emerald-600 dark:text-emerald-400">
-                        That&apos;s ${result.annualCost.toFixed(2)} per year
-                      </p>
-                      <p className="text-emerald-600 dark:text-emerald-400">
-                        {result.annualGallons.toFixed(1)} gallons of gas saved
-                        annually!
-                      </p>
-                    </div>
+                <div className="grid gap-4 text-center">
+                  <h3 className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">
+                    Vehicle {result.savings} saves you{" "}
+                    <span className="text-4xl">
+                      ${result.monthlyCost.toFixed(2)}
+                    </span>{" "}
+                    per month!
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-lg text-emerald-600 dark:text-emerald-400">
+                      Annual savings: ${result.annualCost.toFixed(2)}
+                    </p>
+                    <p className="text-emerald-600/90 dark:text-emerald-400/90">
+                      You&apos;ll save {result.annualGallons.toFixed(1)} gallons of gas
+                      per year!
+                    </p>
                   </div>
-                </>
+                </div>
               ) : (
                 <div className="text-center py-6 text-muted-foreground">
                   Enter vehicle details above to see potential savings

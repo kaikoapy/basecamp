@@ -60,14 +60,14 @@ export async function POST(request: Request) {
 
     if (data.Attachments?.length) {
       for (const attachment of data.Attachments) {
-        // Only process PDFs for now
+        // Allow both PDFs and images
         if (attachment.ContentType === "application/pdf" || 
-          attachment.ContentType.startsWith("image/")) {
+            attachment.ContentType.startsWith("image/")) {
           try {
             const content = Buffer.from(attachment.Content, "base64");
 
-            // // Check size (5MB limit)
-            // const MAX_SIZE = 5 * 1024 * 1024;
+            // Remove size limit check to allow all attachments
+            // const MAX_SIZE = 5 * 1024 * 1024; // Commented out
             // if (content.length > MAX_SIZE) {
             //   console.warn(`Attachment too large: ${content.length} bytes`);
             //   continue;
@@ -116,12 +116,12 @@ export async function POST(request: Request) {
             }
 
             console.log(
-              "Successfully processed PDF attachment:",
+              "Successfully processed attachment:",
               attachment.Name
             );
           } catch (error) {
             console.error(
-              `Failed to process PDF attachment ${attachment.Name}:`,
+              `Failed to process attachment ${attachment.Name}:`,
               error
             );
           }

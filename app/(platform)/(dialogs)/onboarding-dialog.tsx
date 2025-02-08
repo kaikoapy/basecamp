@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 
 interface OnboardingDialogProps {
@@ -31,25 +30,32 @@ export function OnboardingDialog({
       title: "Welcome to Dealer Hub",
       description:
         "Here's your go-to spot for all the tools and resources you need, all in one place.",
-      image: "/placeholder.svg?height=200&width=300",
+      video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yzHt38s0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",
     },
     {
-      title: "Quick Access",
+      title: "Everyday links",
       description:
-        "Pin your favorite tools here for quicker access. Just hover over a card and look for the pin icon.",
-      image: "/placeholder.svg?height=200&width=300",
+        "Bookmark your favorite tools here for quick access. Click to copy sharable links to your clipboard or open links in new tabs directly.",
+      video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yZqQFn9LHhXtkF3K8PfNJaT9UxMReBgIqyCEj",
     },
+    {
+      title: "Useful Navbar",
+      description:
+        "Search bar for quick staff and resource lookup, General dealer info, speed dial for quick access to staff all with click to copy, and a quick link to the sales schedule.",
+      video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yD8BhEWznNxGEbKORAcTIhe2u30QPvsHiaoCJ",
+    },
+
     {
       title: "Tools & Resources",
       description:
-        "Get to external tools like A-Plan, Carfax, and DealerSocket, plus our internal stuff like wire instructions and FAQs.",
-      image: "/placeholder.svg?height=200&width=300",
+        "Easily access documents to print, view additional resources, tools, product knowledge, and more to make your job easier.",
+      video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yLAeYRdU0NFxPEbliwHGXe5B84MSn3v7gULpk",
     },
     {
       title: "Stay Updated",
       description:
-        "Keep an eye on the Announcements for the latest news or new features. You'll see 'New' on the recent ones.",
-      image: "/placeholder.svg?height=200&width=300",
+        "Keep an eye on the announcements section for the latest dealership news and updates. Mark them read so your manager knows you've seen them.",
+      video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yrYtjCuTKQvElgKmYat2NTfp9hIdML7Rx8JWP",
     },
   ];
 
@@ -73,11 +79,13 @@ export function OnboardingDialog({
       <DialogContent className="gap-0 p-0">
         <div className="p-2">
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-            <Image
-              src={stepContent[step - 1].image}
-              alt={stepContent[step - 1].title}
-              fill
-              className="object-cover"
+            <video
+              src={stepContent[step - 1].video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="h-full w-full object-cover"
             />
           </div>
         </div>
