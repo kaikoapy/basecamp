@@ -228,63 +228,6 @@ function applyFixedOffDays(schedule: DaySchedule[], employees: Employee[]): void
   });
 }
 
-/**
- * Applies the Sunday rotation logic.
- * - For non‑last Sundays, the rotation is computed solely from those Sundays.
- *   * When the rotation index is even, employees with sundaySchedule:true are OFF,
- *     and employees with sundaySchedule:false are WORKING.
- *   * When the rotation index is odd, the reverse happens.
- * - The last Sunday is always overridden so that everyone works.
- *
- * @param schedule The calendar grid.
- * @param employees The array of employees.
- */
-function applySundayRotation(schedule: DaySchedule[], employees: Employee[]): void {
-  // Collect non-last Sundays (exclude any Sunday that is the last of the month)
-  const nonLastSundays: { day: DaySchedule; rotationIndex: number }[] = [];
-  schedule.forEach((day) => {
-    if (day.weekday === Weekday.Sunday && day.sundayShift) {
-      // Determine if this Sunday is the last Sunday of the month.
-      const nextSunday = new Date(day.date);
-      nextSunday.setDate(day.date.getDate() + 7);
-      const isLastSunday = nextSunday.getMonth() !== day.date.getMonth();
-      if (!isLastSunday) {
-        nonLastSundays.push({ day, rotationIndex: nonLastSundays.length });
-      }
-    }
-  });
-
-  // Apply rotation logic to all non-last Sundays.
-  // In this revised logic:
-  // - When rotationIndex is even (0, 2, ...), employees with sundaySchedule:true are OFF.
-  // - When rotationIndex is odd (1, 3, ...), employees with sundaySchedule:true are WORKING.
-  nonLastSundays.forEach(({ day, rotationIndex }) => {
-    employees.forEach((emp) => {
-      // Invert the original logic so that on rotationIndex 0, employees with sundaySchedule:true are off.
-      const shouldWork = (emp.sundaySchedule && rotationIndex % 2 !== 0) ||
-                         (!emp.sundaySchedule && rotationIndex % 2 === 0);
-      if (shouldWork) {
-        day.sundayShift!.push(emp.name);
-      } else {
-        day.offList.push(emp.name);
-      }
-    });
-  });
-
-  // Now process last Sundays: override so that everyone works (i.e. no one is off)
-  schedule.forEach((day) => {
-    if (day.weekday === Weekday.Sunday && day.sundayShift) {
-      const nextSunday = new Date(day.date);
-      nextSunday.setDate(day.date.getDate() + 7);
-      const isLastSunday = nextSunday.getMonth() !== day.date.getMonth();
-      if (isLastSunday) {
-        // Override: clear any off assignments and assign every employee to work.
-        day.offList = [];
-        day.sundayShift = employees.map((emp) => emp.name);
-      }
-    }
-  });
-}
 
 
 
