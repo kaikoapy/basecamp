@@ -4,13 +4,15 @@ import { LeaseDisclosure } from "./LeaseDisclosureCard";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ClipboardCopy } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 interface LeaseTemplateButtonProps {
   disclosure: LeaseDisclosure;
 }
 
 export function LeaseTemplateButton({ disclosure }: LeaseTemplateButtonProps) {
+  const { toast } = useToast();
+
   // Calculate if the ad is actually transparent
   const determineTransparency = () => {
     const hasAdditionalFees = 
@@ -94,7 +96,10 @@ I hope this makes the lease terms clearer for you. We always aim to be transpare
   const handleCopyTemplate = async () => {
     const template = generateTemplate();
     await navigator.clipboard.writeText(template);
-    toast.success("Template copied to clipboard!");
+    toast({
+      title: "Success",
+      description: "Template copied to clipboard",
+    });
   };
 
   return (

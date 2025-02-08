@@ -228,7 +228,7 @@ const LeaseDisclosureParser: React.FC = () => {
             disabled={isLoading}
             className="flex-1"
           >
-            {isLoading ? <LoadingText /> : (selectedAdId ? "Update Ad" : "Create Ad")}
+            {isLoading ? <LoadingText /> : (selectedAdId ? "Update Ad" : "Decode Ad")}
           </Button>
 
           {selectedAdId && (
