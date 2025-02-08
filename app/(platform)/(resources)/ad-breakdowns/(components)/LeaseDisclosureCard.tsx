@@ -122,9 +122,9 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
         <div className="space-y-8">
           {/* Advertisement Section */}
           <div className="rounded-2xl bg-[rgb(240,245,255)] p-8">
-            <h3 className="font-semibold text-2xl text-gray-900 mb-4">Advertisement Shows</h3>
+            <h3 className="font-semibold text-xl text-gray-900 mb-4">Advertisement Shows</h3>
             <div className="space-y-2">
-              <p className="text-2xl font-medium">
+              <p className="text-xl font-medium">
                 {disclosure.advertisementOverview.advertisedMonthlyPayment} per month
               </p>
               <p className="text-xl text-gray-600">
@@ -150,20 +150,22 @@ const LeaseDisclosureCard: React.FC<LeaseDisclosureCardProps> = ({ disclosure })
 
           {/* Payment & Fine Print Section */}
           <div className="rounded-2xl bg-white border-2 border-red-100 p-8">
-            <div className="flex items-start gap-4 mb-6">
-              <AlertTriangle className={`w-6 h-6 ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-1 flex-shrink-0`} />
-              <div>
+            <div>
+              <div className="flex items-start gap-4 mb-4">
+                <AlertTriangle className={`w-6 h-6 ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} flex-shrink-0`} />
                 <h3 className="font-semibold text-2xl text-gray-900">
                   {disclosure.advertisementOverview.isTransparent ? 'Transparent Advertisement' : 'The Real Price'}
                 </h3>
-                <p className={`text-4xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-4`}>
-                  ${monthlyWithTax}/Month (w/ tax)
+              </div>
+              <div className="space-y-2">
+                <p className={`text-2xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'}`}>
+                  ${monthlyWithTax}/Month <span className="text-gray-900 text-lg">(w/ tax)</span>
                 </p>
-                <p className={`text-4xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'} mt-4`}>
-                  {totalDueAtSigning} due at signing
+                <p className={`text-2xl font-bold ${disclosure.advertisementOverview.isTransparent ? 'text-green-500' : 'text-red-500'}`}>
+                  {totalDueAtSigning} <span className="text-gray-900 text-lg">due at signing</span>
                 </p>
                 {difference && (
-                  <p className="text-black font-bold text-lg mt-2">
+                  <p className="text-gray-500 font-bold text-lg">
                     {difference}!
                   </p>
                 )}

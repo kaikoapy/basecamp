@@ -76,6 +76,7 @@ Key Analysis Tasks:
    - For non-transparent ads: fees are additional to the advertised amount
    - Required discounts and qualifications
    - Vehicle requirements
+   - For mileage limit, return only the number (e.g., "7,500" instead of "7,500 miles per year")
 
 Important Note for Transparent Ads:
 - When isTransparent is true, the actuallyDueAtSigning should be the advertised down payment plus first month's payment
