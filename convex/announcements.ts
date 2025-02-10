@@ -61,11 +61,11 @@ export const processEmailToAnnouncement = mutation({
       })
     ),
     emailId: v.string(),
-    orgId: v.string(),
+    orgId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Processing email with args:", args);
+      console.log("Processing email to announcement with args:", args);
       const senderName = args.from.split("<")[0].trim() || args.from;
 
       const announcement = {
@@ -88,11 +88,10 @@ export const processEmailToAnnouncement = mutation({
           originalEmailId: args.emailId,
           receivedAt: new Date().toISOString(),
         },
-        orgId: args.orgId,
+        orgId: args.orgId || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5",
       };
 
       console.log("Creating announcement:", announcement);
-
       const result = await ctx.db.insert("announcements", announcement);
       console.log("Announcement created successfully:", result);
       return result;

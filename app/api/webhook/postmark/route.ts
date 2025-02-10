@@ -6,7 +6,6 @@ import { ALLOWED_EMAILS } from "@/app/data/allowed-emails";
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Add the hardcoded org ID
-const HARDCODED_ORG_ID = "org_2qOItQ3RqlWD4snDfmLRD1CG5J5";
 
 interface PostmarkAttachment {
   Name: string;
@@ -138,9 +137,8 @@ export async function POST(request: Request) {
       subject: data.Subject,
       body: data.TextBody,
       htmlBody: data.HtmlBody,
-      attachments: attachments || [], // Ensure attachments is always an array
+      attachments: attachments || [],
       emailId: data.MessageID,
-      orgId: HARDCODED_ORG_ID, // Make sure this line is here
     };
 
     console.log("📤 Sending to Convex with payload:", payload); // Add this log to verify
