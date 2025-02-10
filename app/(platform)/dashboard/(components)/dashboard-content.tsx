@@ -6,7 +6,7 @@ import { DashboardCard } from "./dashboard-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { AnnouncementCard } from "../../(components)/announcement-card";
+import { AnnouncementCard } from "./announcement-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { OnboardingDialog } from "../../(dialogs)/onboarding-dialog";
 import { useEffect, useState } from "react";

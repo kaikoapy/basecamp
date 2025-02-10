@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
-import { AnnouncementCard } from "../(components)/announcement-card";
+import { AnnouncementCard } from "../dashboard/(components)/announcement-card";
 import { Protect } from "@clerk/nextjs";
 
 // Add a helper function to extract text from HTML
