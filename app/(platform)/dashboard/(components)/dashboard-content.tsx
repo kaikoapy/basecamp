@@ -127,8 +127,8 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
 
   return (
     <>
-      <main className="flex-1 p-6 max-w-full mx-auto bg-[rgb(250,250,252)]">
-        {filteredContent.announcements.length > 0 && (
+    <main className="flex-1 p-6 max-w-8xl mx-auto bg-[rgb(250,250,252)]">
+    {filteredContent.announcements.length > 0 && (
           <section id="announcements" className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <h2
@@ -153,9 +153,9 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
                 </Link>
               </Button>
             </div>
-            <ScrollArea className="w-full whitespace-nowrap rounded-md">
+            <ScrollArea className="max-w-[1600px] whitespace-nowrap rounded-md">
               <div className="flex gap-4 pb-4">
-                {filteredContent.announcements.map((announcement) => (
+                {filteredContent.announcements.slice(0, 3).map((announcement) => (
                   <div key={announcement._id} className="w-[440px] min-w-[440px]">
                     <AnnouncementCard
                       id={announcement._id}
@@ -191,7 +191,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
             >
               Quick Access
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 max-w-8xl">
               {filteredContent.pinnedContent.map((content) => (
                 <DashboardCard
                   key={content._id}
