@@ -13,11 +13,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <>
       <SignedIn>
+        <OrganizationCheck />
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
             <MountProvider>
-              <OrganizationCheck>{children}</OrganizationCheck>
+              {children}
             </MountProvider>
           </SidebarInset>
           <DialogProvider />

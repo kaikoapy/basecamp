@@ -387,7 +387,9 @@ export default function DirectoryTable() {
         </div>
         <div className="flex items-center gap-3">
           {/* Delete button */}
-          <Protect role="org:admin">
+          <Protect
+      role="org:admin"
+    >
             {table.getSelectedRowModel().rows.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>

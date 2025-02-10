@@ -223,7 +223,7 @@ const locations: LocationMarker[] = [
     x: 60,
     y: 15,
     title: "New Cars",
-    description: "New Car Parking",
+    description: "New Car Parking and EV Charging",
   },
 ];
 

@@ -8,7 +8,8 @@ interface Reader {
 }
 
 interface ClerkUserIdentity {
-  permissions: string[];
+  org_role?: string;
+  org?: string;
 }
 
 export const create = mutation({
@@ -25,8 +26,12 @@ export const create = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
-      throw new Error("Unauthorized: Requires announcement management permission");
+    if (clerkIdentity.org_role !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
+    }
+
+    if (!clerkIdentity.org) {
+      throw new Error("No organization selected");
     }
 
     const announcement = {
@@ -36,6 +41,7 @@ export const create = mutation({
       isEmailGenerated: false,
       files: [],
       readBy: [],
+      orgId: clerkIdentity.org,
     };
     return await ctx.db.insert("announcements", announcement);
   },
@@ -55,18 +61,18 @@ export const processEmailToAnnouncement = mutation({
       })
     ),
     emailId: v.string(),
+    orgId: v.string(),
   },
   handler: async (ctx, args) => {
     try {
       console.log("Processing email to announcement with args:", args);
       const senderName = args.from.split("<")[0].trim() || args.from;
 
-      // Create the announcement document matching our schema
       const announcement = {
         title: args.subject,
         description: args.body,
         htmlDescription: args.htmlBody,
-        images: [], // Empty array - not handling images yet
+        images: [],
         postedAt: new Date().toISOString(),
         category: "email",
         createdBy: senderName,
@@ -82,6 +88,7 @@ export const processEmailToAnnouncement = mutation({
           originalEmailId: args.emailId,
           receivedAt: new Date().toISOString(),
         },
+        orgId: args.orgId,
       };
 
       console.log("Creating announcement:", announcement);
@@ -98,12 +105,41 @@ export const processEmailToAnnouncement = mutation({
 
 export const list = query({
   handler: async (ctx) => {
-    const announcements = await ctx.db
-      .query("announcements")
-      .order("desc")
-      .collect();
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
 
-    return announcements;
+    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    
+    if (!clerkIdentity.org) {
+      throw new Error("No organization selected");
+    }
+
+    try {
+      // Try using the index first
+      const announcements = await ctx.db
+        .query("announcements")
+        .withIndex("by_orgId", (q) => q.eq("orgId", clerkIdentity.org || ""))
+        .order("desc")
+        .collect();
+      
+      return announcements;
+    } catch (error) {
+      // Fallback during index backfill
+      if (error instanceof Error && error.message.includes('backfilling')) {
+        // Temporary fallback: fetch all and filter in memory
+        const allAnnouncements = await ctx.db
+          .query("announcements")
+          .order("desc")
+          .collect();
+        
+        return allAnnouncements.filter(
+          announcement => announcement.orgId === clerkIdentity.org
+        );
+      }
+      throw error; // Re-throw if it's not a backfill error
+    }
   },
 });
 
@@ -132,8 +168,8 @@ export const update = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
-      throw new Error("Unauthorized: Requires announcement management permission");
+    if (clerkIdentity.org_role !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
     }
 
     return await ctx.db.patch(args.id, {
@@ -156,8 +192,8 @@ export const remove = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
-      throw new Error("Unauthorized: Requires announcement management permission");
+    if (clerkIdentity.org_role !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
     }
 
     return await ctx.db.delete(args.id);
@@ -173,8 +209,8 @@ export const archive = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:announcements:manage")) {
-      throw new Error("Unauthorized: Requires announcement management permission");
+    if (clerkIdentity.org_role !== "org:admin") {
+      throw new Error("Unauthorized: Requires admin role");
     }
 
     return await ctx.db.patch(args.id, {

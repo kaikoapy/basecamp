@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import {
-  evFAQItems,
-  evMisconceptions,
-  evStory,
-} from "@/app/(platform)/(resources)/(FAQS)/(lib)/ev-faqs";
-import { FAQAccordion } from "@/app/(platform)/(resources)/(FAQS)/(components)/faq-accordion";
+  phevFAQItems,
+  phevMisconceptions,
+    // phevStory,
+} from "@/app/(platform)/product-knowledge/(lib)/phev-faqs";
+import { FAQAccordion } from "@/app/(platform)/product-knowledge/(components)/faq-accordion";
 import {
   Battery,
   Gauge,
@@ -21,10 +21,10 @@ import {
   Image as ImageIcon,
   BookOpen,
   AlertTriangle,
-  BookText,
+  // BookText,
 } from "lucide-react";
-import { MisconceptionsSection } from "@/app/(platform)/(resources)/(FAQS)/(components)/Misconceptions-section";
-import { StorySection } from "@/app/(platform)/(resources)/(FAQS)/(components)/StorySection";
+import { MisconceptionsSection } from "@/app/(platform)/product-knowledge/(components)/Misconceptions-section";
+// import { StorySection } from "@/app/(platform)/product-knowledge/(components)/StorySection";
 import { TransitionPanel } from "@/components/ui/transition-panel";
 
 // Map of icon names to components that we'll use on the client side
@@ -51,27 +51,28 @@ const TABS = [
     title: "Misconceptions",
     icon: AlertTriangle,
   },
-  {
-    title: "Story",
-    icon: BookText,
-  },
+  // {
+  //   title: "Story",
+  //   icon: BookText,
+  // },
 ];
 
-export default function EVFAQPage() {
+export default function PHEVFAQPage() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Transform the items to use icon names instead of components
-  const items = evFAQItems.map((item) => ({
+  const items = phevFAQItems.map((item) => ({
     ...item,
     iconName: item.iconName,
   }));
 
   return (
     <main className="mx-auto max-w-4xl py-8 px-4">
-      <h1 className="mb-6 text-2xl font-bold">Volvo EV Resources</h1>
-      <p className="mb-8 text-grey-800">
-        Everything you need to know about Volvo Electric Vehicles, from charging
-        basics to common misconceptions and the EV ownership journey.
+      <h1 className="mb-6 text-2xl font-bold">Volvo PHEV Resources</h1>
+      <p className="mb-8 text-muted-foreground">
+        Everything you need to know about Volvo Plug-in Hybrid Electric Vehicles
+        (PHEVs), from charging basics to common misconceptions and the PHEV
+        ownership journey.
       </p>
 
       <div className="mb-8 flex space-x-3">
@@ -112,9 +113,9 @@ export default function EVFAQPage() {
                 Frequently Asked Questions
               </h2>
               <p className="text-muted-foreground">
-                Common questions and answers about Volvo&apos;s Electric
-                Vehicles (EVs), covering everything from charging and range to
-                maintenance and special features.
+                Common questions and answers about Volvo&apos;s Plug-in Hybrid
+                Electric Vehicles (PHEVs), covering everything from charging and
+                range to maintenance and special features.
               </p>
               <FAQAccordion items={items} iconMap={iconMap} defaultValue="1" />
             </div>,
@@ -123,25 +124,25 @@ export default function EVFAQPage() {
             <div key="misconceptions" className="space-y-6">
               <h2 className="text-xl font-semibold">Common Misconceptions</h2>
               <p className="text-muted-foreground">
-                Let&apos;s separate fact from fiction about electric vehicles
-                and address common concerns about EV ownership.
+                Let&apos;s separate fact from fiction about plug-in hybrid
+                vehicles and address common concerns about PHEV ownership.
               </p>
               <MisconceptionsSection
-                misconceptions={evMisconceptions}
+                misconceptions={phevMisconceptions}
                 title="Common Misconceptions"
-                description="Let's separate fact from fiction about electric vehicles and address common concerns about EV ownership."
+                description="Let's separate fact from fiction about plug-in hybrid vehicles and address common concerns about PHEV ownership."
               />
             </div>,
 
             // Story Section
-            <div key="story" className="space-y-6">
-              <h2 className="text-xl font-semibold">The EV Journey</h2>
-              <p className="text-muted-foreground">
-                Follow along with this simple story that explains EV ownership
-                in a friendly, approachable way.
-              </p>
-              <StorySection story={evStory} theme="light" />
-            </div>,
+            // <div key="story" className="space-y-6">
+            //   <h2 className="text-xl font-semibold">The PHEV Journey</h2>
+            //   <p className="text-muted-foreground">
+            //     Follow along with this simple story that explains PHEV ownership
+            //     in a friendly, approachable way.
+            //   </p>
+            //   <StorySection story={phevStory} />
+            // </div>,
           ]}
         </TransitionPanel>
       </div>

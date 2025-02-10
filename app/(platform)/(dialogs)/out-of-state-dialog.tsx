@@ -41,10 +41,29 @@ export function OutOfStateDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[825px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>Out of State Deals</DialogTitle>
-          <DialogDescription>
-            Key details for out-of-state vehicle transactions:
-          </DialogDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <DialogTitle>Out of State Deals</DialogTitle>
+              <DialogDescription>
+                Key details for out-of-state vehicle transactions:
+              </DialogDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 mr-8"
+              onClick={() =>
+                window.open(
+                  OUT_OF_STATE_PDF,
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+            >
+              <ExternalLink className="h-4 w-4" />
+              View Out-Of-State PDF
+            </Button>
+          </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">
@@ -165,21 +184,6 @@ export function OutOfStateDialog({
                   temporary tag from their state&apos;s DMV before picking up
                   the vehicle.
                 </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={() =>
-                    window.open(
-                      OUT_OF_STATE_PDF,
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  View Out-Of-State PDF
-                </Button>
               </div>
             </section>
           </div>

@@ -1,17 +1,28 @@
 "use client";
 
-import { useOrganization } from "@clerk/nextjs";
+import { useOrganizationList } from "@clerk/nextjs";
+import { useEffect } from "react";
 
-interface OrganizationCheckProps {
-  children: React.ReactNode;
-}
+export function OrganizationCheck() {
+  const { setActive, userMemberships } = useOrganizationList({
+    userMemberships: {
+      infinite: true,
+    },
+  });
 
-export function OrganizationCheck({ children }: OrganizationCheckProps) {
-  const { isLoaded } = useOrganization();
+  useEffect(() => {
+    // Only proceed if we have memberships data and setActive is available
+    if (!userMemberships.data?.length || !setActive) return;
 
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
+    // Get the current active organization ID
+    const activeOrgId = userMemberships.data.find(mem => mem.organization.id === mem.organization.id)?.organization.id;
 
-  return <>{children}</>;
+    // If no active organization, set the first one as active
+    if (!activeOrgId && userMemberships.data[0]) {
+      const firstOrg = userMemberships.data[0];
+      setActive({ organization: firstOrg.organization.id });
+    }
+  }, [userMemberships.data, setActive]);
+
+  return null;
 }

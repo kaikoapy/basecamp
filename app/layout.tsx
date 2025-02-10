@@ -22,8 +22,8 @@ const inter = Inter({
 
 
 export const metadata: Metadata = {
-  title: "DealerHub",
-  description: "VNM - Dealer Hub",
+  title: "Basecamp",
+  description: "Basecamp",
 };
 
 export default function RootLayout({

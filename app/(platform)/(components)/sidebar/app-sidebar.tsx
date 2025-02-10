@@ -247,11 +247,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
           {
             title: "EV FAQs",
-            url: "/ev-faqs",
+            url: "/product-knowledge/ev-faqs",
           },
           {
             title: "Plug-In Hybrid FAQs",
-            url: "/phev-faqs",
+            url: "/product-knowledge/phev-faqs",
           },
           {
             title: "Brochures",

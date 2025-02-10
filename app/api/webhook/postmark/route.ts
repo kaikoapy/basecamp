@@ -5,6 +5,9 @@ import { ALLOWED_EMAILS } from "@/app/data/allowed-emails";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
+// Add the hardcoded org ID
+const HARDCODED_ORG_ID = "org_2qOItQ3RqlWD4snDfmLRD1CG5J5";
+
 interface PostmarkAttachment {
   Name: string;
   Content: string;
@@ -137,6 +140,7 @@ export async function POST(request: Request) {
       htmlBody: data.HtmlBody,
       attachments,
       emailId: data.MessageID,
+      orgId: HARDCODED_ORG_ID,
     };
 
     console.log("📤 Sending to Convex:", payload);

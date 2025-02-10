@@ -3,20 +3,14 @@ import { Story, Chapter } from "@/app/types";
 // components/StorySection.tsx
 interface StorySectionProps {
   story: Story;
-  theme?: "light" | "dark"; // Optional theme for styling
 }
 
-export function StorySection({ story, theme = "light" }: StorySectionProps) {
+export function StorySection({ story }: StorySectionProps) {
   return (
-    <div className={`py-24 ${theme === "light" ? "bg-white" : "bg-gray-50"}`}>
+    <div className={`py-24 bg-white`}>
       <div className="mx-auto max-w-3xl px-6 lg:px-8">
         {/* Story Header */}
         <div className="text-center mb-16">
-          {story.theme && (
-            <span className="text-sm font-medium text-blue-600 mb-2 block">
-              {story.theme}
-            </span>
-          )}
           <h2 className="text-3xl font-bold mb-4">{story.title}</h2>
           <p className="text-gray-600 italic">{story.introduction}</p>
         </div>

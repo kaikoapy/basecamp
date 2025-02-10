@@ -59,10 +59,10 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">DealerHub</span>
+              <span className="font-semibold">BaseCamp</span>
             </div>
             <p className="text-sm text-gray-500">
-              © 2025 DealerHub. All rights reserved.
+              © 2025 BaseCamp. All rights reserved.
             </p>
           </div>
         </div>

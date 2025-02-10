@@ -70,8 +70,7 @@ export const getImportantNumbers = query({
 
 // Update the interface to match the actual structure
 interface ClerkUserIdentity {
-  org_role: string;
-  permissions: string[];
+  role: string[];
 }
 
 export const deleteOne = mutation({
@@ -83,7 +82,7 @@ export const deleteOne = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
+    if (!clerkIdentity.role?.includes("org:admin")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
@@ -100,7 +99,7 @@ export const deleteMany = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
+    if (!clerkIdentity.role?.includes("org:admin")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
@@ -126,7 +125,7 @@ export const update = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
+    if (!clerkIdentity.role?.includes("org:admin")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 
@@ -152,7 +151,7 @@ export const create = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.permissions?.includes("org:directory:manage")) {
+    if (!clerkIdentity.role?.includes("org:admin")) {
       throw new Error("Unauthorized: Requires directory management permission");
     }
 

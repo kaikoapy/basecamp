@@ -49,6 +49,7 @@ export default defineSchema({
     clerkId: v.string(),
     isManager: v.boolean(),
     hasCompletedOnboarding: v.boolean(),
+    orgId: v.optional(v.string()),
     // Add any other user fields you need
   }).index("by_clerk_id", ["clerkId"]),
 
@@ -89,7 +90,9 @@ export default defineSchema({
         })
       )
     ),
-  }).index("by_status", ["isArchived"]),
+    orgId: v.optional(v.string()),
+  }).index("by_status", ["isArchived"])
+    .index("by_orgId", ["orgId"]),
 
   // Company settings table
   companySettings: defineTable({

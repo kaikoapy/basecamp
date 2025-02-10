@@ -104,7 +104,7 @@ export function NavHeader() {
               className="text-2xl font-semibold tracking-tight -ml-2"
               style={{ fontFamily: "var(--font-heebo)" }}
             >
-              <span className="text-RoadeoPurple font-[900]">DealerHub</span>
+              <span className="text-RoadeoPurple font-[900]">Basecamp</span>
             </h1>
           </Link>
           <div className="w-full sm:w-[400px] max-w-full">

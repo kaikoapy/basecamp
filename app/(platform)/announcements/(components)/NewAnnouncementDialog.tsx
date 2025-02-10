@@ -137,10 +137,10 @@ export function NewAnnouncementDialog({
   // Add logging for user role
   React.useEffect(() => {
     if (user) {
-      console.log("User Metadata:", {
-        publicMetadata: user.publicMetadata,
-        role: user.publicMetadata?.role,
+      console.log("User data:", {
+        role: user.organizationMemberships[0]?.role,
         userId: user.id,
+        orgId: user.organizationMemberships[0]?.organization.id,
       });
     }
   }, [user]);
