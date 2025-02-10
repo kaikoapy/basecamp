@@ -111,15 +111,14 @@ export const list = query({
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
     
-    if (!clerkIdentity.org) {
-      throw new Error("No organization selected");
-    }
-
     try {
       // Try using the index first
       const announcements = await ctx.db
         .query("announcements")
-        .withIndex("by_orgId", (q) => q.eq("orgId", clerkIdentity.org || ""))
+        .withIndex("by_orgId", (q) => 
+          // If no org selected, get announcements for the default org
+          q.eq("orgId", clerkIdentity.org || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5")
+        )
         .order("desc")
         .collect();
       
@@ -134,7 +133,7 @@ export const list = query({
           .collect();
         
         return allAnnouncements.filter(
-          announcement => announcement.orgId === clerkIdentity.org
+          announcement => announcement.orgId === (clerkIdentity.org || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5")
         );
       }
       throw error; // Re-throw if it's not a backfill error
