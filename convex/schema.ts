@@ -62,6 +62,7 @@ export default defineSchema({
     category: v.string(),
     createdBy: v.string(),
     postedAt: v.string(),
+    
     expiresAt: v.optional(v.string()),
     isArchived: v.optional(v.boolean()),
     isEmailGenerated: v.boolean(),

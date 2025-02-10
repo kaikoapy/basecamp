@@ -132,18 +132,18 @@ export async function POST(request: Request) {
       }
     }
 
-    // Prepare payload for Convex
+    // Prepare payload for Convex - make sure orgId is included
     const payload = {
       from: data.FromName || data.From,
       subject: data.Subject,
       body: data.TextBody,
       htmlBody: data.HtmlBody,
-      attachments,
+      attachments: attachments || [], // Ensure attachments is always an array
       emailId: data.MessageID,
-      orgId: HARDCODED_ORG_ID,
+      orgId: HARDCODED_ORG_ID, // Make sure this line is here
     };
 
-    console.log("📤 Sending to Convex:", payload);
+    console.log("📤 Sending to Convex with payload:", payload); // Add this log to verify
 
     // Send to Convex
     const result = await convex.mutation(

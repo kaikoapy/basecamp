@@ -65,7 +65,7 @@ export const processEmailToAnnouncement = mutation({
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Processing email to announcement with args:", args);
+      console.log("Processing email with args:", args);
       const senderName = args.from.split("<")[0].trim() || args.from;
 
       const announcement = {
