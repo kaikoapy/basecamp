@@ -16,6 +16,32 @@ export const getSchedule = query({
   },
 });
 
+// Query to get all sales consultants from directory
+export const getSalesStaff = query({
+  handler: async (ctx) => {
+    const salesStaff = await ctx.db
+      .query("directory")
+      .filter((q) => 
+        q.or(
+          q.eq(q.field("position"), "New Sales Specialist"),
+          q.eq(q.field("position"), "Used Sales Specialist")
+        )
+      )
+      .collect();
+    
+    console.log("Raw Sales Staff from Directory:", salesStaff);
+    
+    const mappedStaff = salesStaff.map(staff => ({
+      ...staff,
+      type: staff.position.startsWith("New") ? "new" : "used"
+    }));
+    
+    console.log("Mapped Sales Staff:", mappedStaff);
+    
+    return mappedStaff;
+  },
+});
+
 // Mutation to create a new schedule
 export const createSchedule = mutation({
   args: {
@@ -68,5 +94,15 @@ export const updateSchedule = mutation({
       containers,
       updatedAt: Date.now(),
     });
+  },
+});
+
+// Debug query to check all positions in directory
+export const getAllPositions = query({
+  handler: async (ctx) => {
+    const allStaff = await ctx.db.query("directory").collect();
+    const positions = new Set(allStaff.map(staff => staff.position));
+    console.log("All positions in directory:", Array.from(positions));
+    return Array.from(positions);
   },
 });

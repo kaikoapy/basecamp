@@ -1,147 +1,103 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   DndContext,
   DragOverlay,
   closestCenter,
-  useDraggable,
-  useDroppable,
   DragStartEvent,
   DragEndEvent,
 } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { Card, CardContent } from "@/components/ui/card";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
-// ----- Dummy Data for Initialization (used if no DB data) ----- //
-
-const salespeople = [
-  "new:Gio",
-  "used:Tito",
-  "new:Steven",
-  "used:Moudy",
-  "new:Amr",
-  "used:Gabriel",
-];
-const specialLabels = ["Month End", "Closed"];
-
-const shifts = {
-  weekday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
-  sunday: ["12:00-5:00", "Off"],
-};
-
-const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const getDaysInMonth = (year: number, month: number): number =>
-  new Date(year, month, 0).getDate();
-
-// ----- Utility Functions -----
-
-const parseName = (item: string): string => {
-  let name = item;
-  if (name.includes("::")) {
-    name = name.split("::")[0];
-  }
-  if (name.startsWith("special:")) {
-    name = name.substring("special:".length);
-  }
-  if (name.startsWith("new:")) {
-    name = name.substring("new:".length);
-  }
-  if (name.startsWith("used:")) {
-    name = name.substring("used:".length);
-  }
-  return name;
-};
-
-const getSalespersonType = (item: string): string => {
-  if (item.startsWith("new:")) return "new";
-  if (item.startsWith("used:")) return "used";
-  return "";
-};
-
-// ----- Draggable and Droppable Components -----
-
-interface DraggableItemProps {
-  id: string;
-  containerId: string;
-  children: React.ReactNode;
-}
-
-function DraggableItem({ id, containerId, children }: DraggableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id,
-      data: { containerId },
-    });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    cursor: "grab",
-    opacity: isDragging ? 0 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
-    </div>
-  );
-}
-
-interface DroppableContainerProps {
-  id: string;
-  children: React.ReactNode;
-}
-
-function DroppableContainer({ id, children }: DroppableContainerProps) {
-  const { isOver, setNodeRef } = useDroppable({ id });
-  const style = {
-    backgroundColor: isOver ? "rgba(224, 247, 250, 0.5)" : "transparent",
-    padding: "4px",
-    borderRadius: "4px",
-  };
-
-  return (
-    <div ref={setNodeRef} style={style}>
-      {children}
-    </div>
-  );
-}
-
-// ----- Main CalendarSchedule Component -----
+import { SalespeopleList } from "./salespeople-list";
+import { SpecialLabels } from "./special-labels";
+import { CalendarDay } from "./calendar-day";
+import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek } from "../utils";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
+import { generateSchedulePDF } from "../utils/generate-pdf";
 
 const CalendarSchedule: React.FC = () => {
-  // Assume you want the schedule for the current month.
+  // Use current date – note: we use 1-indexed month for our DB.
   const currentDate = new Date();
-  // If your DB uses 1-indexed months, adjust accordingly:
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay();
+  
+  // Get month name
+  const monthName = new Date(currentYear, currentMonth - 1).toLocaleString('default', { month: 'long' });
 
-  // Use a Convex query to load the schedule for this month.
-  const scheduleData = useQuery(api.schedule.getSchedule, {
-    month: currentMonth,
-    year: currentYear,
-  });
+  // Load schedule and sales staff from Convex
+  const scheduleData = useQuery(api.schedule.getSchedule, { month: currentMonth, year: currentYear });
+  const salesStaffData = useQuery(api.schedule.getSalesStaff);
+  const createSchedule = useMutation(api.schedule.createSchedule);
 
-  // Local state for containers. Start with dummy data so that the UI is not empty
-  // while loading the schedule from the DB.
+  // Transform sales staff data into the format we need - memoized to prevent unnecessary recalculations
+  const defaultSalespeople = useMemo(() => {
+    if (!salesStaffData) return [];
+    
+    const transformed = salesStaffData.map(staff => `${staff.type}:${staff.name}`);
+    return transformed;
+  }, [salesStaffData]);
+
+  // Local state for all containers.
   const [containers, setContainers] = useState<Record<string, string[]>>({
-    "salespeople-list": [...salespeople],
-    "special-labels-list": specialLabels.map((label) => "special:" + label),
+    "salespeople-list": [],
+    "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
   });
 
-  // When scheduleData is loaded, update the local state.
+  // When the sales staff data loads, update the salespeople list
   useEffect(() => {
-    if (scheduleData && scheduleData.containers) {
-      setContainers(scheduleData.containers);
-    }
-  }, [scheduleData]);
+    if (!salesStaffData) return;
+    
+    setContainers(prev => {
+      if (defaultSalespeople.length === 0 && prev["salespeople-list"].length > 0) {
+        return prev;
+      }
+      
+      return {
+        ...prev,
+        "salespeople-list": defaultSalespeople
+      };
+    });
+  }, [defaultSalespeople, salesStaffData]);
 
-  // Additional UI states.
+  // When the DB schedule loads, merge it with our defaults
+  useEffect(() => {
+    if (scheduleData === undefined) return;
+    
+    if (scheduleData === null) {
+      createSchedule({
+        month: currentMonth,
+        year: currentYear,
+        containers: {
+          "salespeople-list": defaultSalespeople,
+          "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
+        },
+      });
+      return;
+    }
+
+    if (scheduleData.containers) {
+      const mergedSalespeople = [
+        ...new Set([
+          ...(scheduleData.containers["salespeople-list"] || []),
+          ...defaultSalespeople
+        ])
+      ];
+      
+      setContainers({
+        ...scheduleData.containers,
+        "salespeople-list": mergedSalespeople,
+        "special-labels-list": scheduleData.containers["special-labels-list"] || 
+          defaultSpecialLabels.map(label => "special:" + label),
+      });
+    }
+  }, [scheduleData, currentMonth, currentYear, createSchedule, defaultSalespeople]);
+
+  // UI state
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeContainer, setActiveContainer] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -149,10 +105,16 @@ const CalendarSchedule: React.FC = () => {
 
   const updateSchedule = useMutation(api.schedule.updateSchedule);
 
-  // ... (handleDragStart, handleDragEnd, handleDragCancel code remains unchanged)
-  // (See your existing code for drag logic)
+  // Memoize the filtered salespeople list
+  const filteredSalespeople = useMemo(() => {
+    const list = containers["salespeople-list"] || [];
+    return list.filter(item => {
+      if (salesFilter === "all") return true;
+      return item.startsWith(salesFilter + ":");
+    });
+  }, [containers, salesFilter]);
 
-  // For brevity, I'll assume you have the same drag functions as before.
+  // Drag handlers
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id.toString();
     setActiveId(id);
@@ -170,20 +132,18 @@ const CalendarSchedule: React.FC = () => {
     const toContainer = over.id.toString();
     const itemId = active.id.toString();
     const originalName = parseName(itemId);
-    if (
-      toContainer === "salespeople-list" ||
-      toContainer === "special-labels-list"
-    ) {
+
+    // If dropping into a sidebar, treat as removal.
+    if (toContainer === "salespeople-list" || toContainer === "special-labels-list") {
       if (fromContainer !== toContainer) {
-        setContainers((prev) => ({
+        setContainers(prev => ({
           ...prev,
-          [fromContainer!]: (prev[fromContainer!] || []).filter(
-            (item) => item !== itemId
-          ),
+          [fromContainer!]: (prev[fromContainer!] || []).filter(item => item !== itemId)
         }));
         setHasChanges(true);
       }
     } else {
+      // Dropping into a shift container.
       const targetDay = toContainer.split("-")[0];
       let duplicateFound = false;
       Object.entries(containers).forEach(([key, items]) => {
@@ -204,26 +164,18 @@ const CalendarSchedule: React.FC = () => {
         setActiveContainer(null);
         return;
       }
-      if (
-        fromContainer === "salespeople-list" ||
-        fromContainer === "special-labels-list"
-      ) {
-        const cloneId =
-          (itemId.includes("::") ? itemId.split("::")[0] : itemId) +
-          "::" +
-          Date.now();
-        setContainers((prev) => ({
+      if (fromContainer === "salespeople-list" || fromContainer === "special-labels-list") {
+        const cloneId = (itemId.includes("::") ? itemId.split("::")[0] : itemId) + "::" + Date.now();
+        setContainers(prev => ({
           ...prev,
-          [toContainer]: [...(prev[toContainer] || []), cloneId],
+          [toContainer]: [...(prev[toContainer] || []), cloneId]
         }));
         setHasChanges(true);
       } else if (fromContainer !== toContainer) {
-        setContainers((prev) => ({
+        setContainers(prev => ({
           ...prev,
-          [fromContainer!]: (prev[fromContainer!] || []).filter(
-            (item) => item !== itemId
-          ),
-          [toContainer]: [...(prev[toContainer] || []), itemId],
+          [fromContainer!]: (prev[fromContainer!] || []).filter(item => item !== itemId),
+          [toContainer]: [...(prev[toContainer] || []), itemId]
         }));
         setHasChanges(true);
       }
@@ -237,76 +189,27 @@ const CalendarSchedule: React.FC = () => {
     setActiveContainer(null);
   };
 
+  // Calendar days calculation
   const calendarDays = Array.from(
     { length: daysInMonth + firstDayOfMonth },
     (_, i) => (i < firstDayOfMonth ? null : i - firstDayOfMonth + 1)
   );
 
-  const renderDay = (day: number) => {
-    const date = new Date(currentYear, currentMonth - 1, day);
-    const dayOfWeek = date.getDay();
-    const isSunday = dayOfWeek === 0;
-    const shiftsForDay = isSunday ? shifts.sunday : shifts.weekday;
-    return (
-      <Card key={`day-${day}`} className="m-1">
-        <CardContent className="p-2">
-          <div className="font-bold mb-2">
-            {daysOfWeek[dayOfWeek]} {day}
-          </div>
-          {shiftsForDay.map((shift, shiftIndex) => {
-            const containerId = `${day}-${shiftIndex}`;
-            const items = containers[containerId] || [];
-            return (
-              <DroppableContainer key={containerId} id={containerId}>
-                <div className="flex flex-col">
-                  <div className="text-muted-foreground text-xs mb-1">
-                    {shift}
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {items.map((item) => {
-                      const baseName = parseName(item);
-                      const isSpecial = item.startsWith("special:");
-                      return (
-                        <DraggableItem
-                          key={item}
-                          id={item}
-                          containerId={containerId}
-                        >
-                          {isSpecial ? (
-                            <div className="bg-white text-black border border-black px-2 py-1 rounded-md shadow-sm m-1 text-xs">
-                              {baseName}
-                            </div>
-                          ) : (
-                            <div className="bg-black text-white px-2 py-1 rounded-md shadow-sm m-1 text-xs">
-                              {baseName}
-                            </div>
-                          )}
-                        </DraggableItem>
-                      );
-                    })}
-                  </div>
-                </div>
-              </DroppableContainer>
-            );
-          })}
-        </CardContent>
-      </Card>
-    );
+  // Save handler
+  const handleSave = async () => {
+    await updateSchedule({ month: currentMonth, year: currentYear, containers });
+    setHasChanges(false);
   };
 
-  const filteredSalespeople =
-    containers["salespeople-list"]?.filter((item) => {
-      if (salesFilter === "all") return true;
-      return item.startsWith(salesFilter + ":");
-    }) || [];
-
-  const handleSave = async () => {
-    await updateSchedule({
-      month: currentMonth,
-      year: currentYear,
-      containers,
+  const handlePrint = () => {
+    generateSchedulePDF({
+      monthName,
+      currentYear,
+      currentMonth,
+      firstDayOfMonth,
+      calendarDays,
+      scheduleData: scheduleData ?? null,
     });
-    setHasChanges(false);
   };
 
   return (
@@ -319,91 +222,60 @@ const CalendarSchedule: React.FC = () => {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className="w-1/5 p-4 border-r">
-          <h2 className="text-xl font-bold mb-4">Salespeople</h2>
-          <div className="flex gap-2 mb-2">
-            <button
-              onClick={() => setSalesFilter("all")}
-              className={`px-2 py-1 border rounded ${
-                salesFilter === "all"
-                  ? "bg-black text-white"
-                  : "bg-white text-black"
-              }`}
+          <SalespeopleList
+            salesFilter={salesFilter}
+            setSalesFilter={setSalesFilter}
+            filteredSalespeople={filteredSalespeople}
+            salesStaffData={salesStaffData}
+          />
+          <SpecialLabels labels={containers["special-labels-list"] || []} />
+          <div className="flex gap-2">
+            {hasChanges && (
+              <button onClick={handleSave} className="mt-6 px-4 py-2 bg-green-600 text-white rounded-md shadow">
+                Save Changes
+              </button>
+            )}
+            <Button
+              onClick={handlePrint}
+              variant="outline"
+              size="default"
+              className="mt-6"
             >
-              All
-            </button>
-            <button
-              onClick={() => setSalesFilter("new")}
-              className={`px-2 py-1 border rounded ${
-                salesFilter === "new"
-                  ? "bg-black text-white"
-                  : "bg-white text-black"
-              }`}
-            >
-              New
-            </button>
-            <button
-              onClick={() => setSalesFilter("used")}
-              className={`px-2 py-1 border rounded ${
-                salesFilter === "used"
-                  ? "bg-black text-white"
-                  : "bg-white text-black"
-              }`}
-            >
-              Used
-            </button>
+              <Printer className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
           </div>
-          <DroppableContainer id="salespeople-list">
-            <div className="flex flex-wrap">
-              {filteredSalespeople.map((item) => (
-                <DraggableItem
-                  key={item}
-                  id={item}
-                  containerId="salespeople-list"
-                >
-                  <div className="bg-black text-white m-2 p-2 rounded-md shadow-sm text-center">
-                    {parseName(item)}
-                  </div>
-                </DraggableItem>
-              ))}
-            </div>
-          </DroppableContainer>
-          <h2 className="text-xl font-bold mt-6 mb-4">Special Labels</h2>
-          <DroppableContainer id="special-labels-list">
-            <div className="flex flex-wrap">
-              {(containers["special-labels-list"] || []).map((item) => (
-                <DraggableItem
-                  key={item}
-                  id={item}
-                  containerId="special-labels-list"
-                >
-                  <div className="bg-white text-black border border-black m-2 p-2 rounded-md shadow-sm text-center">
-                    {parseName(item)}
-                  </div>
-                </DraggableItem>
-              ))}
-            </div>
-          </DroppableContainer>
-          {hasChanges && (
-            <button
-              onClick={handleSave}
-              className="mt-6 px-4 py-2 bg-green-600 text-white rounded-md shadow"
-            >
-              Save Changes
-            </button>
-          )}
         </div>
         {/* Calendar */}
         <div className="w-4/5 p-4">
-          <h1 className="text-2xl font-bold mb-4">Monthly Sales Schedule</h1>
+          <h1 className="text-2xl font-bold mb-4">{monthName} Sales Schedule</h1>
           <div className="overflow-auto h-[calc(100vh-100px)]">
             <div className="grid grid-cols-7 gap-1">
-              {daysOfWeek.map((day) => (
+              {daysOfWeek.map(day => (
                 <div key={day} className="text-center font-bold">
                   {day}
                 </div>
               ))}
               {calendarDays.map((day, idx) =>
-                day ? renderDay(day) : <div key={`empty-${idx}`} className="m-1" />
+                day ? (
+                  <CalendarDay
+                    key={day}
+                    day={day}
+                    dayOfWeek={new Date(currentYear, currentMonth - 1, day).getDay()}
+                    containers={containers}
+                    currentMonth={currentMonth}
+                    currentYear={currentYear}
+                    onUpdateContainers={(newContainers) => {
+                      setContainers(prev => ({
+                        ...prev,
+                        ...newContainers
+                      }));
+                      setHasChanges(true);
+                    }}
+                  />
+                ) : (
+                  <div key={`empty-${idx}`} className="m-1" />
+                )
               )}
             </div>
           </div>
