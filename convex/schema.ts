@@ -95,6 +95,14 @@ export default defineSchema({
   }).index("by_status", ["isArchived"])
     .index("by_orgId", ["orgId"]),
 
+  // Schedule table
+  schedule: defineTable({
+    month: v.number(), // 1-12
+    year: v.number(),  // e.g., 2023
+    containers: v.record(v.string(), v.array(v.string())), // e.g. { "salespeople-list": [...], "1-0": [...] }
+    updatedAt: v.optional(v.number()),
+  }),
+
   // Company settings table
   companySettings: defineTable({
     name: v.string(),

@@ -18,6 +18,7 @@ import type * as announcements from "../announcements.js";
 import type * as directory from "../directory.js";
 import type * as files from "../files.js";
 import type * as resources from "../resources.js";
+import type * as schedule from "../schedule.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   directory: typeof directory;
   files: typeof files;
   resources: typeof resources;
+  schedule: typeof schedule;
   types: typeof types;
   users: typeof users;
 }>;
