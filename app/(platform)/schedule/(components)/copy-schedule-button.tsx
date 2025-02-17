@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy } from "lucide-react";
+import { CalendarSync } from "lucide-react";
 
 // Helper function to convert number to ordinal string
 function getOrdinal(n: number): string {
@@ -53,7 +53,7 @@ export function CopyScheduleButton({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-6 w-6">
-          <Copy className="h-4 w-4" />
+          <CalendarSync className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

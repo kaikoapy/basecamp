@@ -12,7 +12,7 @@ export function DroppableContainer({ id, children }: DroppableContainerProps) {
   const style = {
     backgroundColor: isOver ? "rgba(224,247,250,0.5)" : "transparent",
     padding: "4px",
-    borderRadius: "4px",
+    borderRadius: "8px",
   };
   return <div ref={setNodeRef} style={style}>{children}</div>;
 } 

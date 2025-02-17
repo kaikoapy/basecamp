@@ -76,7 +76,12 @@ export function CalendarDay({
                             {baseName}
                           </div>
                         ) : (
-                          <div className="bg-black text-white px-2 py-1 rounded-md shadow-sm m-1 text-xs">
+                          <div className={`text-black px-2 py-1 rounded-md shadow-sm m-1 text-xs ${
+                            shiftIndex === 0 ? 'bg-yellow-100' :  // Opening shift
+                            shiftIndex === 1 ? 'bg-blue-100' :    // Mid shift
+                            shiftIndex === 2 ? 'bg-purple-100' :  // Closing shift
+                            'bg-gray-100'                         // Off shift
+                          }`}>
                             {baseName}
                           </div>
                         )}

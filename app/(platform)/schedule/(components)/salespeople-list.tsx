@@ -3,12 +3,26 @@
 import { DroppableContainer } from "./droppable-container";
 import { DraggableItem } from "./draggable-item";
 import { parseName } from "../utils";
+import { Id } from "@/convex/_generated/dataModel";
+
+interface SalesStaffMember {
+  type: string;
+  _id: Id<"directory">;
+  _creationTime: number;
+  nickname?: string;
+  number: string;
+  name: string;
+  position: string;
+  department: string;
+  extension: string;
+  email: string;
+}
 
 interface SalespeopleListProps {
   salesFilter: "all" | "new" | "used";
   setSalesFilter: (filter: "all" | "new" | "used") => void;
   filteredSalespeople: string[];
-  salesStaffData: any;
+  salesStaffData: SalesStaffMember[] | undefined;
 }
 
 export function SalespeopleList({
@@ -18,44 +32,39 @@ export function SalespeopleList({
   salesStaffData,
 }: SalespeopleListProps) {
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4">Salespeople</h2>
-      <div className="flex gap-2 mb-2">
-        <button
-          onClick={() => setSalesFilter("all")}
-          className={`px-2 py-1 border rounded ${
-            salesFilter === "all" ? "bg-black text-white" : "bg-white text-black"
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setSalesFilter("new")}
-          className={`px-2 py-1 border rounded ${
-            salesFilter === "new" ? "bg-black text-white" : "bg-white text-black"
-          }`}
-        >
-          New
-        </button>
-        <button
-          onClick={() => setSalesFilter("used")}
-          className={`px-2 py-1 border rounded ${
-            salesFilter === "used" ? "bg-black text-white" : "bg-white text-black"
-          }`}
-        >
-          Used
-        </button>
+    <section className="p-4 bg-gray-50 rounded-md shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">Salespeople</h2>
+      <div className="flex gap-2 mb-4">
+        {(["all", "new", "used"] as const).map(filter => (
+          <button
+            key={filter}
+            onClick={() => setSalesFilter(filter)}
+            className={`px-3 py-1 rounded-full border transition-colors duration-200 text-sm 
+              ${
+                salesFilter === filter
+                  ? "bg-gray-800 text-white border-gray-800"
+                  : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+              }`}
+          >
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+          </button>
+        ))}
       </div>
       <DroppableContainer id="salespeople-list">
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-2">
           {!salesStaffData ? (
-            <div className="text-muted-foreground text-sm">Loading sales staff...</div>
+            <p className="text-xs text-gray-500">Loading sales staff...</p>
           ) : filteredSalespeople.length === 0 ? (
-            <div className="text-muted-foreground text-sm">No sales staff found</div>
+            <p className="text-xs text-gray-500">No sales staff found</p>
           ) : (
             filteredSalespeople.map(item => (
-              <DraggableItem key={item} id={item} containerId="salespeople-list">
-                <div className="bg-black text-white m-2 p-2 rounded-md shadow-sm text-center">
+              <DraggableItem 
+                key={item} 
+                id={item} 
+                containerId="salespeople-list"
+                className="transition-none"
+              >
+                <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm hover:shadow-md text-xs">
                   {parseName(item)}
                 </div>
               </DraggableItem>
@@ -63,6 +72,6 @@ export function SalespeopleList({
           )}
         </div>
       </DroppableContainer>
-    </>
+    </section>
   );
-} 
+}

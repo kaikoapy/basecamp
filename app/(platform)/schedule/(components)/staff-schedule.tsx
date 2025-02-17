@@ -17,6 +17,7 @@ import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek } from "../
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import { generateSchedulePDF } from "../utils/generate-pdf";
+import { isEqual } from "lodash";
 
 const CalendarSchedule: React.FC = () => {
   // Use current date – note: we use 1-indexed month for our DB.
@@ -53,14 +54,11 @@ const CalendarSchedule: React.FC = () => {
     if (!salesStaffData) return;
     
     setContainers(prev => {
-      if (defaultSalespeople.length === 0 && prev["salespeople-list"].length > 0) {
-        return prev;
-      }
-      
-      return {
+      const newContainers = {
         ...prev,
         "salespeople-list": defaultSalespeople
       };
+      return newContainers;
     });
   }, [defaultSalespeople, salesStaffData]);
 
@@ -69,14 +67,16 @@ const CalendarSchedule: React.FC = () => {
     if (scheduleData === undefined) return;
     
     if (scheduleData === null) {
+      const initialContainers = {
+        "salespeople-list": defaultSalespeople,
+        "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
+      };
       createSchedule({
         month: currentMonth,
         year: currentYear,
-        containers: {
-          "salespeople-list": defaultSalespeople,
-          "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
-        },
+        containers: initialContainers,
       });
+      setContainers(initialContainers);
       return;
     }
 
@@ -88,20 +88,73 @@ const CalendarSchedule: React.FC = () => {
         ])
       ];
       
-      setContainers({
+      const newContainers = {
         ...scheduleData.containers,
         "salespeople-list": mergedSalespeople,
         "special-labels-list": scheduleData.containers["special-labels-list"] || 
           defaultSpecialLabels.map(label => "special:" + label),
-      });
+      };
+      
+      setContainers(newContainers);
     }
   }, [scheduleData, currentMonth, currentYear, createSchedule, defaultSalespeople]);
 
   // UI state
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeContainer, setActiveContainer] = useState<string | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
   const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
+
+  // Compute hasChanges by comparing current state with database state
+  const hasChanges = useMemo(() => {
+    if (!scheduleData?.containers) return false;
+
+    // Only compare containers that are not the salespeople-list or special-labels-list
+    const currentKeys = Object.keys(containers).filter(
+      key => key !== "salespeople-list" && key !== "special-labels-list"
+    ).sort();
+    
+    const dbKeys = Object.keys(scheduleData.containers).filter(
+      key => key !== "salespeople-list" && key !== "special-labels-list"
+    ).sort();
+
+    console.log('Current State:', {
+      currentKeys,
+      currentContainers: currentKeys.reduce((acc, key) => {
+        acc[key] = containers[key]?.sort();
+        return acc;
+      }, {} as Record<string, string[]>)
+    });
+
+    console.log('DB State:', {
+      dbKeys,
+      dbContainers: dbKeys.reduce((acc, key) => {
+        acc[key] = scheduleData.containers[key]?.sort();
+        return acc;
+      }, {} as Record<string, string[]>)
+    });
+
+    // If the number of containers (days) is different, there are changes
+    if (currentKeys.length !== dbKeys.length) {
+      console.log('Different number of containers');
+      return true;
+    }
+
+    // Compare each container's contents
+    const hasChanges = currentKeys.some(key => {
+      const currentItems = [...(containers[key] || [])].sort();
+      const dbItems = [...(scheduleData.containers[key] || [])].sort();
+      const isDifferent = !isEqual(currentItems, dbItems);
+      if (isDifferent) {
+        console.log(`Changes found in container ${key}:`, {
+          current: currentItems,
+          db: dbItems
+        });
+      }
+      return isDifferent;
+    });
+
+    console.log('Has changes:', hasChanges);
+    return hasChanges;
+  }, [containers, scheduleData]);
 
   const updateSchedule = useMutation(api.schedule.updateSchedule);
 
@@ -118,14 +171,12 @@ const CalendarSchedule: React.FC = () => {
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id.toString();
     setActiveId(id);
-    setActiveContainer(event.active.data.current?.containerId ?? null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) {
       setActiveId(null);
-      setActiveContainer(null);
       return;
     }
     const fromContainer = active.data.current?.containerId;
@@ -136,11 +187,20 @@ const CalendarSchedule: React.FC = () => {
     // If dropping into a sidebar, treat as removal.
     if (toContainer === "salespeople-list" || toContainer === "special-labels-list") {
       if (fromContainer !== toContainer) {
-        setContainers(prev => ({
-          ...prev,
-          [fromContainer!]: (prev[fromContainer!] || []).filter(item => item !== itemId)
-        }));
-        setHasChanges(true);
+        setContainers(prev => {
+          const newContainers = { ...prev };
+          // Remove the item from its container
+          newContainers[fromContainer!] = (prev[fromContainer!] || []).filter(item => item !== itemId);
+          
+          // If the container is now empty and it's not a special container, remove it
+          if (newContainers[fromContainer!].length === 0 && 
+              fromContainer !== "salespeople-list" && 
+              fromContainer !== "special-labels-list") {
+            delete newContainers[fromContainer!];
+          }
+          
+          return newContainers;
+        });
       }
     } else {
       // Dropping into a shift container.
@@ -161,7 +221,6 @@ const CalendarSchedule: React.FC = () => {
       });
       if (duplicateFound) {
         setActiveId(null);
-        setActiveContainer(null);
         return;
       }
       if (fromContainer === "salespeople-list" || fromContainer === "special-labels-list") {
@@ -170,23 +229,30 @@ const CalendarSchedule: React.FC = () => {
           ...prev,
           [toContainer]: [...(prev[toContainer] || []), cloneId]
         }));
-        setHasChanges(true);
       } else if (fromContainer !== toContainer) {
-        setContainers(prev => ({
-          ...prev,
-          [fromContainer!]: (prev[fromContainer!] || []).filter(item => item !== itemId),
-          [toContainer]: [...(prev[toContainer] || []), itemId]
-        }));
-        setHasChanges(true);
+        setContainers(prev => {
+          const newContainers = { ...prev };
+          // Remove from old container
+          newContainers[fromContainer!] = prev[fromContainer!].filter(item => item !== itemId);
+          // Add to new container
+          newContainers[toContainer] = [...(prev[toContainer] || []), itemId];
+          
+          // If the old container is now empty, remove it
+          if (newContainers[fromContainer!].length === 0 && 
+              fromContainer !== "salespeople-list" && 
+              fromContainer !== "special-labels-list") {
+            delete newContainers[fromContainer!];
+          }
+          
+          return newContainers;
+        });
       }
     }
     setActiveId(null);
-    setActiveContainer(null);
   };
 
   const handleDragCancel = () => {
     setActiveId(null);
-    setActiveContainer(null);
   };
 
   // Calendar days calculation
@@ -197,8 +263,8 @@ const CalendarSchedule: React.FC = () => {
 
   // Save handler
   const handleSave = async () => {
+    console.log('Saving state:', containers);
     await updateSchedule({ month: currentMonth, year: currentYear, containers });
-    setHasChanges(false);
   };
 
   const handlePrint = () => {
@@ -229,26 +295,27 @@ const CalendarSchedule: React.FC = () => {
             salesStaffData={salesStaffData}
           />
           <SpecialLabels labels={containers["special-labels-list"] || []} />
-          <div className="flex gap-2">
-            {hasChanges && (
-              <button onClick={handleSave} className="mt-6 px-4 py-2 bg-green-600 text-white rounded-md shadow">
-                Save Changes
-              </button>
-            )}
-            <Button
-              onClick={handlePrint}
-              variant="outline"
-              size="default"
-              className="mt-6"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Download PDF
-            </Button>
-          </div>
         </div>
         {/* Calendar */}
         <div className="w-4/5 p-4">
-          <h1 className="text-2xl font-bold mb-4">{monthName} Sales Schedule</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">{monthName} Sales Schedule</h1>
+            <div className="flex gap-2">
+              <Button
+                onClick={handlePrint}
+                variant="outline"
+                size="default"
+              >
+                <Printer className="h-4 w-4 mr-2" />
+                Download Schedule
+              </Button>
+              {hasChanges && (
+                <Button onClick={handleSave} variant="default" size="default">
+                  Save Changes
+                </Button>
+              )}
+            </div>
+          </div>
           <div className="overflow-auto h-[calc(100vh-100px)]">
             <div className="grid grid-cols-7 gap-1">
               {daysOfWeek.map(day => (
@@ -270,7 +337,6 @@ const CalendarSchedule: React.FC = () => {
                         ...prev,
                         ...newContainers
                       }));
-                      setHasChanges(true);
                     }}
                   />
                 ) : (
@@ -283,20 +349,9 @@ const CalendarSchedule: React.FC = () => {
       </div>
       <DragOverlay>
         {activeId ? (
-          activeContainer === "salespeople-list" ||
-          activeContainer === "special-labels-list" ? (
-            <div className="bg-black text-white m-2 p-2 rounded-md shadow-sm text-center">
-              {parseName(activeId)}
-            </div>
-          ) : activeId.startsWith("special:") ? (
-            <div className="bg-white text-black border border-black m-1 p-2 rounded-md shadow-sm text-xs">
-              {parseName(activeId)}
-            </div>
-          ) : (
-            <div className="bg-black text-white m-1 p-2 rounded-md shadow-sm text-xs">
-              {parseName(activeId)}
-            </div>
-          )
+          <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm text-xs">
+            {parseName(activeId)}
+          </div>
         ) : null}
       </DragOverlay>
     </DndContext>
