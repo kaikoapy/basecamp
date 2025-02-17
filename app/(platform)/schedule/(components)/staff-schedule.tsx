@@ -22,8 +22,7 @@ import { Label } from "@/components/ui/label";
 import { isEqual } from "lodash";
 import { useQueryState } from "nuqs";
 import { createParser } from "nuqs";
-import { Protect } from "@clerk/nextjs";
-import { useAdmin } from "@/hooks/use-admin";
+import { Protect, useAuth } from "@clerk/nextjs";
 
 const numberParser = createParser({
   parse: (value: string) => parseInt(value),
@@ -31,7 +30,8 @@ const numberParser = createParser({
 });
 
 const CalendarSchedule: React.FC = () => {
-  const { isAdmin } = useAdmin();
+  const { has } = useAuth();
+  const isAdmin = has?.({ role: "org:admin" }) ?? false;
 
   // Use current date – note: we use 1-indexed month for our DB.
   const currentDate = new Date();

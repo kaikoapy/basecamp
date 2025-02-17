@@ -1,16 +1,9 @@
-import dynamic from "next/dynamic";
-import { DebugRole } from "../(components)/debug-role";
-
-const StaffSchedule = dynamic(
-  () => import("./(components)/staff-schedule"),
-  { ssr: false }
-);
+import StaffSchedule from "./(components)/staff-schedule";
 
 export default function SchedulePage() {
   return (
-    <>
-      <DebugRole />
+    <div className="h-screen">
       <StaffSchedule />
-    </>
+    </div>
   );
 }
