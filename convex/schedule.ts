@@ -57,6 +57,7 @@ export const createSchedule = mutation({
       year,
       containers,
       updatedAt: Date.now(),
+      published: false, // New schedules are unpublished by default
     });
   },
 });
@@ -85,6 +86,7 @@ export const updateSchedule = mutation({
         year,
         containers,
         updatedAt: Date.now(),
+        published: false,
       });
       return;
     }
@@ -92,6 +94,33 @@ export const updateSchedule = mutation({
     // Otherwise, update the existing schedule.
     await ctx.db.patch(existingSchedule._id, {
       containers,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Mutation to publish/unpublish a schedule
+export const togglePublishSchedule = mutation({
+  args: {
+    month: v.number(),
+    year: v.number(),
+    published: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const { month, year, published } = args;
+    
+    const existingSchedule = await ctx.db
+      .query("schedule")
+      .filter((q) => q.eq(q.field("month"), month))
+      .filter((q) => q.eq(q.field("year"), year))
+      .first();
+    
+    if (!existingSchedule) {
+      throw new Error("Schedule not found");
+    }
+
+    await ctx.db.patch(existingSchedule._id, {
+      published,
       updatedAt: Date.now(),
     });
   },

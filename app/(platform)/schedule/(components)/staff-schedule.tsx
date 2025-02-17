@@ -15,23 +15,55 @@ import { SpecialLabels } from "./special-labels";
 import { CalendarDay } from "./calendar-day";
 import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek } from "../utils";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Printer, ChevronLeft, ChevronRight, Plus, Pencil } from "lucide-react";
 import { generateSchedulePDF } from "../utils/generate-pdf";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { isEqual } from "lodash";
+import { useQueryState } from "nuqs";
+import { createParser } from "nuqs";
+import { Protect, useAuth } from "@clerk/nextjs";
+
+const numberParser = createParser({
+  parse: (value: string) => parseInt(value),
+  serialize: (value: number) => value.toString(),
+});
 
 const CalendarSchedule: React.FC = () => {
+  const { has } = useAuth();
+  const isAdmin = has?.({ role: "org:admin" }) ?? false;
+
   // Use current date – note: we use 1-indexed month for our DB.
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay();
   
-  // Get month name
-  const monthName = new Date(currentYear, currentMonth - 1).toLocaleString('default', { month: 'long' });
+  // Replace local state with URL state
+  const [displayMonth, setDisplayMonth] = useQueryState(
+    'month',
+    numberParser.withDefault(currentMonth)
+  );
+  
+  const [displayYear, setDisplayYear] = useQueryState(
+    'year',
+    numberParser.withDefault(currentYear)
+  );
+
+  // UI state
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Load schedule and sales staff from Convex
-  const scheduleData = useQuery(api.schedule.getSchedule, { month: currentMonth, year: currentYear });
+  const scheduleData = useQuery(api.schedule.getSchedule, { 
+    month: Number(displayMonth), 
+    year: Number(displayYear) 
+  });
+
+  const prevScheduleData = useQuery(api.schedule.getSchedule, { 
+    month: Number(displayMonth) === 1 ? 12 : Number(displayMonth) - 1, 
+    year: Number(displayMonth) === 1 ? Number(displayYear) - 1 : Number(displayYear)
+  });
   const salesStaffData = useQuery(api.schedule.getSalesStaff);
   const createSchedule = useMutation(api.schedule.createSchedule);
 
@@ -66,19 +98,30 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     if (scheduleData === undefined) return;
     
+    const updateUrlParams = async () => {
+      if (scheduleData) {
+        await Promise.all([
+          setDisplayMonth(scheduleData.month),
+          setDisplayYear(scheduleData.year)
+        ]);
+      }
+    };
+
     if (scheduleData === null) {
       const initialContainers = {
         "salespeople-list": defaultSalespeople,
         "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
       };
       createSchedule({
-        month: currentMonth,
-        year: currentYear,
+        month: displayMonth,
+        year: displayYear,
         containers: initialContainers,
       });
       setContainers(initialContainers);
       return;
     }
+
+    updateUrlParams();
 
     if (scheduleData.containers) {
       const mergedSalespeople = [
@@ -97,63 +140,59 @@ const CalendarSchedule: React.FC = () => {
       
       setContainers(newContainers);
     }
-  }, [scheduleData, currentMonth, currentYear, createSchedule, defaultSalespeople]);
+  }, [scheduleData, displayMonth, displayYear, createSchedule, defaultSalespeople, setDisplayMonth, setDisplayYear]);
 
-  // UI state
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
+  // Get month name
+  const monthName = new Date(displayYear, displayMonth - 1).toLocaleString('default', { month: 'long' });
+
+  const handlePrevMonth = async () => {
+    const newMonth = Number(displayMonth) === 1 ? 12 : Number(displayMonth) - 1;
+    const newYear = Number(displayMonth) === 1 ? Number(displayYear) - 1 : Number(displayYear);
+    
+    await Promise.all([
+      setDisplayMonth(newMonth),
+      setDisplayYear(newYear)
+    ]);
+  };
+
+  const handleNextMonth = async () => {
+    const newMonth = Number(displayMonth) === 12 ? 1 : Number(displayMonth) + 1;
+    const newYear = Number(displayMonth) === 12 ? Number(displayYear) + 1 : Number(displayYear);
+    
+    await Promise.all([
+      setDisplayMonth(newMonth),
+      setDisplayYear(newYear)
+    ]);
+  };
+
+  // Check next month's schedule
+  const nextScheduleData = useQuery(api.schedule.getSchedule, {
+    month: Number(displayMonth) === 12 ? 1 : Number(displayMonth) + 1,
+    year: Number(displayMonth) === 12 ? Number(displayYear) + 1 : Number(displayYear)
+  });
+
+  // Determine if next button should be disabled - allow admins to navigate regardless
+  const isNextButtonDisabled = !scheduleData || (!nextScheduleData?.published && !isAdmin);
 
   // Compute hasChanges by comparing current state with database state
   const hasChanges = useMemo(() => {
     if (!scheduleData?.containers) return false;
 
-    // Only compare containers that are not the salespeople-list or special-labels-list
-    const currentKeys = Object.keys(containers).filter(
-      key => key !== "salespeople-list" && key !== "special-labels-list"
-    ).sort();
-    
-    const dbKeys = Object.keys(scheduleData.containers).filter(
-      key => key !== "salespeople-list" && key !== "special-labels-list"
-    ).sort();
+    // Get schedule-only containers (excluding salespeople and special labels)@
+    const getScheduleContainers = (containers: Record<string, string[]>) => {
+      const cleaned: Record<string, string[]> = {};
+      Object.entries(containers).forEach(([key, items]) => {
+        if (key !== "salespeople-list" && key !== "special-labels-list" && items.length > 0) {
+          cleaned[key] = [...items].sort();
+        }
+      });
+      return cleaned;
+    };
 
-    console.log('Current State:', {
-      currentKeys,
-      currentContainers: currentKeys.reduce((acc, key) => {
-        acc[key] = containers[key]?.sort();
-        return acc;
-      }, {} as Record<string, string[]>)
-    });
+    const currentSchedule = getScheduleContainers(containers);
+    const dbSchedule = getScheduleContainers(scheduleData.containers);
 
-    console.log('DB State:', {
-      dbKeys,
-      dbContainers: dbKeys.reduce((acc, key) => {
-        acc[key] = scheduleData.containers[key]?.sort();
-        return acc;
-      }, {} as Record<string, string[]>)
-    });
-
-    // If the number of containers (days) is different, there are changes
-    if (currentKeys.length !== dbKeys.length) {
-      console.log('Different number of containers');
-      return true;
-    }
-
-    // Compare each container's contents
-    const hasChanges = currentKeys.some(key => {
-      const currentItems = [...(containers[key] || [])].sort();
-      const dbItems = [...(scheduleData.containers[key] || [])].sort();
-      const isDifferent = !isEqual(currentItems, dbItems);
-      if (isDifferent) {
-        console.log(`Changes found in container ${key}:`, {
-          current: currentItems,
-          db: dbItems
-        });
-      }
-      return isDifferent;
-    });
-
-    console.log('Has changes:', hasChanges);
-    return hasChanges;
+    return !isEqual(currentSchedule, dbSchedule);
   }, [containers, scheduleData]);
 
   const updateSchedule = useMutation(api.schedule.updateSchedule);
@@ -167,8 +206,57 @@ const CalendarSchedule: React.FC = () => {
     });
   }, [containers, salesFilter]);
 
-  // Drag handlers
+  // Calendar days calculation
+  const daysInMonth = getDaysInMonth(displayYear, displayMonth);
+  const firstDayOfMonth = new Date(displayYear, displayMonth - 1, 1).getDay();
+  const calendarDays = Array.from(
+    { length: daysInMonth + firstDayOfMonth },
+    (_, i) => (i < firstDayOfMonth ? null : i - firstDayOfMonth + 1)
+  );
+
+  // Save handler
+  const handleSave = async () => {
+    // Clean up empty containers before saving
+    const cleanedContainers = { ...containers };
+    Object.keys(cleanedContainers).forEach(key => {
+      if (key !== "salespeople-list" && key !== "special-labels-list" && cleanedContainers[key].length === 0) {
+        delete cleanedContainers[key];
+      }
+    });
+
+    await updateSchedule({ 
+      month: displayMonth, 
+      year: displayYear, 
+      containers: cleanedContainers 
+    });
+  };
+
+  const handlePrint = () => {
+    generateSchedulePDF({
+      monthName,
+      currentYear: displayYear,
+      currentMonth: displayMonth,
+      firstDayOfMonth,
+      calendarDays,
+      scheduleData: scheduleData ?? null,
+    });
+  };
+
+  // Add togglePublish mutation
+  const togglePublish = useMutation(api.schedule.togglePublishSchedule);
+
+  const handleTogglePublish = async () => {
+    if (!scheduleData) return;
+    await togglePublish({
+      month: displayMonth,
+      year: displayYear,
+      published: !scheduleData.published
+    });
+  };
+
+  // Modify handleDragStart to respect edit mode
   const handleDragStart = (event: DragStartEvent) => {
+    if (!isEditMode) return;
     const id = event.active.id.toString();
     setActiveId(id);
   };
@@ -255,29 +343,6 @@ const CalendarSchedule: React.FC = () => {
     setActiveId(null);
   };
 
-  // Calendar days calculation
-  const calendarDays = Array.from(
-    { length: daysInMonth + firstDayOfMonth },
-    (_, i) => (i < firstDayOfMonth ? null : i - firstDayOfMonth + 1)
-  );
-
-  // Save handler
-  const handleSave = async () => {
-    console.log('Saving state:', containers);
-    await updateSchedule({ month: currentMonth, year: currentYear, containers });
-  };
-
-  const handlePrint = () => {
-    generateSchedulePDF({
-      monthName,
-      currentYear,
-      currentMonth,
-      firstDayOfMonth,
-      calendarDays,
-      scheduleData: scheduleData ?? null,
-    });
-  };
-
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -286,30 +351,81 @@ const CalendarSchedule: React.FC = () => {
       onDragCancel={handleDragCancel}
     >
       <div className="flex h-screen">
-        {/* Sidebar */}
-        <div className="w-1/5 p-4 border-r">
-          <SalespeopleList
-            salesFilter={salesFilter}
-            setSalesFilter={setSalesFilter}
-            filteredSalespeople={filteredSalespeople}
-            salesStaffData={salesStaffData}
-          />
-          <SpecialLabels labels={containers["special-labels-list"] || []} />
-        </div>
+        {/* Sidebar - only show in edit mode */}
+        {isEditMode && (
+          <div className="w-1/5 p-4 border-r">
+            <SalespeopleList
+              salesFilter={salesFilter}
+              setSalesFilter={setSalesFilter}
+              filteredSalespeople={filteredSalespeople}
+              salesStaffData={salesStaffData}
+            />
+            <SpecialLabels labels={containers["special-labels-list"] || []} />
+          </div>
+        )}
         {/* Calendar */}
-        <div className="w-4/5 p-4">
+        <div className={isEditMode ? "w-4/5 p-4" : "w-full p-4"}>
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">{monthName} Sales Schedule</h1>
-            <div className="flex gap-2">
+            <div className="flex-1 flex justify-center items-center gap-4">
+              <Button
+                onClick={handlePrevMonth}
+                variant="outline"
+                size="icon"
+                disabled={!prevScheduleData?.published && !isAdmin}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h1 className="text-2xl font-bold">
+                {monthName} {displayYear} Sales Schedule
+              </h1>
+              <Button
+                onClick={handleNextMonth}
+                variant="outline"
+                size="icon"
+                disabled={isNextButtonDisabled}
+              >
+                {scheduleData ? (
+                  <ChevronRight className="h-4 w-4" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <div className="flex items-center gap-4">
+              {scheduleData && (
+                <>
+                  <Protect role="org:admin">
+                    <Button
+                      onClick={() => setIsEditMode(!isEditMode)}
+                      variant="outline"
+                      size="default"
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
+                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="publish-schedule"
+                        checked={scheduleData?.published ?? false}
+                        onCheckedChange={handleTogglePublish}
+                      />
+                      <Label htmlFor="publish-schedule" className="w-16 text-sm">
+                        {scheduleData?.published ? "Published" : "Draft"}
+                      </Label>
+                    </div>
+                  </Protect>
+                </>
+              )}
               <Button
                 onClick={handlePrint}
                 variant="outline"
                 size="default"
+                disabled={!scheduleData?.published && !isAdmin}
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Download Schedule
               </Button>
-              {hasChanges && (
+              {hasChanges && isEditMode && (
                 <Button onClick={handleSave} variant="default" size="default">
                   Save Changes
                 </Button>
@@ -317,43 +433,52 @@ const CalendarSchedule: React.FC = () => {
             </div>
           </div>
           <div className="overflow-auto h-[calc(100vh-100px)]">
-            <div className="grid grid-cols-7 gap-1">
-              {daysOfWeek.map(day => (
-                <div key={day} className="text-center font-bold">
-                  {day}
-                </div>
-              ))}
-              {calendarDays.map((day, idx) =>
-                day ? (
-                  <CalendarDay
-                    key={day}
-                    day={day}
-                    dayOfWeek={new Date(currentYear, currentMonth - 1, day).getDay()}
-                    containers={containers}
-                    currentMonth={currentMonth}
-                    currentYear={currentYear}
-                    onUpdateContainers={(newContainers) => {
-                      setContainers(prev => ({
-                        ...prev,
-                        ...newContainers
-                      }));
-                    }}
-                  />
-                ) : (
-                  <div key={`empty-${idx}`} className="m-1" />
-                )
-              )}
-            </div>
+            {!scheduleData?.published && !isAdmin ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-lg text-gray-500 font-medium">Schedule Not Available</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-7 gap-1">
+                {daysOfWeek.map(day => (
+                  <div key={day} className="text-center font-bold">
+                    {day}
+                  </div>
+                ))}
+                {calendarDays.map((day, idx) =>
+                  day ? (
+                    <CalendarDay
+                      key={day}
+                      day={day}
+                      dayOfWeek={new Date(displayYear, displayMonth - 1, day).getDay()}
+                      containers={containers}
+                      currentMonth={displayMonth}
+                      currentYear={displayYear}
+                      onUpdateContainers={(newContainers) => {
+                        setContainers(prev => ({
+                          ...prev,
+                          ...newContainers
+                        }));
+                      }}
+                      isEditMode={isEditMode}
+                    />
+                  ) : (
+                    <div key={`empty-${idx}`} className="m-1" />
+                  )
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <DragOverlay>
-        {activeId ? (
-          <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm text-xs">
-            {parseName(activeId)}
-          </div>
-        ) : null}
-      </DragOverlay>
+      {isEditMode && (
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm text-xs">
+              {parseName(activeId)}
+            </div>
+          ) : null}
+        </DragOverlay>
+      )}
     </DndContext>
   );
 };

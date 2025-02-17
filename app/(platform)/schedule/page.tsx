@@ -1,13 +1,9 @@
-/*******************************************************
- * app/page.tsx
- *******************************************************/
+import StaffSchedule from "./(components)/staff-schedule";
 
-import { ScheduleImage } from "./(components)/ScheduleImage";
-
-export default function Page() {
+export default function SchedulePage() {
   return (
-    <main className="min-h-screen">
-      <ScheduleImage />
-    </main>
+    <div className="h-screen">
+      <StaffSchedule />
+    </div>
   );
 }
