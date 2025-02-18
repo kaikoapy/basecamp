@@ -6,7 +6,9 @@ import { v } from "convex/values";
 export const POSITIONS = [
   "General Manager",
   "Sales Manager",
-  "Sales Specialist",
+  "New Car Sales Specialist",
+  "Used Car Sales Specialist",
+  "Product Specialist",
   "Service Advisor",
   "Service Manager",
   "Service Mechanic",
@@ -68,11 +70,6 @@ export const getImportantNumbers = query({
   },
 });
 
-// Update the interface to match the actual structure
-interface ClerkUserIdentity {
-  role: string[];
-}
-
 export const deleteOne = mutation({
   args: { id: v.id("directory") },
   handler: async (ctx, args) => {
@@ -80,12 +77,6 @@ export const deleteOne = mutation({
     if (!identity) {
       throw new Error("Unauthenticated");
     }
-
-    const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.role?.includes("org:admin")) {
-      throw new Error("Unauthorized: Requires directory management permission");
-    }
-
     await ctx.db.delete(args.id);
   },
 });
@@ -97,12 +88,6 @@ export const deleteMany = mutation({
     if (!identity) {
       throw new Error("Unauthenticated");
     }
-
-    const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.role?.includes("org:admin")) {
-      throw new Error("Unauthorized: Requires directory management permission");
-    }
-
     await Promise.all(args.ids.map((id) => ctx.db.delete(id)));
   },
 });
@@ -123,12 +108,6 @@ export const update = mutation({
     if (!identity) {
       throw new Error("Unauthenticated");
     }
-
-    const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.role?.includes("org:admin")) {
-      throw new Error("Unauthorized: Requires directory management permission");
-    }
-
     const { id, ...updateData } = args;
     await ctx.db.patch(id, updateData);
   },
@@ -149,12 +128,6 @@ export const create = mutation({
     if (!identity) {
       throw new Error("Unauthenticated");
     }
-
-    const clerkIdentity = identity as unknown as ClerkUserIdentity;
-    if (!clerkIdentity.role?.includes("org:admin")) {
-      throw new Error("Unauthorized: Requires directory management permission");
-    }
-
     await ctx.db.insert("directory", {
       name: args.name,
       nickname: args.nickname,
