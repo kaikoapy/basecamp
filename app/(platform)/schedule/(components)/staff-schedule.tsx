@@ -22,7 +22,8 @@ import { Label } from "@/components/ui/label";
 import { isEqual } from "lodash";
 import { useQueryState } from "nuqs";
 import { createParser } from "nuqs";
-import { Protect, useAuth } from "@clerk/nextjs";
+import { Protect } from "@clerk/nextjs";
+import { useAdmin } from "@/hooks/use-admin";
 
 const numberParser = createParser({
   parse: (value: string) => parseInt(value),
@@ -30,8 +31,7 @@ const numberParser = createParser({
 });
 
 const CalendarSchedule: React.FC = () => {
-  const { has } = useAuth();
-  const isAdmin = has?.({ role: "org:admin" }) ?? false;
+  const { isAdmin, isLoaded } = useAdmin();
 
   // Use current date – note: we use 1-indexed month for our DB.
   const currentDate = new Date();
@@ -350,126 +350,132 @@ const CalendarSchedule: React.FC = () => {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className="flex h-screen">
-        {/* Sidebar - only show in edit mode */}
-        {isEditMode && (
-          <div className="w-1/5 p-4 border-r">
-            <SalespeopleList
-              salesFilter={salesFilter}
-              setSalesFilter={setSalesFilter}
-              filteredSalespeople={filteredSalespeople}
-              salesStaffData={salesStaffData}
-            />
-            <SpecialLabels labels={containers["special-labels-list"] || []} />
-          </div>
-        )}
-        {/* Calendar */}
-        <div className={isEditMode ? "w-4/5 p-4" : "w-full p-4"}>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-1 flex justify-center items-center gap-4">
-              <Button
-                onClick={handlePrevMonth}
-                variant="outline"
-                size="icon"
-                disabled={!prevScheduleData?.published && !isAdmin}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <h1 className="text-2xl font-bold">
-                {monthName} {displayYear} Sales Schedule
-              </h1>
-              <Button
-                onClick={handleNextMonth}
-                variant="outline"
-                size="icon"
-                disabled={isNextButtonDisabled}
-              >
-                {scheduleData ? (
-                  <ChevronRight className="h-4 w-4" />
-                ) : (
-                  <Plus className="h-4 w-4" />
-                )}
-              </Button>
+      {!isLoaded ? (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-lg text-gray-500 font-medium">Loading...</p>
+        </div>
+      ) : (
+        <div className="flex h-screen">
+          {/* Sidebar - only show in edit mode */}
+          {isEditMode && (
+            <div className="w-1/5 p-4 border-r">
+              <SalespeopleList
+                salesFilter={salesFilter}
+                setSalesFilter={setSalesFilter}
+                filteredSalespeople={filteredSalespeople}
+                salesStaffData={salesStaffData}
+              />
+              <SpecialLabels labels={containers["special-labels-list"] || []} />
             </div>
-            <div className="flex items-center gap-4">
-              {scheduleData && (
-                <>
-                  <Protect role="org:admin">
-                    <Button
-                      onClick={() => setIsEditMode(!isEditMode)}
-                      variant="outline"
-                      size="default"
-                    >
-                      <Pencil className="h-4 w-4 mr-2" />
-                      {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
-                    </Button>
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="publish-schedule"
-                        checked={scheduleData?.published ?? false}
-                        onCheckedChange={handleTogglePublish}
-                      />
-                      <Label htmlFor="publish-schedule" className="w-16 text-sm">
-                        {scheduleData?.published ? "Published" : "Draft"}
-                      </Label>
-                    </div>
-                  </Protect>
-                </>
-              )}
-              <Button
-                onClick={handlePrint}
-                variant="outline"
-                size="default"
-                disabled={!scheduleData?.published && !isAdmin}
-              >
-                <Printer className="h-4 w-4 mr-2" />
-                Download Schedule
-              </Button>
-              {hasChanges && isEditMode && (
-                <Button onClick={handleSave} variant="default" size="default">
-                  Save Changes
+          )}
+          {/* Calendar */}
+          <div className={isEditMode ? "w-4/5 p-4" : "w-full p-4"}>
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex-1 flex justify-center items-center gap-4">
+                <Button
+                  onClick={handlePrevMonth}
+                  variant="outline"
+                  size="icon"
+                  disabled={!prevScheduleData?.published && !isAdmin}
+                >
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
-              )}
-            </div>
-          </div>
-          <div className="overflow-auto h-[calc(100vh-100px)]">
-            {!scheduleData?.published && !isAdmin ? (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-lg text-gray-500 font-medium">Schedule Not Available</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-7 gap-1">
-                {daysOfWeek.map(day => (
-                  <div key={day} className="text-center font-bold">
-                    {day}
-                  </div>
-                ))}
-                {calendarDays.map((day, idx) =>
-                  day ? (
-                    <CalendarDay
-                      key={day}
-                      day={day}
-                      dayOfWeek={new Date(displayYear, displayMonth - 1, day).getDay()}
-                      containers={containers}
-                      currentMonth={displayMonth}
-                      currentYear={displayYear}
-                      onUpdateContainers={(newContainers) => {
-                        setContainers(prev => ({
-                          ...prev,
-                          ...newContainers
-                        }));
-                      }}
-                      isEditMode={isEditMode}
-                    />
+                <h1 className="text-2xl font-bold">
+                  {monthName} {displayYear} Sales Schedule
+                </h1>
+                <Button
+                  onClick={handleNextMonth}
+                  variant="outline"
+                  size="icon"
+                  disabled={isNextButtonDisabled}
+                >
+                  {scheduleData ? (
+                    <ChevronRight className="h-4 w-4" />
                   ) : (
-                    <div key={`empty-${idx}`} className="m-1" />
-                  )
+                    <Plus className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              <div className="flex items-center gap-4">
+                {scheduleData && (
+                  <>
+                    <Protect role="org:admin">
+                      <Button
+                        onClick={() => setIsEditMode(!isEditMode)}
+                        variant="outline"
+                        size="default"
+                      >
+                        <Pencil className="h-4 w-4 mr-2" />
+                        {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
+                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          id="publish-schedule"
+                          checked={scheduleData?.published ?? false}
+                          onCheckedChange={handleTogglePublish}
+                        />
+                        <Label htmlFor="publish-schedule" className="w-16 text-sm">
+                          {scheduleData?.published ? "Published" : "Draft"}
+                        </Label>
+                      </div>
+                    </Protect>
+                  </>
+                )}
+                <Button
+                  onClick={handlePrint}
+                  variant="outline"
+                  size="default"
+                  disabled={!scheduleData?.published && !isAdmin}
+                >
+                  <Printer className="h-4 w-4 mr-2" />
+                  Download Schedule
+                </Button>
+                {hasChanges && isEditMode && (
+                  <Button onClick={handleSave} variant="default" size="default">
+                    Save Changes
+                  </Button>
                 )}
               </div>
-            )}
+            </div>
+            <div className="overflow-auto h-[calc(100vh-100px)]">
+              {!scheduleData?.published && !isAdmin ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-lg text-gray-500 font-medium">Schedule Not Available</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-7 gap-1">
+                  {daysOfWeek.map(day => (
+                    <div key={day} className="text-center font-bold">
+                      {day}
+                    </div>
+                  ))}
+                  {calendarDays.map((day, idx) =>
+                    day ? (
+                      <CalendarDay
+                        key={day}
+                        day={day}
+                        dayOfWeek={new Date(displayYear, displayMonth - 1, day).getDay()}
+                        containers={containers}
+                        currentMonth={displayMonth}
+                        currentYear={displayYear}
+                        onUpdateContainers={(newContainers) => {
+                          setContainers(prev => ({
+                            ...prev,
+                            ...newContainers
+                          }));
+                        }}
+                        isEditMode={isEditMode}
+                      />
+                    ) : (
+                      <div key={`empty-${idx}`} className="m-1" />
+                    )
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
       {isEditMode && (
         <DragOverlay>
           {activeId ? (

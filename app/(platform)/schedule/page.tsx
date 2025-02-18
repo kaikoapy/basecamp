@@ -1,9 +1,22 @@
-import StaffSchedule from "./(components)/staff-schedule";
+"use client";
+
+import dynamic from "next/dynamic";
+import { DebugRole } from "../(components)/debug-role";
+
+const StaffSchedule = dynamic(
+  () => import("./(components)/staff-schedule"),
+  { ssr: false }
+);
+
+function StaffScheduleWrapper() {
+  return <StaffSchedule />;
+}
 
 export default function SchedulePage() {
   return (
-    <div className="h-screen">
-      <StaffSchedule />
-    </div>
+    <>
+      <DebugRole />
+      <StaffScheduleWrapper />
+    </>
   );
 }
