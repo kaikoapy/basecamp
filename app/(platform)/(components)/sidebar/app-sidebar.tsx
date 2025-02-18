@@ -16,7 +16,7 @@ import {
   MessageSquare,
   Printer,
   Brain,
-  Shield,
+  Settings,
 } from "lucide-react";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
@@ -293,9 +293,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
       {
-        title: "Admin",
+        title: "Settings",
         url: "#",
-        icon: Shield,
+        icon: Settings,
         requiresAdmin: true,
         items: [
           {
