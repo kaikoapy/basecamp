@@ -58,6 +58,7 @@ export const speedDialContacts: SpeedDialContacts = {
   ],
   deliverySpecialists: [
     { name: "Josh Sadov", phone: "(305) 690-6116" },
+    { name: "Daniel Arregoitia", phone: "(305) 690-6116" },
   ],
   external: {
     vfs: {
