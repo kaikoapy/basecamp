@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Printer,
   Brain,
+  Shield,
 } from "lucide-react";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname } from "next/navigation";
@@ -289,6 +290,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           //   title: "FAQ",
           //   url: "/faq",
           // },
+        ],
+      },
+      {
+        title: "Admin",
+        url: "#",
+        icon: Shield,
+        requiresAdmin: true,
+        items: [
+          {
+            title: "Sales Schedule",
+            url: "/schedule",
+          },
+          {
+            title: "Directory Management",
+            url: "/directory",
+          },
+          {
+            title: "Announcements",
+            url: "/announcements",
+          },
+          {
+            title: "Users",
+            action: () => showDialog("users"),
+            isModal: true,
+          },
+          {
+            title: "Dealerhip Configuration",
+            action: () => showDialog("dealership-configuration"),
+            isModal: true,
+          },
         ],
       },
       // {

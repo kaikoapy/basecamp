@@ -23,8 +23,8 @@ export const getSalesStaff = query({
       .query("directory")
       .filter((q) => 
         q.or(
-          q.eq(q.field("position"), "New Sales Specialist"),
-          q.eq(q.field("position"), "Used Sales Specialist")
+          q.eq(q.field("position"), "New Car Sales Specialist"),
+          q.eq(q.field("position"), "Used Car Sales Specialist")
         )
       )
       .collect();
@@ -33,7 +33,7 @@ export const getSalesStaff = query({
     
     const mappedStaff = salesStaff.map(staff => ({
       ...staff,
-      type: staff.position.startsWith("New") ? "new" : "used"
+      type: staff.position.includes("New") ? "new" : "used"
     }));
     
     console.log("Mapped Sales Staff:", mappedStaff);
