@@ -32,6 +32,7 @@ export function ShiftConfiguration({ className }: ShiftConfigurationProps) {
 
     try {
       await upsertShifts({
+        dayType: editingDayType,
         shifts: {
           ...shifts,
           [editingDayType]: editingShifts,
