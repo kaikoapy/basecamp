@@ -13,12 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ExternalLink } from "lucide-react"
+import { ShiftConfiguration } from "../(components)/shift-configuration"
 
 import { roles } from "@/app/data/data"
 
 export default function General() {
   return (
-    <>
+    <div className="space-y-6">
+      <ShiftConfiguration />
       <div className="space-y-10">
         <section aria-labelledby="personal-information">
           <form>
@@ -288,6 +290,6 @@ export default function General() {
           </form>
         </section>
       </div>
-    </>
+    </div>
   )
 }

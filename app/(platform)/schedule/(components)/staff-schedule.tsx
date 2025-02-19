@@ -13,22 +13,25 @@ import { api } from "@/convex/_generated/api";
 import { SalespeopleList } from "./salespeople-list";
 import { SpecialLabels } from "./special-labels";
 import { CalendarDay } from "./calendar-day";
-import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek } from "../utils";
-import { Button } from "@/components/ui/button";
-import { Printer, ChevronLeft, ChevronRight, Plus, Pencil } from "lucide-react";
-import { generateSchedulePDF } from "../utils/generate-pdf";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek, defaultShifts } from "../utils";
 import { isEqual } from "lodash";
 import { useQueryState } from "nuqs";
 import { createParser } from "nuqs";
-import { Protect } from "@clerk/nextjs";
 import { useAdmin } from "@/hooks/use-admin";
+import { ScheduleHeader } from "./schedule-header";
+import { generateSchedulePDF } from "../utils/generate-pdf";
 
 const numberParser = createParser({
   parse: (value: string) => parseInt(value),
   serialize: (value: number) => value.toString(),
 });
+
+interface CalendarDayInfo {
+  day: number;
+  month: number;
+  year: number;
+  isPrevMonth: boolean;
+}
 
 const CalendarSchedule: React.FC = () => {
   const { isAdmin, isLoaded } = useAdmin();
@@ -171,9 +174,6 @@ const CalendarSchedule: React.FC = () => {
     year: Number(displayMonth) === 12 ? Number(displayYear) + 1 : Number(displayYear)
   });
 
-  // Determine if next button should be disabled - allow admins to navigate regardless
-  const isNextButtonDisabled = !scheduleData || (!nextScheduleData?.published && !isAdmin);
-
   // Compute hasChanges by comparing current state with database state
   const hasChanges = useMemo(() => {
     if (!scheduleData?.containers) return false;
@@ -209,10 +209,51 @@ const CalendarSchedule: React.FC = () => {
   // Calendar days calculation
   const daysInMonth = getDaysInMonth(displayYear, displayMonth);
   const firstDayOfMonth = new Date(displayYear, displayMonth - 1, 1).getDay();
-  const calendarDays = Array.from(
-    { length: daysInMonth + firstDayOfMonth },
-    (_, i) => (i < firstDayOfMonth ? null : i - firstDayOfMonth + 1)
+  
+  // Calculate previous month's days
+  const prevMonth = displayMonth === 1 ? 12 : displayMonth - 1;
+  const prevYear = displayMonth === 1 ? displayYear - 1 : displayYear;
+  const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
+  
+  // Create array for previous month's days
+  const prevMonthDays: CalendarDayInfo[] = Array.from(
+    { length: firstDayOfMonth },
+    (_, i) => ({
+      day: daysInPrevMonth - firstDayOfMonth + i + 1,
+      month: prevMonth,
+      year: prevYear,
+      isPrevMonth: true
+    })
   );
+  
+  // Current month days
+  const currentMonthDays: CalendarDayInfo[] = Array.from(
+    { length: daysInMonth },
+    (_, i) => ({
+      day: i + 1,
+      month: displayMonth,
+      year: displayYear,
+      isPrevMonth: false
+    })
+  );
+  
+  // Calculate next month's days to fill out the grid
+  const lastDayOfMonth = new Date(displayYear, displayMonth - 1, daysInMonth).getDay();
+  const nextMonthDays: CalendarDayInfo[] = Array.from(
+    { length: lastDayOfMonth === 6 ? 0 : 6 - lastDayOfMonth },
+    (_, i) => ({
+      day: i + 1,
+      month: displayMonth === 12 ? 1 : displayMonth + 1,
+      year: displayMonth === 12 ? displayYear + 1 : displayYear,
+      isPrevMonth: true // We'll use the same styling as prev month
+    })
+  );
+  
+  // Combine all arrays
+  const calendarDays: CalendarDayInfo[] = [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
+
+  // Get shifts from database
+  const shifts = useQuery(api.shifts.getShifts) ?? defaultShifts;
 
   // Save handler
   const handleSave = async () => {
@@ -232,14 +273,27 @@ const CalendarSchedule: React.FC = () => {
   };
 
   const handlePrint = () => {
+    if (!shifts) return;
+    
+    // Convert CalendarDayInfo[] to (number | null)[]
+    const printCalendarDays = calendarDays.map(dayInfo => 
+      dayInfo.isPrevMonth ? null : dayInfo.day
+    );
+
+    // Convert scheduleData to the expected format
+    const printScheduleData = scheduleData ? {
+      containers: scheduleData.containers
+    } : null;
+    
     generateSchedulePDF({
       monthName,
       currentYear: displayYear,
       currentMonth: displayMonth,
       firstDayOfMonth,
-      calendarDays,
-      scheduleData: scheduleData ?? null,
+      calendarDays: printCalendarDays,
+      scheduleData: printScheduleData,
       salesFilter,
+      shifts: shifts,
     });
   };
 
@@ -371,73 +425,22 @@ const CalendarSchedule: React.FC = () => {
           )}
           {/* Calendar */}
           <div className={isEditMode ? "w-4/5 p-4" : "w-full p-4"}>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex-1 flex justify-center items-center gap-4">
-                <Button
-                  onClick={handlePrevMonth}
-                  variant="outline"
-                  size="icon"
-                  disabled={!prevScheduleData?.published && !isAdmin}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <h1 className="text-2xl font-bold">
-                  {monthName} {displayYear} Sales Schedule
-                </h1>
-                <Button
-                  onClick={handleNextMonth}
-                  variant="outline"
-                  size="icon"
-                  disabled={isNextButtonDisabled}
-                >
-                  {scheduleData ? (
-                    <ChevronRight className="h-4 w-4" />
-                  ) : (
-                    <Plus className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              <div className="flex items-center gap-4">
-                {scheduleData && (
-                  <>
-                    <Protect role="org:admin">
-                      <Button
-                        onClick={() => setIsEditMode(!isEditMode)}
-                        variant="outline"
-                        size="default"
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
-                      </Button>
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="publish-schedule"
-                          checked={scheduleData?.published ?? false}
-                          onCheckedChange={handleTogglePublish}
-                        />
-                        <Label htmlFor="publish-schedule" className="w-16 text-sm">
-                          {scheduleData?.published ? "Published" : "Draft"}
-                        </Label>
-                      </div>
-                    </Protect>
-                  </>
-                )}
-                <Button
-                  onClick={handlePrint}
-                  variant="outline"
-                  size="default"
-                  disabled={!scheduleData?.published && !isAdmin}
-                >
-                  <Printer className="h-4 w-4 mr-2" />
-                  Download Schedule
-                </Button>
-                {hasChanges && isEditMode && (
-                  <Button onClick={handleSave} variant="default" size="default">
-                    Save Changes
-                  </Button>
-                )}
-              </div>
-            </div>
+            <ScheduleHeader 
+              monthName={monthName}
+              displayYear={displayYear}
+              isAdmin={isAdmin}
+              isEditMode={isEditMode}
+              scheduleData={scheduleData}
+              prevScheduleData={prevScheduleData}
+              nextScheduleData={nextScheduleData}
+              hasChanges={hasChanges}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              onToggleEditMode={() => setIsEditMode(!isEditMode)}
+              onTogglePublish={handleTogglePublish}
+              onPrint={handlePrint}
+              onSave={handleSave}
+            />
             <div className="overflow-auto h-[calc(100vh-100px)]">
               {!scheduleData?.published && !isAdmin ? (
                 <div className="flex items-center justify-center h-full">
@@ -450,12 +453,25 @@ const CalendarSchedule: React.FC = () => {
                       {day}
                     </div>
                   ))}
-                  {calendarDays.map((day, idx) =>
-                    day ? (
+                  {calendarDays.map((dayInfo) => (
+                    dayInfo.isPrevMonth ? (
+                      <div key={`prev-${dayInfo.day}`} className="m-1 opacity-25">
+                        <CalendarDay
+                          day={dayInfo.day}
+                          dayOfWeek={new Date(dayInfo.year, dayInfo.month - 1, dayInfo.day).getDay()}
+                          containers={prevScheduleData?.containers ?? {}}
+                          currentMonth={dayInfo.month}
+                          currentYear={dayInfo.year}
+                          onUpdateContainers={() => {}}
+                          isEditMode={false}
+                          salesFilter={salesFilter}
+                        />
+                      </div>
+                    ) : (
                       <CalendarDay
-                        key={day}
-                        day={day}
-                        dayOfWeek={new Date(displayYear, displayMonth - 1, day).getDay()}
+                        key={dayInfo.day}
+                        day={dayInfo.day}
+                        dayOfWeek={new Date(dayInfo.year, dayInfo.month - 1, dayInfo.day).getDay()}
                         containers={containers}
                         currentMonth={displayMonth}
                         currentYear={displayYear}
@@ -468,10 +484,8 @@ const CalendarSchedule: React.FC = () => {
                         isEditMode={isEditMode}
                         salesFilter={salesFilter}
                       />
-                    ) : (
-                      <div key={`empty-${idx}`} className="m-1" />
                     )
-                  )}
+                  ))}
                 </div>
               )}
             </div>

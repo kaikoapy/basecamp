@@ -19,6 +19,7 @@ import type * as directory from "../directory.js";
 import type * as files from "../files.js";
 import type * as resources from "../resources.js";
 import type * as schedule from "../schedule.js";
+import type * as shifts from "../shifts.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   resources: typeof resources;
   schedule: typeof schedule;
+  shifts: typeof shifts;
   types: typeof types;
   users: typeof users;
 }>;

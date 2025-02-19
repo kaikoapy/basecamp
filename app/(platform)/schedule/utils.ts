@@ -22,12 +22,16 @@ export function parseName(item: string): string {
   return name.split(" ")[0];
 }
 
-export const shifts = {
-  weekday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
+// Default shifts to use while loading or if database is empty
+export const defaultShifts = {
+  monday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
+  tuesday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
+  wednesday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
+  thursday: ["8:30-5:30", "9:00-6:00", "11:00-8:00", "Off"],
   friday: ["8:30-5:30", "9:00-6:00", "11:00-7:00", "Off"],
   saturday: ["8:30-5:30", "9:00-6:00", "11:00-7:00", "Off"],
   sunday: ["12:00-5:00", "Off"],
-} as const;
+};
 
 export const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 

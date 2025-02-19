@@ -3,9 +3,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { DroppableContainer } from "./droppable-container";
 import { DraggableItem } from "./draggable-item";
-import { parseName, shifts, daysOfWeek } from "../utils";
+import { parseName, defaultShifts, daysOfWeek } from "../utils";
 import { CopyScheduleButton } from "./copy-schedule-button";
 import { useMemo } from "react";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 interface CalendarDayProps {
   day: number;
@@ -28,10 +30,9 @@ export function CalendarDay({
   isEditMode,
   salesFilter,
 }: CalendarDayProps) {
-  const isSunday = dayOfWeek === 0;
-  const isFriday = dayOfWeek === 5;
-  const isSaturday = dayOfWeek === 6;
-  
+  // Get shifts from database
+  const shifts = useQuery(api.shifts.getShifts) ?? defaultShifts;
+
   // Check if this is today's date
   const isToday = useMemo(() => {
     const today = new Date();
@@ -49,16 +50,9 @@ export function CalendarDay({
     });
   };
   
-  let shiftsForDay;
-  if (isSunday) {
-    shiftsForDay = shifts.sunday;
-  } else if (isFriday) {
-    shiftsForDay = shifts.friday;
-  } else if (isSaturday) {
-    shiftsForDay = shifts.saturday;
-  } else {
-    shiftsForDay = shifts.weekday;
-  }
+  // Get shifts for the current day
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+  const shiftsForDay = shifts[dayNames[dayOfWeek]];
 
   return (
     <Card key={`day-${day}`} className="m-1 calendar-card">
@@ -89,7 +83,7 @@ export function CalendarDay({
             </div>
           )}
         </div>
-        {shiftsForDay.map((shift, index) => {
+        {shiftsForDay.map((shift: string, index: number) => {
           const containerId = `${day}-${index}`;
           const items = containers[containerId] || [];
           const filteredItems = filterItems(items);

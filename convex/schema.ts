@@ -174,4 +174,19 @@ export default defineSchema({
   }).index("by_dealership", ["dealershipInfo.name"])
     .index("by_model", ["advertisementOverview.vehicleModel"])
     .index("by_active", ["isActive"]),
+
+  shifts: defineTable({
+    dayType: v.string(),
+    shifts: v.object({
+      monday: v.array(v.string()),
+      tuesday: v.array(v.string()),
+      wednesday: v.array(v.string()),
+      thursday: v.array(v.string()),
+      friday: v.array(v.string()),
+      saturday: v.array(v.string()),
+      sunday: v.array(v.string()),
+    }),
+    updatedAt: v.number(),
+    orgId: v.string(),
+  }).index("by_orgId", ["orgId"]),
 });

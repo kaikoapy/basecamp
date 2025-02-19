@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import { shifts, parseName } from "../utils";
+import { parseName } from "../utils";
 
 const fullDaysOfWeek = [
   "Sunday",
@@ -15,6 +15,16 @@ interface ScheduleData {
   containers?: Record<string, string[]>;
 }
 
+interface ShiftsData {
+  monday: string[];
+  tuesday: string[];
+  wednesday: string[];
+  thursday: string[];
+  friday: string[];
+  saturday: string[];
+  sunday: string[];
+}
+
 interface GeneratePDFParams {
   monthName: string;
   currentYear: number;
@@ -23,6 +33,7 @@ interface GeneratePDFParams {
   calendarDays: (number | null)[];
   scheduleData: ScheduleData | null;
   salesFilter: "all" | "new" | "used";
+  shifts: ShiftsData;
 }
 
 // Helper function to load an image as a Base64 data URL.
@@ -69,6 +80,7 @@ export async function generateSchedulePDF({
   calendarDays,
   scheduleData,
   salesFilter,
+  shifts,
 }: GeneratePDFParams) {
   const doc = new jsPDF({
     orientation: "landscape",
@@ -81,45 +93,42 @@ export async function generateSchedulePDF({
   const lightBlue: [number, number, number] = [210, 225, 245];
   const weekendBlue: [number, number, number] = [240, 248, 255];
   const black: [number, number, number] = [0, 0, 0];
+
   // Page dimensions and margins.
   const pageWidth = doc.internal.pageSize.width;
   const margin = 15;
   const headerHeight = 12;
 
-// ===== Top Left Header with Logo =====
-const headerFontSize = 14;
-doc.setFontSize(headerFontSize);
-doc.setTextColor(...black);
-const headerX = margin;
-const headerY = 10;
+  // ===== Top Left Header with Logo =====
+  const headerFontSize = 14;
+  doc.setFontSize(headerFontSize);
+  doc.setTextColor(...black);
+  const headerX = margin;
+  const headerY = 10;
 
-// First line: bold.
-doc.setFont("helvetica", "bold");
-const firstLine = "Employee Schedule";
-doc.text(firstLine, headerX, headerY);
+  // First line: bold.
+  doc.setFont("helvetica", "bold");
+  const firstLine = "Employee Schedule";
+  doc.text(firstLine, headerX, headerY);
 
-// Calculate the width of the first line for logo placement.
-const firstLineWidth = doc.getTextWidth(firstLine);
+  // Calculate the width of the first line for logo placement.
+  const firstLineWidth = doc.getTextWidth(firstLine);
+  const lineHeightMM = headerFontSize * 0.3528;
 
-// Calculate the line height in mm based on the font size.
-const lineHeightMM = headerFontSize * 0.3528;
+  // Second line: normal (non-bold) with smaller font size
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(headerFontSize - 2);
+  const secondLine = "Volvo Cars North Miami";
+  doc.text(secondLine, headerX, headerY + lineHeightMM);
 
-// Second line: normal (non-bold) with smaller font size
-doc.setFont("helvetica", "normal");
-doc.setFontSize(headerFontSize - 2); // Reduced font size for second line
-const secondLine = "Volvo Cars North Miami";
-doc.text(secondLine, headerX, headerY + lineHeightMM);
-
-// Load the logo image from the public folder as Base64.
-const logoDataUrl = await loadImageAsBase64("/Volvo-Iron-Mark.png");
-const imageGap = 4;
-const imageX = headerX + firstLineWidth + imageGap;
-const imageHeight = lineHeightMM * 2.25; // logo spans two text lines
-const imageWidth = imageHeight; // assuming a square logo
-// Adjust imageY to align the top of the logo with the top of the header text.
-const imageY = headerY - lineHeightMM;
-doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
-
+  // Load the logo image
+  const logoDataUrl = await loadImageAsBase64("/Volvo-Iron-Mark.png");
+  const imageGap = 4;
+  const imageX = headerX + firstLineWidth + imageGap;
+  const imageHeight = lineHeightMM * 2.25;
+  const imageWidth = imageHeight;
+  const imageY = headerY - lineHeightMM;
+  doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
 
   // ===== Center Header =====
   const teamName = getTeamName(salesFilter);
@@ -150,13 +159,15 @@ doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
   let currentRow = 0;
   let currentCol = firstDayOfMonth;
 
-  // Dark font color for shifts.
+  // Dark font color for shifts
   const darkColor: [number, number, number] = [0, 0, 0];
 
   calendarDays.filter((day): day is number => day !== null).forEach((day) => {
     const x = margin + currentCol * colWidth;
     const y = calendarStartY + currentRow * rowHeight;
     const dayOfWeek = new Date(currentYear, currentMonth - 1, day).getDay();
+    const dayName = fullDaysOfWeek[dayOfWeek].toLowerCase() as keyof ShiftsData;
+    const shiftsForDay = shifts[dayName];
 
     if (isWeekend(dayOfWeek)) {
       doc.setFillColor(...weekendBlue);
@@ -176,87 +187,41 @@ doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
     doc.setTextColor(...primaryBlue);
     doc.text(`${day}`, x + 2, y + 4);
 
-    const shiftsForDay =
-      dayOfWeek === 0 ? shifts.sunday :
-      dayOfWeek === 5 ? shifts.friday :
-      dayOfWeek === 6 ? shifts.saturday :
-      shifts.weekday;
-
     let shiftY = y + 8;
     const timeFontSize = 8;
     const namesFontSize = 8;
 
-    shiftsForDay.forEach((shift, shiftIndex) => {
+    shiftsForDay.forEach((shift: string, shiftIndex: number) => {
       const containerId = `${day}-${shiftIndex}`;
       const items = scheduleData?.containers?.[containerId] || [];
-      // Filter items based on salesFilter
       const filteredItems = filterItems(items, salesFilter);
       const parsedNames = filteredItems.map((item) => parseName(item));
       
-      // Calculate maximum space per shift to ensure consistent spacing
-      const maxShiftSpace = rowHeight - 8; // Total space minus date header
+      const maxShiftSpace = rowHeight - 8;
       const spacePerShift = maxShiftSpace / shiftsForDay.length;
-      
-      // Add a small offset for the "Off" shift (last shift)
       const isOffShift = shiftIndex === shiftsForDay.length - 1;
-      const offShiftOffset = isOffShift ? 1 : 0; // 1mm offset for "Off" shift
+      const offShiftOffset = isOffShift ? 1 : 0;
       
-      // Calculate the Y position based on shift index
       shiftY = y + 8 + (spacePerShift * shiftIndex) + offShiftOffset;
 
-      if (dayOfWeek === 0) {
-        if (parsedNames.length === 0) {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(timeFontSize);
-          doc.setTextColor(...darkColor);
-          doc.text(shift, x + 2, shiftY + shiftPadding);
-        } else {
-          const sortedNames = [...parsedNames].sort((a, b) => a.length - b.length);
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(timeFontSize);
-          doc.setTextColor(...darkColor);
-          doc.text(shift, x + 2, shiftY + shiftPadding);
-          const shiftWidth = doc.getTextWidth(shift + " ");
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(namesFontSize);
-          doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-          if (sortedNames.length > 2) {
-            doc.text(sortedNames.slice(2, 5).join(", "), x + 2, shiftY + shiftPadding + 3);
-          }
-          if (sortedNames.length > 5) {
-            doc.text(sortedNames.slice(5).join(", "), x + 2, shiftY + shiftPadding + 6);
-          }
-        }
-      } else {
-        if (parsedNames.length === 0) {
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(timeFontSize);
-          doc.setTextColor(...darkColor);
-          doc.text(shift, x + 2, shiftY + shiftPadding);
-        } else if (parsedNames.length <= 2) {
-          const sortedNames = [...parsedNames].sort((a, b) => a.length - b.length);
+      // Always show the shift time
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(timeFontSize);
+      doc.setTextColor(...darkColor);
+      doc.text(shift, x + 2, shiftY + shiftPadding);
+
+      if (parsedNames.length > 0) {
+        const sortedNames = [...parsedNames].sort((a, b) => a.length - b.length);
+        const shiftWidth = doc.getTextWidth(shift + " ");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(namesFontSize);
+
+        if (parsedNames.length <= 2) {
           const namesLine = sortedNames.join(", ");
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(timeFontSize);
-          doc.setTextColor(...darkColor);
-          doc.text(shift, x + 2, shiftY + shiftPadding);
-          const shiftWidth = doc.getTextWidth(shift + " ");
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(namesFontSize);
           doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
         } else {
-          const sortedNames = [...parsedNames].sort((a, b) => a.length - b.length);
-          const firstRowNames = sortedNames.slice(0, 2).join(", ");
-          const secondRowNames = sortedNames.slice(2).join(", ");
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(timeFontSize);
-          doc.setTextColor(...darkColor);
-          doc.text(shift, x + 2, shiftY + shiftPadding);
-          const shiftWidth = doc.getTextWidth(shift + " ");
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(namesFontSize);
-          doc.text(firstRowNames, x + 2 + shiftWidth, shiftY + shiftPadding);
-          doc.text(secondRowNames, x + 2, shiftY + shiftPadding + 3);
+          doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+          doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
         }
       }
     });

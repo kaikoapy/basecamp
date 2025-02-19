@@ -15,8 +15,10 @@ function StaffScheduleWrapper() {
 export default function SchedulePage() {
   return (
     <>
-      <DebugRole />
-      <StaffScheduleWrapper />
+      <div className="bg-[rgb(250,250,252)]">
+        <DebugRole />
+        <StaffScheduleWrapper />
+      </div>
     </>
   );
 }
