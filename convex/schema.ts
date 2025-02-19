@@ -186,6 +186,13 @@ export default defineSchema({
       saturday: v.array(v.string()),
       sunday: v.array(v.string()),
     }),
+    specialDates: v.optional(v.array(v.object({
+      date: v.string(), // Format: "YYYY-MM-DD"
+      type: v.union(v.literal("closed"), v.literal("custom")),
+      name: v.string(), // e.g., "Christmas Day", "Christmas Eve"
+      shifts: v.optional(v.array(v.string())), // Optional custom shifts for this date
+      note: v.optional(v.string()), // Optional note about the special date
+    }))),
     updatedAt: v.number(),
     orgId: v.string(),
   }).index("by_orgId", ["orgId"]),
