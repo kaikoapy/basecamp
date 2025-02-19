@@ -15,6 +15,7 @@ interface CalendarDayProps {
   currentYear: number;
   onUpdateContainers: (newContainers: Record<string, string[]>) => void;
   isEditMode: boolean;
+  salesFilter: "all" | "new" | "used";
 }
 
 export function CalendarDay({ 
@@ -25,6 +26,7 @@ export function CalendarDay({
   currentYear,
   onUpdateContainers,
   isEditMode,
+  salesFilter,
 }: CalendarDayProps) {
   const isSunday = dayOfWeek === 0;
   const isFriday = dayOfWeek === 5;
@@ -37,6 +39,15 @@ export function CalendarDay({
            today.getMonth() === currentMonth - 1 && 
            today.getFullYear() === currentYear;
   }, [day, currentMonth, currentYear]);
+
+  // Filter items based on salesFilter
+  const filterItems = (items: string[]) => {
+    return items.filter(item => {
+      if (item.startsWith("special:")) return true; // Always show special labels
+      if (salesFilter === "all") return true;
+      return item.startsWith(salesFilter + ":");
+    });
+  };
   
   let shiftsForDay;
   if (isSunday) {
@@ -81,6 +92,7 @@ export function CalendarDay({
         {shiftsForDay.map((shift, index) => {
           const containerId = `${day}-${index}`;
           const items = containers[containerId] || [];
+          const filteredItems = filterItems(items);
           
           // Get background color based on shift index
           const getItemBgColor = (isSpecial: boolean) => {
@@ -99,7 +111,7 @@ export function CalendarDay({
               {isEditMode ? (
                 <DroppableContainer id={containerId}>
                   <div className="flex flex-wrap gap-1 min-h-[24px]">
-                    {items.map(item => {
+                    {filteredItems.map(item => {
                       const isSpecial = item.startsWith("special:");
                       return (
                         <DraggableItem 
@@ -117,7 +129,7 @@ export function CalendarDay({
                 </DroppableContainer>
               ) : (
                 <div className="flex flex-wrap gap-1 min-h-[24px]">
-                  {items.map(item => {
+                  {filteredItems.map(item => {
                     const isSpecial = item.startsWith("special:");
                     return (
                       <div 

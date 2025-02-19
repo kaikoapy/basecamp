@@ -22,6 +22,7 @@ interface GeneratePDFParams {
   firstDayOfMonth: number;
   calendarDays: (number | null)[];
   scheduleData: ScheduleData | null;
+  salesFilter: "all" | "new" | "used";
 }
 
 // Helper function to load an image as a Base64 data URL.
@@ -39,6 +40,27 @@ function loadImageAsBase64(url: string): Promise<string> {
     );
 }
 
+// Helper function to filter items based on salesFilter
+function filterItems(items: string[], salesFilter: "all" | "new" | "used") {
+  return items.filter(item => {
+    if (item.startsWith("special:")) return true; // Always show special labels
+    if (salesFilter === "all") return true;
+    return item.startsWith(salesFilter + ":");
+  });
+}
+
+// Helper function to get the team name based on filter
+function getTeamName(salesFilter: "all" | "new" | "used") {
+  switch (salesFilter) {
+    case "new":
+      return "New Car Sales Team";
+    case "used":
+      return "Used Car Sales Team";
+    default:
+      return "Sales Team";
+  }
+}
+
 export async function generateSchedulePDF({
   monthName,
   currentYear,
@@ -46,6 +68,7 @@ export async function generateSchedulePDF({
   firstDayOfMonth,
   calendarDays,
   scheduleData,
+  salesFilter,
 }: GeneratePDFParams) {
   const doc = new jsPDF({
     orientation: "landscape",
@@ -99,7 +122,8 @@ doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
 
 
   // ===== Center Header =====
-  const centerHeader = `New Car Sales Team\n${monthName} ${currentYear}`;
+  const teamName = getTeamName(salesFilter);
+  const centerHeader = `${teamName}\n${monthName} ${currentYear}`;
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
   doc.text(centerHeader, pageWidth / 2, 10, { align: "center" });
@@ -165,7 +189,9 @@ doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
     shiftsForDay.forEach((shift, shiftIndex) => {
       const containerId = `${day}-${shiftIndex}`;
       const items = scheduleData?.containers?.[containerId] || [];
-      const parsedNames = items.map((item) => parseName(item));
+      // Filter items based on salesFilter
+      const filteredItems = filterItems(items, salesFilter);
+      const parsedNames = filteredItems.map((item) => parseName(item));
       
       // Calculate maximum space per shift to ensure consistent spacing
       const maxShiftSpace = rowHeight - 8; // Total space minus date header
@@ -242,5 +268,5 @@ doc.addImage(logoDataUrl, "PNG", imageX, imageY, imageWidth, imageHeight);
     }
   });
 
-  doc.save(`${monthName.toLowerCase()}-sales-schedule.pdf`);
+  doc.save(`${monthName.toLowerCase()}-${salesFilter}-sales-schedule.pdf`);
 }

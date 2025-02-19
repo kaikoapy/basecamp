@@ -239,6 +239,7 @@ const CalendarSchedule: React.FC = () => {
       firstDayOfMonth,
       calendarDays,
       scheduleData: scheduleData ?? null,
+      salesFilter,
     });
   };
 
@@ -465,6 +466,7 @@ const CalendarSchedule: React.FC = () => {
                           }));
                         }}
                         isEditMode={isEditMode}
+                        salesFilter={salesFilter}
                       />
                     ) : (
                       <div key={`empty-${idx}`} className="m-1" />
