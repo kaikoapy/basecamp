@@ -187,13 +187,38 @@ export default defineSchema({
       sunday: v.array(v.string()),
     }),
     specialDates: v.optional(v.array(v.object({
-      date: v.string(), // Format: "YYYY-MM-DD"
+      date: v.string(),
       type: v.union(v.literal("closed"), v.literal("custom")),
-      name: v.string(), // e.g., "Christmas Day", "Christmas Eve"
-      shifts: v.optional(v.array(v.string())), // Optional custom shifts for this date
-      note: v.optional(v.string()), // Optional note about the special date
+      name: v.string(),
+      shifts: v.optional(v.array(v.string())),
+      note: v.optional(v.string()),
     }))),
     updatedAt: v.number(),
     orgId: v.string(),
+  }).index("by_orgId", ["orgId"]),
+
+  // Position and department configuration table
+  positionConfig: defineTable({
+    orgId: v.string(),
+    positions: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        originalName: v.string(), // Reference to the original position name
+        isActive: v.boolean(),
+        department: v.string(),
+        updatedAt: v.number(),
+      })
+    ),
+    departments: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        originalName: v.string(), // Reference to the original department name
+        isActive: v.boolean(),
+        updatedAt: v.number(),
+      })
+    ),
+    updatedAt: v.number(),
   }).index("by_orgId", ["orgId"]),
 });

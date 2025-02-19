@@ -14,25 +14,22 @@ import {
 } from "@/components/ui/select"
 import { ExternalLink } from "lucide-react"
 import { ShiftManagement } from "../(components)/shift-management"
-
-
-
+import { Separator } from "@/components/ui/separator"
+import { PositionConfig } from "../(components)/position-config"
 
 import { roles } from "@/app/data/data"
 
-
-
-
-
 export default function SettingsGeneralPage() {
-
-
-
-
-
-
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">General Settings</h3>
+        <p className="text-sm text-muted-foreground">
+          Configure general settings for your dealership
+        </p>
+      </div>
+      <Separator />
+      <PositionConfig />
       <section aria-labelledby="shift-management">
         <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
           <div>
