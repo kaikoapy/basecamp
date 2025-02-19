@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as ads from "../ads.js";
 import type * as announcements from "../announcements.js";
+import type * as dealer_info from "../dealer_info.js";
 import type * as directory from "../directory.js";
 import type * as files from "../files.js";
 import type * as position_config from "../position_config.js";
@@ -35,6 +36,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   ads: typeof ads;
   announcements: typeof announcements;
+  dealer_info: typeof dealer_info;
   directory: typeof directory;
   files: typeof files;
   position_config: typeof position_config;

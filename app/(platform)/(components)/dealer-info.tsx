@@ -7,11 +7,28 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { dealerInfo } from "@/app/data/dealer-info";
 import { CopyButton } from "@/components/copy-button";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+interface Department {
+  name: string;
+  hours: string;
+  phone: string;
+}
+
+interface DealerInfo {
+  name: string;
+  address: string;
+  googleMapsUrl: string;
+  departments: Department[];
+}
 
 export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
+  const dealerInfo = useQuery(api.dealer_info.get);
+
+  if (!dealerInfo) return null;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

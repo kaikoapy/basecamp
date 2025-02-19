@@ -26,11 +26,16 @@ export default defineSchema({
     name: v.string(),
     address: v.string(),
     googleMapsUrl: v.string(),
+    departments: v.array(
+      v.object({
+        name: v.string(),
+        hours: v.string(),
+        phone: v.string(),
+      })
+    ),
     updatedAt: v.number(),
-    // Add phone field for important numbers
-    phone: v.optional(v.string()),
-    category: v.optional(v.string()), // For identifying important numbers
-  }).index("by_category", ["category"]),
+    orgId: v.optional(v.string()),
+  }).index("by_orgId", ["orgId"]),
 
   // Directory table
   directory: defineTable({
