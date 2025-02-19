@@ -51,7 +51,6 @@ export const getAddress = query({
     }
     const dealerInfo = await ctx.db
       .query("dealerInfo")
-      .filter((q) => q.eq(q.field("category"), "address"))
       .first();
     return dealerInfo?.address;
   },
@@ -65,8 +64,8 @@ export const getImportantNumbers = query({
     }
     return await ctx.db
       .query("dealerInfo")
-      .filter((q) => q.eq(q.field("category"), "important_number"))
-      .collect();
+      .collect()
+      .then(info => info[0]?.departments || []);
   },
 });
 
