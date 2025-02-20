@@ -11,15 +11,11 @@ export function OrganizationCheck() {
   });
 
   useEffect(() => {
-    // Only proceed if we have memberships data and setActive is available
     if (!userMemberships.data?.length || !setActive) return;
 
-    // Get the current active organization ID
-    const activeOrgId = userMemberships.data.find(mem => mem.organization.id === mem.organization.id)?.organization.id;
-
-    // If no active organization, set the first one as active
-    if (!activeOrgId && userMemberships.data[0]) {
-      const firstOrg = userMemberships.data[0];
+    // Get the first organization if available
+    const firstOrg = userMemberships.data[0];
+    if (firstOrg) {
       setActive({ organization: firstOrg.organization.id });
     }
   }, [userMemberships.data, setActive]);

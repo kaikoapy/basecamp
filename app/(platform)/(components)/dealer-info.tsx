@@ -28,7 +28,15 @@ export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
   const dealerInfo = useQuery(api.dealer_info.get);
 
-  if (!dealerInfo) return null;
+  if (dealerInfo === undefined) return null;
+
+  if (dealerInfo === null) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        No dealer information available
+      </div>
+    );
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

@@ -6,14 +6,17 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
     
-    // For queries, we'll try with orgId if available, otherwise get the first record
     const orgId = identity.orgId;
+    
+    // If orgId exists, filter by it, otherwise get first record
     if (orgId) {
       return await ctx.db
         .query("dealerInfo")
         .filter((q) => q.eq(q.field("orgId"), orgId))
         .first();
     }
+    
+    // Fallback to getting first record if no orgId
     return await ctx.db.query("dealerInfo").first();
   },
 });
