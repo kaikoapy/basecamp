@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
 import {
   Popover,
@@ -27,14 +27,23 @@ interface DealerInfo {
 
 export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoaded: isOrgLoaded } = useOrganization();
+  const { isLoaded: isOrgLoaded, organization } = useOrganization();
   const dealerInfo = useQuery(api.dealer_info.get);
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("DealerInfo Component:", {
+      isOrgLoaded,
+      orgId: organization?.id,
+      hasData: !!dealerInfo
+    });
+  }, [isOrgLoaded, organization, dealerInfo]);
 
   // Show loading state while org data is loading
   if (!isOrgLoaded) {
     return (
       <div className="text-sm text-muted-foreground">
-        Loading dealer information...
+        Loading organization...
       </div>
     );
   }
@@ -52,7 +61,7 @@ export function DealerInfo() {
   if (dealerInfo === null) {
     return (
       <div className="text-sm text-muted-foreground">
-        No dealer information available
+        No dealer information available for org: {organization?.id}
       </div>
     );
   }

@@ -10,6 +10,12 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
     
+    // Add debug logging
+    console.log("Dealer Info Query:", {
+      identityOrgId: identity.orgId,
+      defaultOrgId: DEFAULT_ORG_ID
+    });
+
     // Try with user's org ID first
     let dealerInfo = null;
     if (identity.orgId) {
@@ -17,6 +23,11 @@ export const get = query({
         .query("dealerInfo")
         .filter((q) => q.eq(q.field("orgId"), identity.orgId))
         .first();
+      
+      console.log("Dealer Info Result (user org):", {
+        found: !!dealerInfo,
+        orgId: identity.orgId
+      });
     }
 
     // If no dealer info found, try with default org ID
@@ -25,6 +36,23 @@ export const get = query({
         .query("dealerInfo")
         .filter((q) => q.eq(q.field("orgId"), DEFAULT_ORG_ID))
         .first();
+      
+      console.log("Dealer Info Result (default org):", {
+        found: !!dealerInfo,
+        orgId: DEFAULT_ORG_ID
+      });
+    }
+
+    // Add one more fallback to find any dealer info
+    if (!dealerInfo) {
+      const allDealerInfo = await ctx.db
+        .query("dealerInfo")
+        .collect();
+      
+      console.log("Available Dealer Info:", allDealerInfo.map(d => ({
+        id: d._id,
+        orgId: d.orgId
+      })));
     }
 
     return dealerInfo;
