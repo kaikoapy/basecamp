@@ -118,11 +118,25 @@ export const list = query({
 
     if (!args.orgId) return null;
 
-    const announcements = await ctx.db
+    // Try with user's org ID first
+    let announcements = await ctx.db
       .query("announcements")
       .filter((q) => q.eq(q.field("orgId"), args.orgId))
       .order("desc")
       .collect();
+
+    // If no announcements found, try with default org ID
+    if (announcements.length === 0) {
+      const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+        ? "org_2tCUpNDKWSjk7287EmluGeDtC9R"  // prod org
+        : "org_2qOItQ3RqlWD4snDfmLRD1CG5J5"; // dev org
+
+      announcements = await ctx.db
+        .query("announcements")
+        .filter((q) => q.eq(q.field("orgId"), DEFAULT_ORG_ID))
+        .order("desc")
+        .collect();
+    }
 
     console.log("Announcements Query Results:", {
       count: announcements.length,
