@@ -16,15 +16,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <SignedIn>
         <DebugRole />
         <OrganizationCheck />
-        <SidebarProvider>
-          <MountProvider>
+        <div className="h-screen flex">
+          <SidebarProvider>
             <AppSidebar />
-            <SidebarInset>
-              {children}
-            </SidebarInset>
+            <main className="flex-1 overflow-y-auto">
+              <MountProvider>
+                <SidebarInset>
+                  {children}
+                </SidebarInset>
+              </MountProvider>
+            </main>
             <DialogProvider />
-          </MountProvider>
-        </SidebarProvider>
+          </SidebarProvider>
+        </div>
       </SignedIn>
       <SignedOut>
         <RedirectToSignIn />
