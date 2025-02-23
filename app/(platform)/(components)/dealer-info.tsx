@@ -10,6 +10,7 @@ import {
 import { CopyButton } from "@/components/copy-button";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useOrganization } from "@clerk/nextjs";
 
 interface Department {
   name: string;
@@ -26,10 +27,28 @@ interface DealerInfo {
 
 export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isLoaded: isOrgLoaded } = useOrganization();
   const dealerInfo = useQuery(api.dealer_info.get);
 
-  if (dealerInfo === undefined) return null;
+  // Show loading state while org data is loading
+  if (!isOrgLoaded) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        Loading dealer information...
+      </div>
+    );
+  }
 
+  // Show loading state while dealer info is loading
+  if (dealerInfo === undefined) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        Loading dealer information...
+      </div>
+    );
+  }
+
+  // Show message if no dealer info found
   if (dealerInfo === null) {
     return (
       <div className="text-sm text-muted-foreground">

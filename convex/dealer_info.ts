@@ -1,34 +1,33 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+  ? "org_2tCUpNDKWSjk7287EmluGeDtC9R"
+  : "org_2qOItQ3RqlWD4snDfmLRD1CG5J5";
+
 export const get = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
     
-    const orgId = identity.orgId;
-    
-    // Try to get dealer info for the current org first
+    // Try with user's org ID first
     let dealerInfo = null;
-    if (orgId) {
+    if (identity.orgId) {
       dealerInfo = await ctx.db
         .query("dealerInfo")
-        .filter((q) => q.eq(q.field("orgId"), orgId))
+        .filter((q) => q.eq(q.field("orgId"), identity.orgId))
         .first();
     }
 
-    // If no dealer info found for current org, try the default org
+    // If no dealer info found, try with default org ID
     if (!dealerInfo) {
-      // Use hardcoded values for now since we're in transition
-      const defaultOrgId = "org_2qOItQ3RqlWD4snDfmLRD1CG5J5"; // dev org
-      
       dealerInfo = await ctx.db
         .query("dealerInfo")
-        .filter((q) => q.eq(q.field("orgId"), defaultOrgId))
+        .filter((q) => q.eq(q.field("orgId"), DEFAULT_ORG_ID))
         .first();
     }
 
-    return dealerInfo || null;
+    return dealerInfo;
   },
 });
 
