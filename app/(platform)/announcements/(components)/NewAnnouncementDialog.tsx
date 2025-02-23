@@ -134,17 +134,6 @@ export function NewAnnouncementDialog({
   const hasUserRead = readStatus?.some((reader) => reader.userId === user?.id);
   const readCount = readStatus?.length || 0;
 
-  // Add logging for user role
-  React.useEffect(() => {
-    if (user) {
-      console.log("User data:", {
-        role: user.organizationMemberships[0]?.role,
-        userId: user.id,
-        orgId: user.organizationMemberships[0]?.organization.id,
-      });
-    }
-  }, [user]);
-
   const getClerkUserImageUrl = (userId: string) => {
     return userId === user?.id ? user?.imageUrl : undefined;
   };
@@ -236,17 +225,8 @@ export function NewAnnouncementDialog({
 
   const handleMarkAsRead = async () => {
     if (!user) return;
-    console.log("Clerk user:", {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      fullName: user.fullName,
-      username: user.username,
-      imageUrl: user.imageUrl,
-    });
     try {
       const userName = `${user.firstName} ${user.lastName}`.trim();
-      console.log("Using name:", userName);
       await markAsRead({
         id: announcement._id,
         userId: user.id,

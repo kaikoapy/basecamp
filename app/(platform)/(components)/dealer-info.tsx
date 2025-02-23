@@ -42,7 +42,6 @@ export function DealerInfo() {
   if (!dealerInfo) return null;
 
   const handleOpenChange = (open: boolean) => {
-    console.log("Popover state change:", { open });
     setIsOpen(open);
   };
 

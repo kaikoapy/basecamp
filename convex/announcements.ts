@@ -27,12 +27,6 @@ export const create = mutation({
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
     
-    console.log("Create Announcement:", {
-      identityOrgId: identity.orgId,
-      clerkOrgId: clerkIdentity.org,
-      role: clerkIdentity.org_role
-    });
-
     if (clerkIdentity.org_role !== "org:admin") {
       throw new Error("Unauthorized: Requires admin role");
     }
@@ -72,7 +66,6 @@ export const processEmailToAnnouncement = mutation({
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Processing email to announcement with args:", args);
       const senderName = args.from.split("<")[0].trim() || args.from;
 
       const announcement = {
@@ -98,12 +91,8 @@ export const processEmailToAnnouncement = mutation({
         orgId: args.orgId || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5",
       };
 
-      console.log("Creating announcement:", announcement);
-      const result = await ctx.db.insert("announcements", announcement);
-      console.log("Announcement created successfully:", result);
-      return result;
+      return await ctx.db.insert("announcements", announcement);
     } catch (error) {
-      console.error("Error in processEmailToAnnouncement:", error);
       throw error;
     }
   },
@@ -112,10 +101,6 @@ export const processEmailToAnnouncement = mutation({
 export const list = query({
   args: { orgId: v.string() },
   handler: async (ctx, args) => {
-    console.log("Announcements List Query:", {
-      receivedOrgId: args.orgId
-    });
-
     if (!args.orgId) return null;
 
     // Try with user's org ID first
@@ -137,11 +122,6 @@ export const list = query({
         .order("desc")
         .collect();
     }
-
-    console.log("Announcements Query Results:", {
-      count: announcements.length,
-      orgIds: announcements.map(a => a.orgId)
-    });
 
     return announcements;
   },
@@ -227,8 +207,7 @@ export const generateUploadUrl = mutation({
   args: {
     type: v.string(),
   },
-  handler: async (ctx, args) => {
-    console.log("Generating upload URL for type:", args.type); // Corrected line
+  handler: async (ctx) => {
     return await ctx.storage.generateUploadUrl();
   },
 });
