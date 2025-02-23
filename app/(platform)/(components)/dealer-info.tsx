@@ -10,6 +10,8 @@ import {
 import { CopyButton } from "@/components/copy-button";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useOrganization } from "@clerk/nextjs";
+import { Doc } from "@/convex/_generated/dataModel";
 
 interface Department {
   name: string;
@@ -17,7 +19,7 @@ interface Department {
   phone: string;
 }
 
-interface DealerInfo {
+type DealerInfoDoc = Doc<"dealerInfo"> & {
   name: string;
   address: string;
   googleMapsUrl: string;
@@ -27,23 +29,17 @@ interface DealerInfo {
 
 export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
-  const dealerInfo = useQuery(api.dealer_info.get);
+  const { organization, isLoaded } = useOrganization();
+  
+  // Only query when we have an organization ID
+  const dealerInfo = useQuery(
+    api.dealer_info.get,
+    isLoaded && organization?.id ? { orgId: organization.id } : "skip"
+  ) as DealerInfoDoc | null;
 
-  if (dealerInfo === undefined) {
-    return (
-      <div className="text-sm text-muted-foreground">
-        Loading dealer information...
-      </div>
-    );
-  }
-
-  if (dealerInfo === null) {
-    return (
-      <div className="text-sm text-muted-foreground">
-        No dealer information available
-      </div>
-    );
-  }
+  // Handle loading and error states
+  if (!isLoaded || !organization?.id) return null;
+  if (!dealerInfo) return null;
 
   const handleOpenChange = (open: boolean) => {
     console.log("Popover state change:", { open });
@@ -77,7 +73,7 @@ export function DealerInfo() {
 
           {/* Departments Section */}
           <div className="space-y-4">
-            {dealerInfo.departments.map((dept) => (
+            {dealerInfo.departments.map((dept: Department) => (
               <div key={dept.name} className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="text-sm font-semibold text-muted-foreground">
@@ -96,7 +92,7 @@ export function DealerInfo() {
                 </div>
 
                 <div className="grid gap-1 text-sm">
-                  {dept.hours.split("\n").map((line, i) => {
+                  {dept.hours.split("\n").map((line: string, i: number) => {
                     const [day, time] = line.split(": ");
                     return (
                       <div key={i} className="grid grid-cols-[100px,1fr] gap-2">
