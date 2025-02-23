@@ -26,6 +26,13 @@ export const create = mutation({
     }
 
     const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    
+    console.log("Create Announcement:", {
+      identityOrgId: identity.orgId,
+      clerkOrgId: clerkIdentity.org,
+      role: clerkIdentity.org_role
+    });
+
     if (clerkIdentity.org_role !== "org:admin") {
       throw new Error("Unauthorized: Requires admin role");
     }
@@ -105,6 +112,10 @@ export const processEmailToAnnouncement = mutation({
 export const list = query({
   args: { orgId: v.string() },
   handler: async (ctx, args) => {
+    console.log("Announcements List Query:", {
+      receivedOrgId: args.orgId
+    });
+
     if (!args.orgId) return null;
 
     const announcements = await ctx.db
@@ -112,6 +123,11 @@ export const list = query({
       .filter((q) => q.eq(q.field("orgId"), args.orgId))
       .order("desc")
       .collect();
+
+    console.log("Announcements Query Results:", {
+      count: announcements.length,
+      orgIds: announcements.map(a => a.orgId)
+    });
 
     return announcements;
   },

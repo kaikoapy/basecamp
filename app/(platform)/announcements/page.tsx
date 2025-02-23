@@ -40,10 +40,26 @@ function extractTextFromHtml(html: string): string {
 
 export default function AnnouncementsPage() {
   const { organization, isLoaded } = useOrganization();
+  
+  // Add debug logging
+  console.log("Announcements Page:", {
+    isLoaded,
+    orgId: organization?.id,
+    hasOrg: !!organization
+  });
+
   const announcements = useQuery(
     api.announcements.list,
     isLoaded && organization?.id ? { orgId: organization.id } : "skip"
   );
+
+  // Add debug logging for query result
+  console.log("Announcements Query Result:", {
+    hasAnnouncements: !!announcements,
+    count: announcements?.length,
+    firstAnnouncement: announcements?.[0]
+  });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
 

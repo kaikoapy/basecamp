@@ -50,6 +50,13 @@ function extractTextFromHtml(html: string): string {
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const { organization, isLoaded } = useOrganization();
+  
+  // Add debug logging
+  console.log("Dashboard Content:", {
+    isLoaded,
+    orgId: organization?.id,
+  });
+
   const announcements = useQuery(
     api.announcements.list,
     isLoaded && organization?.id ? { orgId: organization.id } : "skip"
@@ -58,6 +65,12 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const hasCompletedOnboarding = useQuery(api.users.getOnboardingStatus);
   const markComplete = useMutation(api.users.markOnboardingComplete);
+
+  // Add debug logging for announcements
+  console.log("Dashboard Announcements:", {
+    hasAnnouncements: !!announcements,
+    count: announcements?.length
+  });
 
   useEffect(() => {
     if (hasCompletedOnboarding === false) {
