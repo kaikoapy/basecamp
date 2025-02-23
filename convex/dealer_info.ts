@@ -1,39 +1,50 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+interface ClerkUserIdentity {
+  org_role?: string;
+  org?: string;
+}
 
 export const get = query({
   handler: async (ctx) => {
     try {
       const identity = await ctx.auth.getUserIdentity();
+      if (!identity) throw new Error("Unauthenticated");
+
+      const clerkIdentity = identity as unknown as ClerkUserIdentity;
       
+      console.log("Dealer Info Query Identity:", {
+        hasIdentity: !!identity,
+        clerkOrgId: clerkIdentity.org,
+        identityOrgId: identity.orgId
+      });
+
       // Get all dealer info first to see what's available
       const allDealerInfo = await ctx.db
         .query("dealerInfo")
         .collect();
       
-      console.log("Dealer Info Query Debug:", {
-        identityOrgId: identity?.orgId,
-        allDealerInfo: allDealerInfo.map(d => ({
-          id: d._id,
-          orgId: d.orgId,
-          name: d.name,
-          address: d.address
-        }))
-      });
-
-      // Try with identity's org ID first
+      // Try with clerk org ID first
       let dealerInfo = null;
-      if (identity?.orgId) {
+      if (clerkIdentity.org) {
+        dealerInfo = await ctx.db
+          .query("dealerInfo")
+          .filter((q) => q.eq(q.field("orgId"), clerkIdentity.org))
+          .first();
+      }
+
+      // If no dealer info found, try with identity org ID
+      if (!dealerInfo && identity.orgId) {
         dealerInfo = await ctx.db
           .query("dealerInfo")
           .filter((q) => q.eq(q.field("orgId"), identity.orgId))
           .first();
       }
 
-      // If no dealer info found with identity's org ID, try with all records
+      // If still no dealer info found, use the first available one
       if (!dealerInfo && allDealerInfo.length > 0) {
-        dealerInfo = allDealerInfo[0]; // Use the first available dealer info
+        dealerInfo = allDealerInfo[0];
       }
 
       console.log("Query Result:", {
@@ -42,7 +53,12 @@ export const get = query({
           id: dealerInfo._id,
           orgId: dealerInfo.orgId,
           name: dealerInfo.name
-        } : null
+        } : null,
+        allDealerInfo: allDealerInfo.map(d => ({
+          id: d._id,
+          orgId: d.orgId,
+          name: d.name
+        }))
       });
 
       return dealerInfo;

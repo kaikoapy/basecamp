@@ -29,15 +29,6 @@ export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
   const dealerInfo = useQuery(api.dealer_info.get);
 
-  console.log("DealerInfo Component Render:", {
-    hasData: !!dealerInfo,
-    isOpen,
-    dealerInfoData: dealerInfo ? {
-      name: dealerInfo.name,
-      orgId: dealerInfo.orgId
-    } : null
-  });
-
   if (dealerInfo === undefined) {
     return (
       <div className="text-sm text-muted-foreground">
