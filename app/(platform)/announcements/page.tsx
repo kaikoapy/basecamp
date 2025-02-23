@@ -16,6 +16,7 @@ import {
 import { Plus, Search, Filter } from "lucide-react";
 import { AnnouncementCard } from "../dashboard/(components)/announcement-card";
 import { Protect } from "@clerk/nextjs";
+import { useOrganization } from "@clerk/nextjs";
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -38,10 +39,30 @@ function extractTextFromHtml(html: string): string {
 }
 
 export default function AnnouncementsPage() {
-
-  const announcements = useQuery(api.announcements.list);
+  const { organization, isLoaded } = useOrganization();
+  const announcements = useQuery(
+    api.announcements.list,
+    isLoaded && organization?.id ? { orgId: organization.id } : "skip"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [timeFilter, setTimeFilter] = useState("all");
+
+  // Handle loading states
+  if (!isLoaded || !organization?.id) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg text-gray-500 font-medium">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!announcements) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg text-gray-500 font-medium">Loading announcements...</p>
+      </div>
+    );
+  }
 
   // Filter announcements based on search query and time filter
   const filteredAnnouncements = announcements?.filter((announcement) => {
