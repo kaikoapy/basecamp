@@ -1,6 +1,6 @@
 "use client";
 
-import { useOrganizationList } from "@clerk/nextjs";
+import { useOrganizationList, useOrganization } from "@clerk/nextjs";
 import { useEffect } from "react";
 
 const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production" 
@@ -8,29 +8,22 @@ const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
   : "org_2qOItQ3RqlWD4snDfmLRD1CG5J5"; // dev org
 
 export function OrganizationCheck() {
-  const { setActive, userMemberships } = useOrganizationList({
+  const { setActive } = useOrganizationList({
     userMemberships: {
       infinite: true,
     },
   });
+  const { isLoaded, organization } = useOrganization();
 
   useEffect(() => {
-    if (!setActive) return;
-
-    // If no memberships or empty memberships, use default org
-    if (!userMemberships.data?.length) {
-      setActive({ organization: DEFAULT_ORG_ID });
-      return;
-    }
-
-    // Get the current active organization ID
-    const activeOrgId = userMemberships.data.find(mem => mem.organization.id === mem.organization.id)?.organization.id;
+    if (!isLoaded || !setActive) return;
 
     // If no active organization, set the default org
-    if (!activeOrgId) {
+    if (!organization) {
+      console.log("Setting default organization:", DEFAULT_ORG_ID);
       setActive({ organization: DEFAULT_ORG_ID });
     }
-  }, [userMemberships.data, setActive]);
+  }, [isLoaded, organization, setActive]);
 
   return null;
 }
