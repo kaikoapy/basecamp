@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 interface Reader {
   userId: string;
@@ -109,35 +110,33 @@ export const list = query({
       throw new Error("Unauthenticated");
     }
 
-    const clerkIdentity = identity as unknown as ClerkUserIdentity;
+    const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+      ? "org_2tCUpNDKWSjk7287EmluGeDtC9R"
+      : "org_2qOItQ3RqlWD4snDfmLRD1CG5J5";
+
+    // Try with user's org ID first
+    let announcements: Doc<"announcements">[] = [];
     
-    try {
-      // Try using the index first
-      const announcements = await ctx.db
+    const orgId = identity.orgId as string | undefined;
+    
+    if (orgId) {
+      announcements = await ctx.db
         .query("announcements")
-        .withIndex("by_orgId", (q) => 
-          // If no org selected, get announcements for the default org
-          q.eq("orgId", clerkIdentity.org || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5")
-        )
+        .withIndex("by_orgId", (q) => q.eq("orgId", orgId))
         .order("desc")
         .collect();
-      
-      return announcements;
-    } catch (error) {
-      // Fallback during index backfill
-      if (error instanceof Error && error.message.includes('backfilling')) {
-        // Temporary fallback: fetch all and filter in memory
-        const allAnnouncements = await ctx.db
-          .query("announcements")
-          .order("desc")
-          .collect();
-        
-        return allAnnouncements.filter(
-          announcement => announcement.orgId === (clerkIdentity.org || "org_2qOItQ3RqlWD4snDfmLRD1CG5J5")
-        );
-      }
-      throw error; // Re-throw if it's not a backfill error
     }
+
+    // If no announcements found, try with default org ID
+    if (!announcements.length) {
+      announcements = await ctx.db
+        .query("announcements")
+        .withIndex("by_orgId", (q) => q.eq("orgId", DEFAULT_ORG_ID))
+        .order("desc")
+        .collect();
+    }
+
+    return announcements;
   },
 });
 

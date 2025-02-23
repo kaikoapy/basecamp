@@ -10,6 +10,7 @@ import { AnnouncementCard } from "./announcement-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { OnboardingDialog } from "../../(dialogs)/onboarding-dialog";
 import { useEffect, useState } from "react";
+import { useOrganization } from "@clerk/nextjs";
 
 interface DashboardContentProps {
   searchQuery?: string;
@@ -48,6 +49,9 @@ function extractTextFromHtml(html: string): string {
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
+  const { isLoaded: isOrgLoaded } = useOrganization();
+  const announcements = useQuery(api.announcements.list);
+  const allResources = useQuery(api.resources.getAllResources);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const hasCompletedOnboarding = useQuery(api.users.getOnboardingStatus);
   const markComplete = useMutation(api.users.markOnboardingComplete);
@@ -65,12 +69,22 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     }
   };
 
-  // Fetch all resources from Convex
-  const announcements = useQuery(api.announcements.list);
-  const allResources = useQuery(api.resources.getAllResources);
+  // Show loading state while org data is loading
+  if (!isOrgLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg text-gray-500 font-medium">Loading...</p>
+      </div>
+    );
+  }
 
+  // Show loading state while data is loading
   if (!allResources || !announcements) {
-    return null; // Let the loading.tsx handle the loading state
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg text-gray-500 font-medium">Loading content...</p>
+      </div>
+    );
   }
 
   // Filter content based on search query and categories
