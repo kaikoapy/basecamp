@@ -4,6 +4,7 @@ import { MountProvider } from "@/components/providers/mount-provider";
 import { OrganizationCheck } from "./(components)/organization-check";
 import { DialogProvider } from "./(components)/dialog-provider";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { DebugRole } from "./(components)/debug-role";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,15 +14,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <>
       <SignedIn>
+        <DebugRole />
         <OrganizationCheck />
         <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <MountProvider>
+          <MountProvider>
+            <AppSidebar />
+            <SidebarInset>
               {children}
-            </MountProvider>
-          </SidebarInset>
-          <DialogProvider />
+            </SidebarInset>
+            <DialogProvider />
+          </MountProvider>
         </SidebarProvider>
       </SignedIn>
       <SignedOut>

@@ -18,11 +18,13 @@ export function OrganizationCheck() {
   useEffect(() => {
     if (!isLoaded || !setActive) return;
 
-    // If no active organization, set the default org
-    if (!organization) {
-      console.log("Setting default organization:", DEFAULT_ORG_ID);
-      setActive({ organization: DEFAULT_ORG_ID });
-    }
+    // Always set the default organization
+    console.log("OrganizationCheck: Setting organization", {
+      current: organization?.id,
+      default: DEFAULT_ORG_ID
+    });
+    
+    setActive({ organization: DEFAULT_ORG_ID });
   }, [isLoaded, organization, setActive]);
 
   return null;
