@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Heebo, Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +19,6 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-
 export const metadata: Metadata = {
   title: "Basecamp",
   description: "Basecamp",
@@ -32,25 +30,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
-        >
-          <TooltipProvider>
-            <ConvexClientProvider>
-              <Suspense fallback={<div>Loading...</div>}>
-                <NuqsAdapter>
-                  <Providers>
-                    {children}
-                  </Providers>
-                </NuqsAdapter>
-                <Toaster />
-              </Suspense>
-            </ConvexClientProvider>
-          </TooltipProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
+      >
+        <TooltipProvider>
+          <ConvexClientProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <NuqsAdapter>
+                <Providers>
+                  {children}
+                </Providers>
+              </NuqsAdapter>
+              <Toaster />
+            </Suspense>
+          </ConvexClientProvider>
+        </TooltipProvider>
+      </body>
+    </html>
   );
 }
