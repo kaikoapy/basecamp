@@ -17,6 +17,7 @@ import type * as ads from "../ads.js";
 import type * as announcements from "../announcements.js";
 import type * as dealer_info from "../dealer_info.js";
 import type * as directory from "../directory.js";
+import type * as env from "../env.js";
 import type * as files from "../files.js";
 import type * as position_config from "../position_config.js";
 import type * as resources from "../resources.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   announcements: typeof announcements;
   dealer_info: typeof dealer_info;
   directory: typeof directory;
+  env: typeof env;
   files: typeof files;
   position_config: typeof position_config;
   resources: typeof resources;

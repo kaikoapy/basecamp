@@ -8,16 +8,27 @@ export const get = query({
     
     const orgId = identity.orgId;
     
-    // If orgId exists, filter by it, otherwise get first record
+    // Try to get dealer info for the current org first
+    let dealerInfo = null;
     if (orgId) {
-      return await ctx.db
+      dealerInfo = await ctx.db
         .query("dealerInfo")
         .filter((q) => q.eq(q.field("orgId"), orgId))
         .first();
     }
-    
-    // Fallback to getting first record if no orgId
-    return await ctx.db.query("dealerInfo").first();
+
+    // If no dealer info found for current org, try the default org
+    if (!dealerInfo) {
+      // Use hardcoded values for now since we're in transition
+      const defaultOrgId = "org_2qOItQ3RqlWD4snDfmLRD1CG5J5"; // dev org
+      
+      dealerInfo = await ctx.db
+        .query("dealerInfo")
+        .filter((q) => q.eq(q.field("orgId"), defaultOrgId))
+        .first();
+    }
+
+    return dealerInfo || null;
   },
 });
 
