@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { DashboardContent } from "./(components)/dashboard-content";
+import Loading from "./loading";
 
-export default function Page() {
+export default function DashboardPage() {
   return (
-    <div className="bg-[rgb(250,250,252)]">
+    <Suspense fallback={<Loading />}>
       <DashboardContent />
-    </div>
+    </Suspense>
   );
 }

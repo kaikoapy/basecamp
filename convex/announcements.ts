@@ -1,6 +1,5 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { Doc } from "./_generated/dataModel";
 
 interface Reader {
   userId: string;
@@ -104,37 +103,15 @@ export const processEmailToAnnouncement = mutation({
 });
 
 export const list = query({
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthenticated");
-    }
+  args: { orgId: v.string() },
+  handler: async (ctx, args) => {
+    if (!args.orgId) return null;
 
-    const DEFAULT_ORG_ID = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-      ? "org_2tCUpNDKWSjk7287EmluGeDtC9R"
-      : "org_2qOItQ3RqlWD4snDfmLRD1CG5J5";
-
-    // Try with user's org ID first
-    let announcements: Doc<"announcements">[] = [];
-    
-    const orgId = identity.orgId as string | undefined;
-    
-    if (orgId) {
-      announcements = await ctx.db
-        .query("announcements")
-        .withIndex("by_orgId", (q) => q.eq("orgId", orgId))
-        .order("desc")
-        .collect();
-    }
-
-    // If no announcements found, try with default org ID
-    if (!announcements.length) {
-      announcements = await ctx.db
-        .query("announcements")
-        .withIndex("by_orgId", (q) => q.eq("orgId", DEFAULT_ORG_ID))
-        .order("desc")
-        .collect();
-    }
+    const announcements = await ctx.db
+      .query("announcements")
+      .filter((q) => q.eq(q.field("orgId"), args.orgId))
+      .order("desc")
+      .collect();
 
     return announcements;
   },

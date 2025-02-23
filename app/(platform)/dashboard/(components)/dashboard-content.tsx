@@ -49,8 +49,11 @@ function extractTextFromHtml(html: string): string {
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
-  const { isLoaded: isOrgLoaded } = useOrganization();
-  const announcements = useQuery(api.announcements.list);
+  const { organization, isLoaded } = useOrganization();
+  const announcements = useQuery(
+    api.announcements.list,
+    isLoaded && organization?.id ? { orgId: organization.id } : "skip"
+  );
   const allResources = useQuery(api.resources.getAllResources);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const hasCompletedOnboarding = useQuery(api.users.getOnboardingStatus);
@@ -70,7 +73,7 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   };
 
   // Show loading state while org data is loading
-  if (!isOrgLoaded) {
+  if (!isLoaded || !organization?.id) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-lg text-gray-500 font-medium">Loading...</p>
