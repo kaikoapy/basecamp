@@ -1,4 +1,4 @@
-// File: /Users/kaiandpicha/dealer-hub/components/copy-button.tsx
+// File: /Users/kaiandpicha/basecamp/components/copy-button.tsx
 
 "use client";
 
