@@ -22,11 +22,21 @@ interface DealerInfo {
   address: string;
   googleMapsUrl: string;
   departments: Department[];
+  orgId: string;
 }
 
 export function DealerInfo() {
   const [isOpen, setIsOpen] = useState(false);
   const dealerInfo = useQuery(api.dealer_info.get);
+
+  console.log("DealerInfo Component Render:", {
+    hasData: !!dealerInfo,
+    isOpen,
+    dealerInfoData: dealerInfo ? {
+      name: dealerInfo.name,
+      orgId: dealerInfo.orgId
+    } : null
+  });
 
   if (dealerInfo === undefined) {
     return (
@@ -44,14 +54,19 @@ export function DealerInfo() {
     );
   }
 
+  const handleOpenChange = (open: boolean) => {
+    console.log("Popover state change:", { open });
+    setIsOpen(open);
+  };
+
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <button className="absolute inset-0 w-full h-full cursor-pointer">
           <span className="sr-only">Open dealer info</span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[350px]" align="end">
+      <PopoverContent className="w-[350px] z-50" align="end">
         <div className="mb-4 text-lg font-semibold">Dealer Information</div>
         <div className="space-y-6">
           {/* Address Section */}
