@@ -226,7 +226,7 @@ export function DashboardCard(props: DashboardCardProps) {
           </div>
         )}
         
-        {/* Show external link icon if showExternalLink is true */}
+        {/* Show external link icon if showExternalLink is true
         {showExternalLink && url && (
           <a 
             href={url} 
@@ -238,7 +238,7 @@ export function DashboardCard(props: DashboardCardProps) {
             <ArrowUpRight className="h-3 w-3 mr-1" />
             Open
           </a>
-        )}
+        )} */}
       </div>
       {!isAnnouncement && (
         <Tooltip>
