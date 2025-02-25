@@ -78,9 +78,14 @@ interface DashboardCardProps {
     name: string;
     type: string;
   }>;
+  searchQuery?: string;
 }
 
 export function DashboardCard(props: DashboardCardProps) {
+  // Destructure searchQuery if it's accidentally passed, but don't use it
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { searchQuery, ...actualProps } = props;
+  
   const {
     id,
     title,
@@ -102,10 +107,11 @@ export function DashboardCard(props: DashboardCardProps) {
     isEmail,
     type,
     showCopyButton,
+    showExternalLink,
     readBy = [],
     files,
     content,
-  } = props;
+  } = actualProps;
 
   const { userId } = useAppAuth();
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -218,6 +224,20 @@ export function DashboardCard(props: DashboardCardProps) {
           <div className="inline-flex items-center rounded-lg bg-green-300 px-2 py-1 text-xs font-medium text-green-800 ring-1 ring-inset ring-green-600/20">
             New!
           </div>
+        )}
+        
+        {/* Show external link icon if showExternalLink is true */}
+        {showExternalLink && url && (
+          <a 
+            href={url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center rounded-lg bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 ring-1 ring-inset ring-blue-600/20"
+          >
+            <ArrowUpRight className="h-3 w-3 mr-1" />
+            Open
+          </a>
         )}
       </div>
       {!isAnnouncement && (
