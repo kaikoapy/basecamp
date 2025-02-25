@@ -107,7 +107,7 @@ export function DashboardCard(props: DashboardCardProps) {
     isEmail,
     type,
     showCopyButton,
-    showExternalLink,
+    // showExternalLink,
     readBy = [],
     files,
     content,
