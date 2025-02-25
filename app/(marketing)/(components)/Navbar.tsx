@@ -28,7 +28,7 @@ export default function Navbar() {
               className="text-xl font-semibold tracking-tight"
               style={{ fontFamily: "var(--font-poppins)" }}
             >
-              <span className="text-primary font-bold">BaseCamp</span>
+              <span className="text-primary font-bold">Basecamp</span>
             </h1>
           </Link>
 
