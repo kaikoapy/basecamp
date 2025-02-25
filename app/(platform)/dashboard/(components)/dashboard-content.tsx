@@ -10,9 +10,10 @@ import { AnnouncementCard } from "./announcement-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { OnboardingDialog } from "../../(dialogs)/onboarding-dialog";
 import { useEffect, useState } from "react";
-import { useOrganization } from "@clerk/nextjs";
 import { createLogger } from "@/lib/logger";
-import { useAdmin } from "@/hooks/use-admin";
+import React from "react";
+import { useAppAuth } from "@/app/providers/auth-provider";
+import { Loading } from "@/components/ui/loading";
 
 interface DashboardContentProps {
   searchQuery?: string;
@@ -53,19 +54,19 @@ function extractTextFromHtml(html: string): string {
 }
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
-  const { organization, isLoaded } = useOrganization();
-  const isAdmin = useAdmin();
+  const { isLoaded, orgId, isAdmin } = useAppAuth();
+  const [isInitialLoading, setIsInitialLoading] = React.useState(true);
   
   // Add debug logging
   logger.debug("Dashboard state", {
     isLoaded,
-    orgId: organization?.id,
+    orgId,
     isAdmin
   });
 
   const announcements = useQuery(
     api.announcements.list,
-    isLoaded && organization?.id ? { orgId: organization.id } : "skip"
+    isLoaded && orgId ? { orgId } : "skip"
   );
   const allResources = useQuery(api.resources.getAllResources);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -83,6 +84,18 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     latest: announcements?.[0]
   });
 
+  // Handle initial loading state with a delay to prevent flashing
+  React.useEffect(() => {
+    if (isLoaded && orgId && allResources && announcements) {
+      // Add a small delay before showing content to ensure everything is loaded
+      const timer = setTimeout(() => {
+        setIsInitialLoading(false);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded, orgId, allResources, announcements]);
+
   useEffect(() => {
     if (hasCompletedOnboarding === false) {
       setShowOnboarding(true);
@@ -96,22 +109,19 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
     }
   };
 
+  // Show consistent loading state during initial load
+  if (isInitialLoading) {
+    return <Loading message="Loading dashboard..." />;
+  }
+
   // Show loading state while org data is loading
-  if (!isLoaded || !organization?.id) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg text-gray-500 font-medium">Loading...</p>
-      </div>
-    );
+  if (!isLoaded || !orgId) {
+    return <Loading message="Loading organization data..." />;
   }
 
   // Show loading state while data is loading
   if (!allResources || !announcements) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg text-gray-500 font-medium">Loading content...</p>
-      </div>
-    );
+    return <Loading message="Loading content..." />;
   }
 
   // Filter content based on search query and categories

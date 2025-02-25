@@ -2,10 +2,22 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 // Define public routes
-const publicRoutes = createRouteMatcher(["/", "/sign-in", "/sign-up"]);
+const publicRoutes = createRouteMatcher([
+  "/", 
+  "/sign-in(.*)", 
+  "/sign-up(.*)",
+  "/organizations(.*)"
+]);
 
 // Define webhook routes that should bypass auth
 const webhookRoutes = createRouteMatcher(["/api/webhook/postmark"]);
+
+// Define routes that don't require an organization
+const noOrgRequiredRoutes = createRouteMatcher([
+  "/organizations(.*)",
+  "/api/(.*)organizations(.*)",
+  "/api/(.*)org(.*)"
+]);
 
 export default clerkMiddleware(async (auth, request) => {
   // Allow webhook routes to bypass auth
@@ -13,12 +25,14 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.next();
   }
 
+  // Handle public routes
   if (publicRoutes(request)) {
     // If user is signed in and trying to access public routes, redirect to dashboard
     const isSignedIn = await auth
       .protect()
       .then(() => true)
       .catch(() => false);
+      
     if (isSignedIn && request.nextUrl.pathname === "/") {
       const dashboard = new URL("/dashboard", request.url);
       return NextResponse.redirect(dashboard);
@@ -26,9 +40,21 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.next();
   }
 
-  // Protect all other routes
-  const signedIn = await auth.protect();
-  if (!signedIn) {
+  try {
+    // Protect all other routes
+    const session = await auth.protect();
+    
+    // If user is authenticated but has no organization selected and is trying to access protected routes
+    // that require an organization, redirect to organizations page
+    if (!session.orgId && !noOrgRequiredRoutes(request)) {
+      // Add a query parameter to indicate this is a redirect due to missing org
+      const orgsPage = new URL("/organizations?reason=no-org-selected", request.url);
+      return NextResponse.redirect(orgsPage);
+    }
+    
+    return NextResponse.next();
+  } catch {
+    // If not authenticated, redirect to sign-in
     const signIn = new URL("/sign-in", request.url);
     return NextResponse.redirect(signIn);
   }

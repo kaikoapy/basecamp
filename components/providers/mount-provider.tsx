@@ -20,7 +20,11 @@ export function MountProvider({ children }: MountProviderProps) {
   }
 
   const childrenWithProps = React.Children.map(children, (child) => {
-    if (React.isValidElement<WithSearchQuery>(child)) {
+    if (
+      React.isValidElement(child) && 
+      typeof child.type !== 'string' &&
+      React.isValidElement<WithSearchQuery>(child)
+    ) {
       return React.cloneElement<WithSearchQuery>(
         child as ReactElement<WithSearchQuery>,
         { searchQuery }

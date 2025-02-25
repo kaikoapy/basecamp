@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Heebo, Inter } from "next/font/google";
 import "./globals.css";
-import { ConvexClientProvider } from "./ConvexClientProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -35,16 +34,14 @@ export default function RootLayout({
         className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
       >
         <TooltipProvider>
-          <ConvexClientProvider>
-            <Suspense fallback={<div>Loading...</div>}>
-              <NuqsAdapter>
-                <Providers>
-                  {children}
-                </Providers>
-              </NuqsAdapter>
-              <Toaster />
-            </Suspense>
-          </ConvexClientProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <NuqsAdapter>
+              <Providers>
+                {children}
+              </Providers>
+            </NuqsAdapter>
+            <Toaster />
+          </Suspense>
         </TooltipProvider>
       </body>
     </html>

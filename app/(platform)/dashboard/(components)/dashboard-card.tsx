@@ -22,9 +22,9 @@ import { EX90SheetDialog } from "@/app/(platform)/(dialogs)/ex90-sheet-dialog";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
 import { CopyButtonWithText } from "@/components/copy-button";
 import { createLogger } from "@/lib/logger";
+import { useAppAuth } from "@/app/providers/auth-provider";
 
 const logger = createLogger("dashboard-card");
 
@@ -107,7 +107,7 @@ export function DashboardCard(props: DashboardCardProps) {
     content,
   } = props;
 
-  const { user } = useUser();
+  const { userId } = useAppAuth();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const togglePinnedMutation = useMutation(api.resources.togglePinned);
   const isPinned = defaultPinned;
@@ -117,52 +117,56 @@ export function DashboardCard(props: DashboardCardProps) {
     category === "Finance" ||
     category === "Sales";
 
-  const now = new Date();
-
   logger.debug("Card data", { 
     postDate: postedAt, 
-    now,
+    now: new Date(),
     title,
     hasAttachments: files ? files.length > 0 : false 
   });
 
   // Check if the announcement is new (not read by current user and within 30 days)
   const isNew = React.useMemo(() => {
-    if (!postedAt || !user) {
+    if (!postedAt || !userId) {
       return false;
     }
 
-    const postDate = new Date(postedAt);
+    try {
+      const now = new Date();
+      const postDate = new Date(postedAt);
 
-    // Ignore future dates
-    if (postDate > now) {
-      logger.debug("Future date:", { postDate, now });
+      // Ignore future dates
+      if (postDate > now) {
+        logger.debug("Future date:", { postDate, now });
+        return false;
+      }
+
+      // Check if posted within last 30 days
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const isRecent = postDate > thirtyDaysAgo;
+
+      // Check if current user has read it
+      const hasRead = readBy.some((read) => read.userId === userId);
+
+      logger.debug("Announcement check:", {
+        title,
+        postDate,
+        now,
+        thirtyDaysAgo,
+        isRecent,
+        hasRead,
+        isAnnouncement,
+        userId,
+        readBy: readBy.length,
+      });
+
+      // Return true only if it's recent AND hasn't been read AND is an announcement
+      return isRecent && !hasRead && isAnnouncement;
+    } catch (error) {
+      logger.error("Error calculating isNew status", { error, title });
       return false;
     }
-
-    // Check if posted within last 30 days
-    const thirtyDaysAgo = new Date(now);
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const isRecent = postDate > thirtyDaysAgo;
-
-    // Check if current user has read it
-    const hasRead = readBy.some((read) => read.userId === user.id);
-
-    logger.debug("Announcement check:", {
-      title,
-      postDate,
-      now,
-      thirtyDaysAgo,
-      isRecent,
-      hasRead,
-      isAnnouncement,
-      userId: user.id,
-      readBy,
-    });
-
-    // Return true only if it's recent AND hasn't been read AND is an announcement
-    return isRecent && !hasRead && isAnnouncement;
-  }, [postedAt, user, readBy, isAnnouncement, title]);
+  }, [postedAt, userId, readBy, isAnnouncement, title]);
 
   const dialog = useDialog();
 
