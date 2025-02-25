@@ -24,6 +24,9 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { CopyButtonWithText } from "@/components/copy-button";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("dashboard-card");
 
 // Base64 encoding function
 function encodeId(id: string): string {
@@ -114,18 +117,26 @@ export function DashboardCard(props: DashboardCardProps) {
     category === "Finance" ||
     category === "Sales";
 
+  const now = new Date();
+
+  logger.debug("Card data", { 
+    postDate: postedAt, 
+    now,
+    title,
+    hasAttachments: files ? files.length > 0 : false 
+  });
+
   // Check if the announcement is new (not read by current user and within 30 days)
   const isNew = React.useMemo(() => {
     if (!postedAt || !user) {
       return false;
     }
 
-    const now = new Date();
     const postDate = new Date(postedAt);
 
     // Ignore future dates
     if (postDate > now) {
-      console.log("Future date:", { postDate, now });
+      logger.debug("Future date:", { postDate, now });
       return false;
     }
 
@@ -137,7 +148,7 @@ export function DashboardCard(props: DashboardCardProps) {
     // Check if current user has read it
     const hasRead = readBy.some((read) => read.userId === user.id);
 
-    console.log("Announcement check:", {
+    logger.debug("Announcement check:", {
       title,
       postDate,
       now,

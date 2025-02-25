@@ -1,18 +1,18 @@
 "use client";
 
 import { useOrganization } from "@clerk/nextjs";
-import { useEffect } from "react";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("debug-role");
 
 export function DebugRole() {
   const { organization, isLoaded } = useOrganization();
 
-  useEffect(() => {
-    console.log("Debug Role Component:", {
-      isLoaded,
-      orgId: organization?.id,
-      path: window.location.pathname
-    });
-  }, [isLoaded, organization]);
+  logger.debug("Role state", {
+    isLoaded,
+    orgId: organization?.id,
+    role: organization?.publicMetadata?.role
+  });
 
   return null;
 }

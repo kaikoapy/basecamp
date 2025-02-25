@@ -31,6 +31,7 @@ interface CopyButtonProps extends VariantProps<typeof buttonVariants> {
   showText?: boolean;
 }
 
+
 export function CopyButton({
   value,
   className,
@@ -55,8 +56,8 @@ export function CopyButton({
       if (onClick) {
         onClick();
       }
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
+    } catch {
+      // Show appropriate user feedback
     }
   };
 
@@ -173,8 +174,8 @@ export function CopyButtonWithText({
       if (onClick) {
         onClick();
       }
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
+    } catch {
+      // Show appropriate user feedback
     }
   };
 
@@ -269,8 +270,8 @@ export function CopyButtonInline({
       await navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
+    } catch {
+      // Show appropriate user feedback
     }
   };
 

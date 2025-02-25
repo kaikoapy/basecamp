@@ -17,6 +17,10 @@ import { Plus, Search, Filter } from "lucide-react";
 import { AnnouncementCard } from "../dashboard/(components)/announcement-card";
 import { Protect } from "@clerk/nextjs";
 import { useOrganization } from "@clerk/nextjs";
+import { createLogger } from "@/lib/logger";
+import { useAdmin } from "@/hooks/use-admin";
+
+const logger = createLogger("announcements-page");
 
 // Add a helper function to extract text from HTML
 function extractTextFromHtml(html: string): string {
@@ -40,12 +44,13 @@ function extractTextFromHtml(html: string): string {
 
 export default function AnnouncementsPage() {
   const { organization, isLoaded } = useOrganization();
+  const isAdmin = useAdmin();
   
-  // Add debug logging
-  console.log("Announcements Page:", {
+  logger.debug("Page state", {
     isLoaded,
     orgId: organization?.id,
-    hasOrg: !!organization
+    hasOrg: !!organization,
+    isAdmin
   });
 
   const announcements = useQuery(
@@ -53,8 +58,7 @@ export default function AnnouncementsPage() {
     isLoaded && organization?.id ? { orgId: organization.id } : "skip"
   );
 
-  // Add debug logging for query result
-  console.log("Announcements Query Result:", {
+  logger.debug("Announcements data", {
     hasAnnouncements: !!announcements,
     count: announcements?.length,
     firstAnnouncement: announcements?.[0]

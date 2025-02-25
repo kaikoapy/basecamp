@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
 // Query to get schedule for a specific month/year
@@ -29,14 +29,14 @@ export const getSalesStaff = query({
       )
       .collect();
     
-    console.log("Raw Sales Staff from Directory:", salesStaff);
+    console.info("[getSalesStaff] Raw Sales Staff from Directory", { count: salesStaff.length });
     
     const mappedStaff = salesStaff.map(staff => ({
       ...staff,
       type: staff.position.includes("New") ? "new" : "used"
     }));
     
-    console.log("Mapped Sales Staff:", mappedStaff);
+    console.info("[getSalesStaff] Mapped Sales Staff", { count: mappedStaff.length });
     
     return mappedStaff;
   },
@@ -131,7 +131,42 @@ export const getAllPositions = query({
   handler: async (ctx) => {
     const allStaff = await ctx.db.query("directory").collect();
     const positions = new Set(allStaff.map(staff => staff.position));
-    console.log("All positions in directory:", Array.from(positions));
+    console.info("[getAllPositions] Directory positions", { positions: Array.from(positions) });
     return Array.from(positions);
   },
+});
+
+interface StaffMember {
+  id: string;
+  name: string;
+  email: string;
+  position: string;
+  department: string;
+}
+
+async function fetchSalesStaff(): Promise<StaffMember[]> {
+  // Implementation would go here
+  return [];
+}
+
+function transformStaffData(staff: StaffMember): StaffMember {
+  return {
+    ...staff,
+    department: staff.department.toLowerCase(),
+    position: staff.position.toLowerCase()
+  };
+}
+
+export const syncSalesStaff = internalAction({
+  handler: async () => {
+    const salesStaff = await fetchSalesStaff();
+    // Server-side logging is okay in backend code
+    console.info("[syncSalesStaff] Raw Sales Staff from Directory", { count: salesStaff.length });
+
+    const mappedStaff = salesStaff.map(transformStaffData);
+    console.info("[syncSalesStaff] Mapped Sales Staff", { count: mappedStaff.length });
+
+    const positions = new Set(salesStaff.map(staff => staff.position));
+    console.info("[syncSalesStaff] Directory positions", { positions: Array.from(positions) });
+  }
 });

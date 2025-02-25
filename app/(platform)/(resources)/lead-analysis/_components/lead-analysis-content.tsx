@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { XMLParser } from "fast-xml-parser";
 import { toast } from "sonner";
+import { createLogger } from "@/lib/logger";
 
 import { Card } from "@/components/ui/card";
 import { UploadIcon } from "lucide-react";
@@ -32,18 +33,9 @@ interface LeadSourceData {
   }[];
 }
 
-interface DetailData {
-  Tracking: string;
-  TrackingNewLeads: string;
-  TrackingContacted: string;
-  TrackingStoreVisits: string;
-  TrackingApptOpen: string;
-  TrackingApptShow: string;
-  TrackingApptNoShow: string;
-  TrackingSold: string;
-}
-
 interface DealerSocketSource {
+  name: string;
+  type: string;
   Source: string;
   SourceNewLeads: string;
   SourceContacted: string;
@@ -52,9 +44,20 @@ interface DealerSocketSource {
   SourceApptShow: string;
   SourceApptNoShow: string;
   SourceSold: string;
-  Detail_Collection: {
-    Detail: DetailData | DetailData[];
+  Detail_Collection?: {
+    Detail: DealerSocketDetail | DealerSocketDetail[];
   };
+}
+
+interface DealerSocketDetail {
+  Tracking: string;
+  TrackingNewLeads: string;
+  TrackingContacted: string;
+  TrackingStoreVisits: string;
+  TrackingApptOpen: string;
+  TrackingApptShow: string;
+  TrackingApptNoShow: string;
+  TrackingSold: string;
 }
 
 interface DealerSocketXML {
@@ -67,16 +70,18 @@ interface DealerSocketXML {
   };
 }
 
+const logger = createLogger("lead-analysis");
+
 function validateXMLStructure(data: unknown): data is DealerSocketXML {
-  console.log("Validating XML structure...");
+  logger.debug("Validating XML structure...");
   
   if (!data || typeof data !== "object") {
-    console.log("Failed: Root object is missing");
+    logger.error("XML validation failed", { reason: "Root object is missing" });
     throw new Error("Invalid XML: Root object is missing");
   }
 
   const result = data as DealerSocketXML;
-  console.log("Report structure:", {
+  logger.debug("Report structure found", {
     hasReport: !!result.Report,
     hasTable1: !!result.Report?.table1,
     hasCollection: !!result.Report?.table1?.table1_Group1_Collection,
@@ -84,116 +89,115 @@ function validateXMLStructure(data: unknown): data is DealerSocketXML {
   });
 
   if (!result.Report?.table1?.table1_Group1_Collection?.table1_Group1) {
-    console.log("Failed: Missing required DealerSocket report structure");
+    logger.error("XML validation failed", { reason: "Missing required DealerSocket report structure" });
     throw new Error("Invalid XML: Missing required DealerSocket report structure");
   }
 
   return true;
 }
 
+function processSourceData(source: DealerSocketSource): LeadSourceData | null {
+  // Skip certain source types
+  if (["Dealer Mgmt Sys", "MasterMind", "Mastermind", "Non Sales Call", "Lease Return", "General Lease"]
+      .includes(source.Source)) {
+    return null;
+  }
+
+  let details = source.Detail_Collection?.Detail || [];
+  if (!Array.isArray(details)) {
+    details = [details];
+  }
+
+  return {
+    source: source.Source,
+    newLeads: Number(source.SourceNewLeads || 0),
+    contacted: Number(source.SourceContacted || 0),
+    storeVisits: Number(source.SourceStoreVisits || 0),
+    apptsOpened: Number(source.SourceApptOpen || 0),
+    apptsShown: Number(source.SourceApptShow || 0),
+    noShows: Number(source.SourceApptNoShow || 0),
+    sales: Number(source.SourceSold || 0),
+    details: details.map(detail => ({
+      tracking: detail.Tracking,
+      newLeads: Number(detail.TrackingNewLeads || 0),
+      contacted: Number(detail.TrackingContacted || 0),
+      storeVisits: Number(detail.TrackingStoreVisits || 0),
+      apptsOpened: Number(detail.TrackingApptOpen || 0),
+      apptsShown: Number(detail.TrackingApptShow || 0),
+      noShows: Number(detail.TrackingApptNoShow || 0),
+      sales: Number(detail.TrackingSold || 0),
+    })),
+  };
+}
+
 export function LeadAnalysisContent() {
   const [data, setData] = useState<LeadSourceData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: { "application/xml": [".xml"] },
-    maxFiles: 1,
-    onDrop: async (acceptedFiles: File[]) => {
+    onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
       if (!file) return;
 
       try {
-        console.log("Reading file:", file.name);
+        logger.info("Reading file", { name: file.name });
         const text = await file.text();
-        console.log("File content length:", text.length);
-        console.log("First 200 characters:", text.substring(0, 200));
+        logger.debug("File content details", { 
+          length: text.length,
+          preview: text.substring(0, 200)
+        });
 
         const parser = new XMLParser({
           ignoreAttributes: false,
           attributeNamePrefix: "",
-          parseAttributeValue: true,
-          parseTagValue: true,
-          trimValues: true,
-          ignoreDeclaration: true,
-          removeNSPrefix: true,
         });
         
-        console.log("Parsing XML...");
+        logger.debug("Parsing XML...");
         const result = parser.parse(text);
-        console.log("Full parsed result:", result);
-        console.log("Parsed XML structure:", {
+        logger.debug("Parsed XML structure", {
           hasReport: !!result.Report,
           hasTable1: !!result.Report?.table1,
-          hasCollection: !!result.Report?.table1?.table1_Group1_Collection,
-          hasGroup1: !!result.Report?.table1?.table1_Group1_Collection?.table1_Group1,
         });
-        
-        if (validateXMLStructure(result)) {
-          let sources = result.Report.table1.table1_Group1_Collection.table1_Group1;
-          
-          // Ensure sources is an array
-          if (!Array.isArray(sources)) {
-            sources = [sources];
-          }
-          
-          console.log("Raw sources:", sources);
-          console.log("Processing", sources.length, "sources");
-          const processedData = sources
-            .map((source) => {
-              console.log("Processing source:", source);
-              
-              // Process details
-              let details = source.Detail_Collection?.Detail || [];
-              if (!Array.isArray(details)) {
-                details = [details];
-              }
-              
-              return {
-                source: source.Source,
-                newLeads: Number(source.SourceNewLeads || 0),
-                contacted: Number(source.SourceContacted || 0),
-                storeVisits: Number(source.SourceStoreVisits || 0),
-                apptsOpened: Number(source.SourceApptOpen || 0),
-                apptsShown: Number(source.SourceApptShow || 0),
-                noShows: Number(source.SourceApptNoShow || 0),
-                sales: Number(source.SourceSold || 0),
-                details: details.map(detail => ({
-                  tracking: detail.Tracking,
-                  newLeads: Number(detail.TrackingNewLeads || 0),
-                  contacted: Number(detail.TrackingContacted || 0),
-                  storeVisits: Number(detail.TrackingStoreVisits || 0),
-                  apptsOpened: Number(detail.TrackingApptOpen || 0),
-                  apptsShown: Number(detail.TrackingApptShow || 0),
-                  noShows: Number(detail.TrackingApptNoShow || 0),
-                  sales: Number(detail.TrackingSold || 0),
-                })),
-              };
-            })
-            .filter((row) =>
-              row.source &&
-              ![
-                "Dealer Mgmt Sys",
-                "MasterMind",
-                "Mastermind",
-                "Non Sales Call",
-                "Lease Return",
-                "General Lease"
-              ].includes(
-                row.source
-              )
-            );
 
-          console.log("Processed data:", processedData);
+        if (validateXMLStructure(result)) {
+          const rawSources = result.Report.table1.table1_Group1_Collection.table1_Group1;
+          const sources = Array.isArray(rawSources) ? rawSources : [rawSources];
+          
+          logger.debug("Sources found", { 
+            count: sources.length,
+            sourceTypes: sources.map((s: DealerSocketSource) => s.name || 'unknown')
+          });
+
+          const processedData = sources
+            .map((source: DealerSocketSource) => {
+              logger.debug("Processing source", { 
+                name: source.name || 'unknown',
+                type: source.type || 'unknown'
+              });
+              
+              return processSourceData(source);
+            })
+            .filter((item): item is LeadSourceData => item !== null);
+
+          logger.info("Data processing complete", { 
+            processedCount: processedData.length 
+          });
+          
+          if (error) setError(null);
           setData(processedData);
           toast.success(`Successfully processed ${processedData.length} lead sources`);
         }
       } catch (error) {
-        console.error("Full error details:", error);
-        toast.error(
-          error instanceof Error
-            ? `Error: ${error.message}`
-            : "Error parsing XML file"
-        );
+        logger.error("Failed to process file", {
+          error: error instanceof Error ? error.message : String(error)
+        });
+        setError("Failed to parse XML file");
+        toast.error("Failed to parse XML file");
       }
+    },
+    multiple: false,
+    accept: {
+      "text/xml": [".xml"],
     },
   });
 

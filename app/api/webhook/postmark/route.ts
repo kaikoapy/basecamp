@@ -2,8 +2,10 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { NextResponse } from "next/server";
 import { ALLOWED_EMAILS } from "@/app/data/allowed-emails";
+import { createLogger } from "@/lib/logger";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const logger = createLogger("postmark-webhook");
 
 // Add the hardcoded org ID
 
@@ -30,25 +32,26 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    console.log("📨 Received Postmark webhook request");
-
-    // Log the request method and headers for debugging
-    console.log("Request method:", request.method);
-    console.log("Request headers:", Object.fromEntries(request.headers));
+    logger.info("Received Postmark webhook request");
+    
+    logger.debug("Request details", {
+      method: request.method,
+      headers: Object.fromEntries(request.headers)
+    });
 
     // Postmark sends JSON directly - no need for formData parsing
     const data = (await request.json()) as PostmarkWebhook;
 
     // Add email validation
     if (!ALLOWED_EMAILS.includes(data.From.toLowerCase())) {
-      console.warn(`Unauthorized email attempt from: ${data.From}`);
+      logger.warn(`Unauthorized email attempt from: ${data.From}`);
       return NextResponse.json(
         { error: "Unauthorized sender" },
         { status: 403 }
       );
     }
 
-    console.log("Webhook data received:", {
+    logger.info("Webhook data received", {
       from: data.From,
       subject: data.Subject,
       messageId: data.MessageID,
@@ -71,7 +74,7 @@ export async function POST(request: Request) {
             // Remove size limit check to allow all attachments
             // const MAX_SIZE = 5 * 1024 * 1024; // Commented out
             // if (content.length > MAX_SIZE) {
-            //   console.warn(`Attachment too large: ${content.length} bytes`);
+            //   logger.warn(`Attachment too large: ${content.length} bytes`);
             //   continue;
             // }
 
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
               { type: attachment.ContentType }
             );
 
-            console.log("Generated Convex upload URL:", uploadUrl);
+            logger.debug("Generated Convex upload URL", { uploadUrl });
 
             const response = await fetch(uploadUrl, {
               method: "POST",
@@ -96,13 +99,16 @@ export async function POST(request: Request) {
 
             // Get the storage ID from the response
             const { storageId } = await response.json();
-            console.log("Received storage ID:", storageId);
+            logger.debug("Received storage ID", { storageId });
 
             // Generate the download URL using the storage ID
             const storedUrl = await convex.query(api.announcements.getUrl, {
               storageId,
             });
-            console.log("Constructed download URL:", storedUrl);
+            logger.debug("Storage details", { 
+              storageId,
+              storedUrl 
+            });
 
             if (storedUrl) {
               attachments.push({
@@ -111,21 +117,17 @@ export async function POST(request: Request) {
                 type: attachment.ContentType,
               });
             } else {
-              console.error(
-                "Failed to generate download URL for storage ID:",
-                storageId
-              );
+              logger.error("Failed to generate download URL", { storageId });
             }
 
-            console.log(
-              "Successfully processed attachment:",
-              attachment.Name
-            );
+            logger.info("Successfully processed attachment", { 
+              name: attachment.Name 
+            });
           } catch (error) {
-            console.error(
-              `Failed to process attachment ${attachment.Name}:`,
-              error
-            );
+            logger.error("Failed to process attachment", { 
+              name: attachment.Name,
+              error: error instanceof Error ? error.message : String(error)
+            });
           }
         }
       }
@@ -141,7 +143,7 @@ export async function POST(request: Request) {
       emailId: data.MessageID,
     };
 
-    console.log("📤 Sending to Convex with payload:", payload); // Add this log to verify
+    logger.debug("Sending to Convex", { payload });
 
     // Send to Convex
     const result = await convex.mutation(
@@ -149,10 +151,10 @@ export async function POST(request: Request) {
       payload
     );
 
-    console.log("✅ Successfully created announcement:", result);
+    logger.info("Successfully created announcement", { result });
     return NextResponse.json({ success: true, id: result });
   } catch (error) {
-    console.error("Error processing email:", error);
+    logger.error("Error processing webhook", { error });
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

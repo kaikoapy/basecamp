@@ -11,10 +11,14 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { OnboardingDialog } from "../../(dialogs)/onboarding-dialog";
 import { useEffect, useState } from "react";
 import { useOrganization } from "@clerk/nextjs";
+import { createLogger } from "@/lib/logger";
+import { useAdmin } from "@/hooks/use-admin";
 
 interface DashboardContentProps {
   searchQuery?: string;
 }
+
+const logger = createLogger("dashboard-content");
 
 // Add a helper function for consistent date formatting
 function formatDate(date: Date | string) {
@@ -50,11 +54,13 @@ function extractTextFromHtml(html: string): string {
 
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const { organization, isLoaded } = useOrganization();
+  const isAdmin = useAdmin();
   
   // Add debug logging
-  console.log("Dashboard Content:", {
+  logger.debug("Dashboard state", {
     isLoaded,
     orgId: organization?.id,
+    isAdmin
   });
 
   const announcements = useQuery(
@@ -67,9 +73,14 @@ export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   const markComplete = useMutation(api.users.markOnboardingComplete);
 
   // Add debug logging for announcements
-  console.log("Dashboard Announcements:", {
+  logger.debug("Dashboard Announcements:", {
     hasAnnouncements: !!announcements,
     count: announcements?.length
+  });
+
+  logger.debug("Announcements", {
+    count: announcements?.length,
+    latest: announcements?.[0]
   });
 
   useEffect(() => {

@@ -1,5 +1,8 @@
 import fs from "fs"
 import path from "path"
+import { createLogger } from "@/lib/logger"
+
+const logger = createLogger("data-generator")
 
 function generateRandomData(
   previousValue,
@@ -140,15 +143,15 @@ const startDate = "2023-01-01"
 const endDate = "2024-05-17"
 
 const overviews = generateData(startDate, endDate, categories)
-
-const dataString = `import { OverviewData } from "./schema";
-
-export const overviews: OverviewData[] = ${JSON.stringify(overviews, null, 2)};
-`
-
 const outputPath = path.join(__dirname, "overview-data.ts")
 
-fs.writeFile(outputPath, dataString, (err) => {
-  if (err) throw err
-  console.log(`Data has been written to ${outputPath}`)
-})
+async function writeDataToFile(data, outputPath) {
+  const dataString = `import { OverviewData } from "./schema";
+
+export const overviews: OverviewData[] = ${JSON.stringify(data, null, 2)};
+`;
+  await fs.writeFile(outputPath, dataString)
+  logger.info("Data generation complete", { outputPath })
+}
+
+writeDataToFile(overviews, outputPath)
