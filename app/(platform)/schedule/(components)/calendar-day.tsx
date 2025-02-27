@@ -91,6 +91,8 @@ export function CalendarDay({
           // Get background color based on shift index
           const getItemBgColor = (isSpecial: boolean) => {
             if (isSpecial) return "bg-white";
+            // Check if this is an "Off" shift by name
+            if (shift === "Off") return "bg-gray-100";
             switch(index) {
               case 0: return "bg-yellow-100"; // Morning shift
               case 1: return "bg-blue-100";   // Mid shift
