@@ -255,7 +255,7 @@ export async function generateSchedulePDF({
         const availableWidth = colWidth - 4 - shiftWidth; // 4mm for padding
         
         // Function to optimize name distribution across rows
-        function distributeNames(names: string[], maxWidth: number, maxRows: number = 3, maxNamesPerRow: number | null = null): string[][] {
+        function distributeNames(names: string[], maxWidth: number, maxRows: number = 3, maxNamesPerRow: number | null = null, forceNamesPerRow: boolean = false): string[][] {
           // If no names or no rows allowed, return empty array
           if (names.length === 0 || maxRows === 0) return [];
           
@@ -275,7 +275,12 @@ export async function generateSchedulePDF({
             // Check if we've reached the maximum names per row (if specified)
             const reachedMaxNamesInRow = maxNamesPerRow !== null && rows[currentRow].length >= maxNamesPerRow;
             
-            if ((widthIfAdded <= maxWidth && !reachedMaxNamesInRow) || rows[currentRow].length === 0) {
+            // For forced names per row, only check the count limit, not the width
+            const shouldAddToCurrentRow = forceNamesPerRow 
+              ? !reachedMaxNamesInRow || rows[currentRow].length === 0
+              : ((widthIfAdded <= maxWidth && !reachedMaxNamesInRow) || rows[currentRow].length === 0);
+            
+            if (shouldAddToCurrentRow) {
               // Add to current row if it fits or if it's the first name in the row
               rows[currentRow].push(name);
               currentRowWidth = widthIfAdded;
@@ -296,8 +301,8 @@ export async function generateSchedulePDF({
         
         // Special handling for Sundays (which have fewer shifts)
         if (isSunday(dayOfWeek) && shiftsForDay.length <= 2) {
-          // For Sundays, allow up to 3 rows with 3 names per row
-          const nameRows = distributeNames(sortedNames, availableWidth, 3, 3);
+          // For Sundays, allow up to 3 rows with exactly 3 names per row (force 3 per row)
+          const nameRows = distributeNames(sortedNames, availableWidth, 3, 3, true);
           
           // Render each row
           nameRows.forEach((rowNames, rowIndex) => {
