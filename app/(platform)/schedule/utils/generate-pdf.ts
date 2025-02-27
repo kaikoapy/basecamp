@@ -236,13 +236,11 @@ export async function generateSchedulePDF({
         doc.setFontSize(namesFontSize);
 
         // Adjust how many names to show based on available space
-        if (totalRows > 5 && parsedNames.length > 2) {
-          // For 6-row months with many names, be more compact
-          doc.text(sortedNames.join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-        } else if (parsedNames.length <= 2) {
+        if (parsedNames.length <= 2) {
           const namesLine = sortedNames.join(", ");
           doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
         } else {
+          // Always use two rows for 3+ names, even in 6-row months
           doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
           doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
         }
