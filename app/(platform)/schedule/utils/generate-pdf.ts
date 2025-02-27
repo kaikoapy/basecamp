@@ -96,6 +96,7 @@ export async function generateSchedulePDF({
 
   // Page dimensions and margins.
   const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
   const margin = 15;
   const headerHeight = 12;
 
@@ -151,8 +152,19 @@ export async function generateSchedulePDF({
   });
 
   // ===== Calendar Day Cells =====
-  const rowHeight = 34;
-  const calendarStartY = weekdayHeaderY + 7;
+  // Calculate the number of rows needed for this month
+  const totalDays = calendarDays.filter((day): day is number => day !== null).length;
+  const daysInFirstRow = 7 - firstDayOfMonth;
+  const remainingDays = totalDays - daysInFirstRow;
+  const additionalRows = Math.ceil(remainingDays / 7);
+  const totalRows = 1 + additionalRows;
+  
+  // Calculate available space and adjust row height
+  const weekdayHeaderHeight = 7;
+  const availableHeight = pageHeight - weekdayHeaderY - weekdayHeaderHeight - margin;
+  const rowHeight = Math.min(34, availableHeight / totalRows);
+  
+  const calendarStartY = weekdayHeaderY + weekdayHeaderHeight;
   const isWeekend = (dayIndex: number) => dayIndex === 0 || dayIndex === 6;
 
   const shiftPadding = 1;
@@ -161,6 +173,11 @@ export async function generateSchedulePDF({
 
   // Dark font color for shifts
   const darkColor: [number, number, number] = [0, 0, 0];
+
+  // Adjust font sizes for smaller cells if needed
+  const dayFontSize = totalRows > 5 ? 8 : 9;
+  const timeFontSize = totalRows > 5 ? 7 : 8;
+  const namesFontSize = totalRows > 5 ? 7 : 8;
 
   calendarDays.filter((day): day is number => day !== null).forEach((day) => {
     const x = margin + currentCol * colWidth;
@@ -177,32 +194,34 @@ export async function generateSchedulePDF({
     doc.setDrawColor(...primaryBlue);
     doc.rect(x, y, colWidth, rowHeight);
 
+    // Adjust header height for day number
+    const dayHeaderHeight = totalRows > 5 ? 5 : 6;
+    
     doc.setFillColor(...lightBlue);
-    doc.rect(x, y, colWidth, 6, "F");
+    doc.rect(x, y, colWidth, dayHeaderHeight, "F");
     doc.setDrawColor(...primaryBlue);
-    doc.rect(x, y, colWidth, 6, "S");
+    doc.rect(x, y, colWidth, dayHeaderHeight, "S");
 
-    doc.setFontSize(9);
+    doc.setFontSize(dayFontSize);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...primaryBlue);
-    doc.text(`${day}`, x + 2, y + 4);
+    doc.text(`${day}`, x + 2, y + (dayHeaderHeight * 0.7));
 
-    let shiftY = y + 8;
-    const timeFontSize = 8;
-    const namesFontSize = 8;
-
+    let shiftY = y + dayHeaderHeight + 2;
+    
+    // Adjust spacing for shifts based on available space
     shiftsForDay.forEach((shift: string, shiftIndex: number) => {
       const containerId = `${day}-${shiftIndex}`;
       const items = scheduleData?.containers?.[containerId] || [];
       const filteredItems = filterItems(items, salesFilter);
       const parsedNames = filteredItems.map((item) => parseName(item));
       
-      const maxShiftSpace = rowHeight - 8;
+      const maxShiftSpace = rowHeight - dayHeaderHeight - 2;
       const spacePerShift = maxShiftSpace / shiftsForDay.length;
       const isOffShift = shiftIndex === shiftsForDay.length - 1;
       const offShiftOffset = isOffShift ? 1 : 0;
       
-      shiftY = y + 8 + (spacePerShift * shiftIndex) + offShiftOffset;
+      shiftY = y + dayHeaderHeight + 2 + (spacePerShift * shiftIndex) + offShiftOffset;
 
       // Always show the shift time
       doc.setFont("helvetica", "bold");
@@ -216,7 +235,11 @@ export async function generateSchedulePDF({
         doc.setFont("helvetica", "normal");
         doc.setFontSize(namesFontSize);
 
-        if (parsedNames.length <= 2) {
+        // Adjust how many names to show based on available space
+        if (totalRows > 5 && parsedNames.length > 2) {
+          // For 6-row months with many names, be more compact
+          doc.text(sortedNames.join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+        } else if (parsedNames.length <= 2) {
           const namesLine = sortedNames.join(", ");
           doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
         } else {
