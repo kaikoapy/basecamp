@@ -220,8 +220,6 @@ export async function generateSchedulePDF({
       const filteredItems = filterItems(items, salesFilter);
       const parsedNames = filteredItems.map((item) => parseName(item));
       
-      const maxShiftSpace = rowHeight - dayHeaderHeight - 2;
-      const spacePerShift = maxShiftSpace / shiftsForDay.length;
       const isOffShift = shiftIndex === shiftsForDay.length - 1;
       const offShiftOffset = isOffShift ? 1 : 0;
       
@@ -233,7 +231,13 @@ export async function generateSchedulePDF({
       // Add extra padding if previous shift had multiple rows
       const extraPadding = isPreviousShiftWithMultipleRows ? 2 : 0;
       
-      shiftY = y + dayHeaderHeight + 2 + (spacePerShift * shiftIndex) + offShiftOffset + extraPadding;
+      // Calculate base vertical position for each shift
+      // Use fixed spacing for more consistency rather than dynamic spacing
+      const baseShiftSpacing = isSunday(dayOfWeek) ? 
+        (rowHeight - dayHeaderHeight - 2) / 2 : // For Sundays with 2 shifts, divide space evenly
+        Math.min(11, (rowHeight - dayHeaderHeight - 2) / shiftsForDay.length); // For other days, use consistent spacing with a maximum
+      
+      shiftY = y + dayHeaderHeight + 2 + (baseShiftSpacing * shiftIndex) + offShiftOffset + extraPadding;
 
       // Always show the shift time
       doc.setFont("helvetica", "bold");
@@ -251,7 +255,7 @@ export async function generateSchedulePDF({
         const availableWidth = colWidth - 4 - shiftWidth; // 4mm for padding
         
         // Function to optimize name distribution across rows
-        function distributeNames(names: string[], maxWidth: number, maxRows: number = 3): string[][] {
+        function distributeNames(names: string[], maxWidth: number, maxRows: number = 3, maxNamesPerRow: number | null = null): string[][] {
           // If no names or no rows allowed, return empty array
           if (names.length === 0 || maxRows === 0) return [];
           
@@ -268,7 +272,10 @@ export async function generateSchedulePDF({
             // Width if we add this name to current row (including comma if not first name)
             const widthIfAdded = currentRowWidth + nameWidth + (rows[currentRow].length > 0 ? commaWidth : 0);
             
-            if (widthIfAdded <= maxWidth || rows[currentRow].length === 0) {
+            // Check if we've reached the maximum names per row (if specified)
+            const reachedMaxNamesInRow = maxNamesPerRow !== null && rows[currentRow].length >= maxNamesPerRow;
+            
+            if ((widthIfAdded <= maxWidth && !reachedMaxNamesInRow) || rows[currentRow].length === 0) {
               // Add to current row if it fits or if it's the first name in the row
               rows[currentRow].push(name);
               currentRowWidth = widthIfAdded;
@@ -289,8 +296,8 @@ export async function generateSchedulePDF({
         
         // Special handling for Sundays (which have fewer shifts)
         if (isSunday(dayOfWeek) && shiftsForDay.length <= 2) {
-          // For Sundays, allow up to 3 rows
-          const nameRows = distributeNames(sortedNames, availableWidth, 3);
+          // For Sundays, allow up to 3 rows with 3 names per row
+          const nameRows = distributeNames(sortedNames, availableWidth, 3, 3);
           
           // Render each row
           nameRows.forEach((rowNames, rowIndex) => {
@@ -299,8 +306,8 @@ export async function generateSchedulePDF({
             doc.text(rowNames.join(", "), xPos, yPos);
           });
         } else {
-          // For other days, allow up to 2 rows
-          const nameRows = distributeNames(sortedNames, availableWidth, 2);
+          // For other days, allow up to 2 rows with 2 names per row
+          const nameRows = distributeNames(sortedNames, availableWidth, 2, 2);
           
           // Render each row
           nameRows.forEach((rowNames, rowIndex) => {
