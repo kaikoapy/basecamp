@@ -246,35 +246,68 @@ export async function generateSchedulePDF({
         const shiftWidth = doc.getTextWidth(shift + " ");
         doc.setFont("helvetica", "normal");
         doc.setFontSize(namesFontSize);
-
+        
+        // Calculate available width for names
+        const availableWidth = colWidth - 4 - shiftWidth; // 4mm for padding
+        
+        // Function to optimize name distribution across rows
+        function distributeNames(names: string[], maxWidth: number, maxRows: number = 3): string[][] {
+          // If no names or no rows allowed, return empty array
+          if (names.length === 0 || maxRows === 0) return [];
+          
+          const rows: string[][] = [[]];
+          let currentRowWidth = 0;
+          let currentRow = 0;
+          
+          // Process each name
+          for (let i = 0; i < names.length; i++) {
+            const name = names[i];
+            const nameWidth = doc.getTextWidth(name);
+            const commaWidth = doc.getTextWidth(", ");
+            
+            // Width if we add this name to current row (including comma if not first name)
+            const widthIfAdded = currentRowWidth + nameWidth + (rows[currentRow].length > 0 ? commaWidth : 0);
+            
+            if (widthIfAdded <= maxWidth || rows[currentRow].length === 0) {
+              // Add to current row if it fits or if it's the first name in the row
+              rows[currentRow].push(name);
+              currentRowWidth = widthIfAdded;
+            } else if (currentRow + 1 < maxRows) {
+              // Start a new row if we haven't reached max rows
+              currentRow++;
+              rows[currentRow] = [name];
+              currentRowWidth = nameWidth;
+            } else {
+              // If we've reached max rows, add to the last row anyway
+              // This might overflow but it's better than omitting names
+              rows[currentRow].push(name);
+            }
+          }
+          
+          return rows;
+        }
+        
         // Special handling for Sundays (which have fewer shifts)
         if (isSunday(dayOfWeek) && shiftsForDay.length <= 2) {
-          // For Sundays with 2 or fewer shifts, allow up to 3 rows for names
-          if (parsedNames.length <= 3) {
-            // 1-3 names: single row
-            const namesLine = sortedNames.join(", ");
-            doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
-          } else if (parsedNames.length <= 6) {
-            // 4-6 names: two rows (3 names per row)
-            doc.text(sortedNames.slice(0, 3).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            doc.text(sortedNames.slice(3).join(", "), x + 2, shiftY + shiftPadding + 3);
-          } else {
-            // 7+ names: three rows
-            doc.text(sortedNames.slice(0, 3).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            doc.text(sortedNames.slice(3, 6).join(", "), x + 2, shiftY + shiftPadding + 3);
-            doc.text(sortedNames.slice(6).join(", "), x + 2, shiftY + shiftPadding + 6);
-          }
+          // For Sundays, allow up to 3 rows
+          const nameRows = distributeNames(sortedNames, availableWidth, 3);
+          
+          // Render each row
+          nameRows.forEach((rowNames, rowIndex) => {
+            const xPos = rowIndex === 0 ? x + 2 + shiftWidth : x + 2;
+            const yPos = shiftY + shiftPadding + (rowIndex * 3);
+            doc.text(rowNames.join(", "), xPos, yPos);
+          });
         } else {
-          // Standard handling for other days
-          if (parsedNames.length <= 2) {
-            const namesLine = sortedNames.join(", ");
-            doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
-          } else {
-            // Always use two rows for 3+ names, even in 6-row months
-            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            // Increase the vertical spacing between lines for better readability
-            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3.5);
-          }
+          // For other days, allow up to 2 rows
+          const nameRows = distributeNames(sortedNames, availableWidth, 2);
+          
+          // Render each row
+          nameRows.forEach((rowNames, rowIndex) => {
+            const xPos = rowIndex === 0 ? x + 2 + shiftWidth : x + 2;
+            const yPos = shiftY + shiftPadding + (rowIndex * 3.5);
+            doc.text(rowNames.join(", "), xPos, yPos);
+          });
         }
       }
     });
