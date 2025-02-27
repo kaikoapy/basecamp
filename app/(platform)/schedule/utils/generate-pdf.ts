@@ -225,7 +225,15 @@ export async function generateSchedulePDF({
       const isOffShift = shiftIndex === shiftsForDay.length - 1;
       const offShiftOffset = isOffShift ? 1 : 0;
       
-      shiftY = y + dayHeaderHeight + 2 + (spacePerShift * shiftIndex) + offShiftOffset;
+      // Add more vertical spacing between shifts when there are multiple rows of names
+      // Calculate if the previous shift had multiple rows of names
+      const isPreviousShiftWithMultipleRows = shiftIndex > 0 && 
+        (scheduleData?.containers?.[`${day}-${shiftIndex-1}`]?.length ?? 0) > 2;
+      
+      // Add extra padding if previous shift had multiple rows
+      const extraPadding = isPreviousShiftWithMultipleRows ? 2 : 0;
+      
+      shiftY = y + dayHeaderHeight + 2 + (spacePerShift * shiftIndex) + offShiftOffset + extraPadding;
 
       // Always show the shift time
       doc.setFont("helvetica", "bold");
@@ -242,19 +250,19 @@ export async function generateSchedulePDF({
         // Special handling for Sundays (which have fewer shifts)
         if (isSunday(dayOfWeek) && shiftsForDay.length <= 2) {
           // For Sundays with 2 or fewer shifts, allow up to 3 rows for names
-          if (parsedNames.length <= 2) {
-            // 1-2 names: single row
+          if (parsedNames.length <= 3) {
+            // 1-3 names: single row
             const namesLine = sortedNames.join(", ");
             doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
-          } else if (parsedNames.length <= 4) {
-            // 3-4 names: two rows
-            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
+          } else if (parsedNames.length <= 6) {
+            // 4-6 names: two rows (3 names per row)
+            doc.text(sortedNames.slice(0, 3).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+            doc.text(sortedNames.slice(3).join(", "), x + 2, shiftY + shiftPadding + 3);
           } else {
-            // 5+ names: three rows
-            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            doc.text(sortedNames.slice(2, 4).join(", "), x + 2, shiftY + shiftPadding + 3);
-            doc.text(sortedNames.slice(4).join(", "), x + 2, shiftY + shiftPadding + 6);
+            // 7+ names: three rows
+            doc.text(sortedNames.slice(0, 3).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+            doc.text(sortedNames.slice(3, 6).join(", "), x + 2, shiftY + shiftPadding + 3);
+            doc.text(sortedNames.slice(6).join(", "), x + 2, shiftY + shiftPadding + 6);
           }
         } else {
           // Standard handling for other days
@@ -264,7 +272,8 @@ export async function generateSchedulePDF({
           } else {
             // Always use two rows for 3+ names, even in 6-row months
             doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
+            // Increase the vertical spacing between lines for better readability
+            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3.5);
           }
         }
       }
