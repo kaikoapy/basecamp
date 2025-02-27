@@ -162,10 +162,14 @@ export async function generateSchedulePDF({
   // Calculate available space and adjust row height
   const weekdayHeaderHeight = 7;
   const availableHeight = pageHeight - weekdayHeaderY - weekdayHeaderHeight - margin;
-  const rowHeight = Math.min(34, availableHeight / totalRows);
+  // Increase the minimum row height slightly for 6-row months to make squares bigger
+  const rowHeight = totalRows > 5 
+    ? Math.min(30, availableHeight / totalRows) // Slightly larger minimum for 6-row months
+    : Math.min(34, availableHeight / totalRows);
   
   const calendarStartY = weekdayHeaderY + weekdayHeaderHeight;
   const isWeekend = (dayIndex: number) => dayIndex === 0 || dayIndex === 6;
+  const isSunday = (dayIndex: number) => dayIndex === 0;
 
   const shiftPadding = 1;
   let currentRow = 0;
@@ -235,14 +239,33 @@ export async function generateSchedulePDF({
         doc.setFont("helvetica", "normal");
         doc.setFontSize(namesFontSize);
 
-        // Adjust how many names to show based on available space
-        if (parsedNames.length <= 2) {
-          const namesLine = sortedNames.join(", ");
-          doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
+        // Special handling for Sundays (which have fewer shifts)
+        if (isSunday(dayOfWeek) && shiftsForDay.length <= 2) {
+          // For Sundays with 2 or fewer shifts, allow up to 3 rows for names
+          if (parsedNames.length <= 2) {
+            // 1-2 names: single row
+            const namesLine = sortedNames.join(", ");
+            doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
+          } else if (parsedNames.length <= 4) {
+            // 3-4 names: two rows
+            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
+          } else {
+            // 5+ names: three rows
+            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+            doc.text(sortedNames.slice(2, 4).join(", "), x + 2, shiftY + shiftPadding + 3);
+            doc.text(sortedNames.slice(4).join(", "), x + 2, shiftY + shiftPadding + 6);
+          }
         } else {
-          // Always use two rows for 3+ names, even in 6-row months
-          doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
-          doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
+          // Standard handling for other days
+          if (parsedNames.length <= 2) {
+            const namesLine = sortedNames.join(", ");
+            doc.text(namesLine, x + 2 + shiftWidth, shiftY + shiftPadding);
+          } else {
+            // Always use two rows for 3+ names, even in 6-row months
+            doc.text(sortedNames.slice(0, 2).join(", "), x + 2 + shiftWidth, shiftY + shiftPadding);
+            doc.text(sortedNames.slice(2).join(", "), x + 2, shiftY + shiftPadding + 3);
+          }
         }
       }
     });
