@@ -27,7 +27,9 @@ export const getSalesStaff = query({
       .filter((q) => 
         q.or(
           q.eq(q.field("position"), "New Sales Specialist"),
-          q.eq(q.field("position"), "Used Sales Specialist")
+          q.eq(q.field("position"), "Used Sales Specialist"),
+          q.eq(q.field("position"), "New Car Sales Specialist"),
+          q.eq(q.field("position"), "Used Car Sales Specialist")
         )
       )
       .collect();
