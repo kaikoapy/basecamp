@@ -600,6 +600,7 @@ const CalendarSchedule: React.FC = () => {
                 setSalesFilter={setSalesFilter}
                 filteredSalespeople={filteredSalespeople}
                 salesStaffData={salesStaffData}
+                lastUpdated={scheduleData?.updatedAt}
               />
               <SpecialLabels labels={containers["special-labels-list"] || []} />
             </div>

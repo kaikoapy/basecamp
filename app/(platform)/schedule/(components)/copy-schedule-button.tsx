@@ -73,8 +73,17 @@ export function CopyScheduleButton({
                       const prefix = item.startsWith('special:') ? 'special:' : 
                                    item.startsWith('new:') ? 'new:' :
                                    item.startsWith('used:') ? 'used:' : '';
-                      const name = item.split(':')[1].split('::')[0];
-                      return `${prefix}${name}::${crypto.randomUUID()}`;
+                      
+                      // Fix: Don't split the ID for non-special items, as it breaks the staff ID reference
+                      if (item.startsWith('special:')) {
+                        const name = item.split(':')[1].split('::')[0];
+                        return `${prefix}${name}::${crypto.randomUUID()}`;
+                      } else {
+                        // For staff IDs, preserve the original ID but add a unique suffix
+                        // This ensures the getDisplayName function can still find the staff member
+                        const baseId = item.includes('::') ? item.split('::')[0] : item;
+                        return `${baseId}::${crypto.randomUUID()}`;
+                      }
                     });
                   }
                 });

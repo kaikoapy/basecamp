@@ -4,22 +4,30 @@ import { DroppableContainer } from "./droppable-container";
 import { DraggableItem } from "./draggable-item";
 import { SalesStaffMember } from "@/convex/types";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatDistanceToNow } from "date-fns";
 
 export interface SalespeopleListProps {
   salesFilter: "all" | "new" | "used";
   setSalesFilter: (filter: "all" | "new" | "used") => void;
   filteredSalespeople: string[];
   salesStaffData: SalesStaffMember[] | undefined;
+  lastUpdated?: number;
 }
 
 export const SalespeopleList: React.FC<SalespeopleListProps> = ({
   salesFilter,
   setSalesFilter,
   filteredSalespeople,
-  salesStaffData
+  salesStaffData,
+  lastUpdated
 }) => {
+  // Format the last updated timestamp
+  const formattedLastUpdated = lastUpdated 
+    ? formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })
+    : null;
+
   return (
-    <section className="p-4 bg-gray-50 rounded-md shadow-sm">
+    <section className="p-4 bg-gray-50 rounded-md shadow-sm flex flex-col h-full">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Salespeople</h2>
       <Tabs value={salesFilter} onValueChange={(value) => setSalesFilter(value as "all" | "new" | "used")}>
         <TabsList className="h-auto gap-2 rounded-none border-b border-border bg-transparent px-0 py-1 text-foreground w-full mb-4">
@@ -65,6 +73,13 @@ export const SalespeopleList: React.FC<SalespeopleListProps> = ({
           </div>
         </DroppableContainer>
       </Tabs>
+      
+      {/* Last updated information */}
+      {formattedLastUpdated && (
+        <div className="mt-auto pt-4 border-t border-gray-200 text-xs text-gray-500">
+          <p>Last updated: {formattedLastUpdated}</p>
+        </div>
+      )}
     </section>
   );
 }
