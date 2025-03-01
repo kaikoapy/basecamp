@@ -484,18 +484,24 @@ const CalendarSchedule: React.FC = () => {
 
   // Helper function to get display name from ID
   const getDisplayName = (id: string): string => {
+    // Add more detailed logging for production debugging
+    console.log(`[getDisplayName] Processing ID: "${id}"`);
+    
     // If it's a special label (handle both original and cloned special labels)
     if (id.startsWith("special:")) {
       // Extract the label name without the timestamp
       const labelWithPossibleTimestamp = id.substring("special:".length);
       // If it has a timestamp, remove it
-      return labelWithPossibleTimestamp.includes("::") 
+      const result = labelWithPossibleTimestamp.includes("::") 
         ? labelWithPossibleTimestamp.split("::")[0] 
         : labelWithPossibleTimestamp;
+      console.log(`[getDisplayName] Special label detected: "${result}"`);
+      return result;
     }
     
     // If it has a timestamp (cloned item)
     const baseId = id.includes("::") ? id.split("::")[0] : id;
+    console.log(`[getDisplayName] Base ID: "${baseId}"`);
     
     // Check for "new:" or "used:" prefix and remove it
     let cleanId = baseId;
@@ -503,44 +509,94 @@ const CalendarSchedule: React.FC = () => {
     if (baseId.startsWith("new:")) {
       cleanId = baseId.substring(baseId.indexOf(":") + 1);
       prefix = "new:";
+      console.log(`[getDisplayName] New prefix detected, clean ID: "${cleanId}"`);
     } else if (baseId.startsWith("used:")) {
       cleanId = baseId.substring(baseId.indexOf(":") + 1);
       prefix = "used:";
+      console.log(`[getDisplayName] Used prefix detected, clean ID: "${cleanId}"`);
     }
     
-    // Debug logging to help diagnose the issue
-    console.log(`Looking for staff with ID: ${cleanId}`);
-    
     // First try to find by ID - this should work for Convex IDs like k57cd9h0m588y905ycmmv58res77jvxp
-    const staff = salesStaffData?.find(s => `${s._id}` === cleanId);
-    
-    if (staff) {
-      // Get only the first name from displayName or name
-      const displayName = staff.displayName || staff.name || "";
-      return displayName.split(" ")[0];
+    if (salesStaffData) {
+      console.log(`[getDisplayName] Searching for staff with ID: "${cleanId}" among ${salesStaffData.length} staff members`);
+      
+      // Log all available staff IDs for debugging
+      console.log(`[getDisplayName] Available staff IDs:`, salesStaffData.map(s => String(s._id)));
+      
+      // Try to find by exact ID match
+      const staffById = salesStaffData.find(s => String(s._id) === cleanId);
+      if (staffById) {
+        const displayName = staffById.displayName || staffById.name || "";
+        const firstName = displayName.split(" ")[0];
+        console.log(`[getDisplayName] Found staff by ID match: "${firstName}"`);
+        return firstName;
+      }
+      
+      // If not found by exact ID, try case-insensitive comparison
+      const staffByIdCaseInsensitive = salesStaffData.find(
+        s => String(s._id).toLowerCase() === cleanId.toLowerCase()
+      );
+      if (staffByIdCaseInsensitive) {
+        const displayName = staffByIdCaseInsensitive.displayName || staffByIdCaseInsensitive.name || "";
+        const firstName = displayName.split(" ")[0];
+        console.log(`[getDisplayName] Found staff by case-insensitive ID match: "${firstName}"`);
+        return firstName;
+      }
     }
     
     // If not found by ID, check if the ID itself is a name (legacy format)
     if (typeof cleanId === 'string' && cleanId.includes(" ")) {
-      console.log(`ID appears to be a name: ${cleanId}`);
-      return cleanId.split(" ")[0]; // Return just the first name
-    }
-    
-    // If it's a Convex ID format but not found, log available IDs for debugging
-    if (typeof cleanId === 'string' && /^k[a-z0-9]+$/.test(cleanId)) {
-      console.log(`Detected Convex ID format: ${cleanId}`);
-      if (salesStaffData) {
-        console.log("Available staff IDs:", salesStaffData.map(s => s._id));
-      }
+      const firstName = cleanId.split(" ")[0];
+      console.log(`[getDisplayName] ID appears to be a name: "${firstName}"`);
+      return firstName;
     }
     
     // For production environment, if we have a prefix and a name, use that
     if (prefix && typeof cleanId === 'string') {
       // This might be a case where the ID is actually "used:Alex Reynaldos" format
-      console.log(`Using name directly from ID: ${cleanId}`);
-      return cleanId.split(" ")[0]; // Return just the first name
+      // or where the ID is a Convex ID but we need to use it directly
+      if (cleanId.includes(" ")) {
+        const firstName = cleanId.split(" ")[0];
+        console.log(`[getDisplayName] Using name from prefixed ID: "${firstName}"`);
+        return firstName;
+      } else if (/^k[a-z0-9]+$/.test(cleanId)) {
+        // If it's a Convex ID format, try to find the corresponding staff member again
+        // This is a fallback for production where the ID format might be different
+        if (salesStaffData) {
+          // Try to find by ID in containers["salespeople-list"]
+          const salespeopleList = containers["salespeople-list"] || [];
+          console.log(`[getDisplayName] Checking salespeople-list:`, salespeopleList);
+          
+          // If the ID is in the salespeople list, it might be a valid staff member
+          if (salespeopleList.includes(cleanId) || salespeopleList.includes(baseId) || salespeopleList.includes(id)) {
+            // Try to find by any property that might match
+            for (const staff of salesStaffData) {
+              if (
+                String(staff._id) === cleanId || 
+                String(staff.name).includes(cleanId) || 
+                String(staff.displayName).includes(cleanId)
+              ) {
+                const displayName = staff.displayName || staff.name || "";
+                const firstName = displayName.split(" ")[0];
+                console.log(`[getDisplayName] Found staff by property match: "${firstName}"`);
+                return firstName;
+              }
+            }
+          }
+        }
+      }
     }
     
+    // Last resort: check if this ID exists in the salespeople-list
+    // If it does, it might be a valid ID that we're just not matching correctly
+    const salespeopleList = containers["salespeople-list"] || [];
+    if (salespeopleList.includes(cleanId) || salespeopleList.includes(baseId) || salespeopleList.includes(id)) {
+      console.log(`[getDisplayName] ID exists in salespeople-list but no match found`);
+      // Return the ID itself as a last resort
+      return cleanId.substring(0, 10); // Truncate long IDs
+    }
+    
+    console.log(`[getDisplayName] No match found for ID: "${id}", returning "Unknown"`);
     return "Unknown";
   };
 
