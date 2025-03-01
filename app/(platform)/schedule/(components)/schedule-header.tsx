@@ -157,7 +157,7 @@ export function ScheduleHeader({
                 size="default"
               >
                 <Pencil className="h-4 w-4 mr-2" />
-                {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
+                {isEditMode ? "Exit Edit Mode" : "Edit"}
               </Button>
             </Protect>
           </>
