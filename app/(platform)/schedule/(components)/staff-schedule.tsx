@@ -107,26 +107,6 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     if (!salesStaffData || scheduleData === undefined) return;
 
-    // Log all staff data to inspect Amr's record
-    if (salesStaffData) {
-      console.log("DEBUG: All staff data:", salesStaffData);
-      
-      // Try to find Amr in the staff data
-      const amrRecord = salesStaffData.find(staff => 
-        staff.name && staff.name.includes("Amr") || 
-        String(staff._id) === "k577bd4dj73ar3d6jqbz4g5drh7b8s58"
-      );
-      
-      if (amrRecord) {
-        console.log("DEBUG: Found Amr's record:", amrRecord);
-        console.log("DEBUG: Amr's ID:", String(amrRecord._id));
-        console.log("DEBUG: Amr's name:", amrRecord.name);
-        console.log("DEBUG: Amr's displayName:", amrRecord.displayName);
-      } else {
-        console.log("DEBUG: Could not find Amr in staff data");
-      }
-    }
-
     // Don't update URL params if we're navigating to a non-existent schedule
     // This was causing issues with navigation
     if (scheduleData) {
@@ -138,9 +118,6 @@ const CalendarSchedule: React.FC = () => {
       
       // For existing schedules, load the containers
       if (scheduleData.containers) {
-        console.log("Loading existing schedule for", scheduleData.month, scheduleData.year);
-        console.log("Schedule containers:", scheduleData.containers);
-        
         // Check for any staff IDs in the schedule that don't match current staff
         if (salesStaffData && salesStaffData.length > 0) {
           const allStaffIds = new Set(salesStaffData.map(staff => String(staff._id)));
@@ -153,7 +130,7 @@ const CalendarSchedule: React.FC = () => {
               if (!item.startsWith("special:")) {
                 const baseId = item.includes("::") ? item.split("::")[0] : item;
                 if (!allStaffIds.has(baseId)) {
-                  console.log("Staff ID not found in current staff:", baseId);
+                  // Staff ID not found in current staff
                 }
               }
             });
@@ -165,7 +142,6 @@ const CalendarSchedule: React.FC = () => {
     } else if (scheduleData === null) {
       // For non-existent schedules, just initialize the containers with salespeople and special labels
       // but DON'T create a new schedule in the database yet
-      console.log("Schedule doesn't exist for", displayMonth, displayYear);
       
       const initialContainers = {
         "salespeople-list": containers["salespeople-list"].length > 0 
@@ -191,8 +167,6 @@ const CalendarSchedule: React.FC = () => {
     const newMonth = Number(displayMonth) === 1 ? 12 : Number(displayMonth) - 1;
     const newYear = Number(displayMonth) === 1 ? Number(displayYear) - 1 : Number(displayYear);
     
-    console.log("Navigating to previous month:", newMonth, newYear);
-    
     await Promise.all([
       setDisplayMonth(newMonth),
       setDisplayYear(newYear)
@@ -202,8 +176,6 @@ const CalendarSchedule: React.FC = () => {
   const handleNextMonth = async () => {
     const newMonth = Number(displayMonth) === 12 ? 1 : Number(displayMonth) + 1;
     const newYear = Number(displayMonth) === 12 ? Number(displayYear) + 1 : Number(displayYear);
-    
-    console.log("Navigating to next month:", newMonth, newYear);
     
     await Promise.all([
       setDisplayMonth(newMonth),
@@ -348,7 +320,6 @@ const CalendarSchedule: React.FC = () => {
 
     if (scheduleData === null) {
       // Create a new schedule if it doesn't exist
-      console.log("Creating new schedule with containers:", cleanedContainers);
       await createSchedule({ 
         month: displayMonth, 
         year: displayYear, 
@@ -397,7 +368,6 @@ const CalendarSchedule: React.FC = () => {
     
     // Don't try to toggle publish for a non-existent schedule
     if (scheduleData === null) {
-      console.log("Cannot toggle publish for a non-existent schedule");
       return;
     }
     
