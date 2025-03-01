@@ -469,19 +469,37 @@ const CalendarSchedule: React.FC = () => {
     
     // Check for "new:" or "used:" prefix and remove it
     let cleanId = baseId;
-    if (baseId.startsWith("new:") || baseId.startsWith("used:")) {
+    if (baseId.startsWith("new:")) {
+      cleanId = baseId.substring(baseId.indexOf(":") + 1);
+    } else if (baseId.startsWith("used:")) {
       cleanId = baseId.substring(baseId.indexOf(":") + 1);
     }
     
+    // Debug logging to help diagnose the issue
+    console.log(`Looking for staff with ID: ${cleanId}`);
+    
     // Find the staff member
-    const staff = salesStaffData?.find(s => s._id === cleanId);
+    const staff = salesStaffData?.find(s => `${s._id}` === cleanId);
+    
     if (!staff) {
+      console.log(`Staff not found for ID: ${cleanId}`);
+      
       // For saved schedules, the ID might be in a different format
       // Check if it's a string that contains a name
       if (typeof cleanId === 'string' && cleanId.includes(" ")) {
         // This might be a legacy format where the ID is actually a name
         return cleanId.split(" ")[0]; // Return just the first name
       }
+      
+      // If it's a Convex ID format (starts with 'k' followed by alphanumeric chars)
+      if (typeof cleanId === 'string' && /^k[a-z0-9]+$/.test(cleanId)) {
+        console.log(`Detected Convex ID format: ${cleanId}`);
+        // Try to find this ID in the salesStaffData
+        if (salesStaffData) {
+          console.log("Available staff IDs:", salesStaffData.map(s => s._id));
+        }
+      }
+      
       return "Unknown";
     }
     

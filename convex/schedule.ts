@@ -22,6 +22,14 @@ export const getSalesStaff = query({
   handler: async (ctx): Promise<SalesStaffMember[]> => {
     console.info("[getSalesStaff] Starting query");
     
+    // First, get all directory entries to check what's actually in the database
+    const allDirectoryEntries = await ctx.db.query("directory").collect();
+    console.info("[getSalesStaff] All directory entries:", allDirectoryEntries);
+    
+    // Log all positions in the directory
+    const allPositions = new Set(allDirectoryEntries.map(entry => entry.position));
+    console.info("[getSalesStaff] All positions in directory:", Array.from(allPositions));
+    
     const salesStaff = await ctx.db
       .query("directory")
       .filter((q) => 
@@ -35,6 +43,7 @@ export const getSalesStaff = query({
       .collect();
     
     console.info("[getSalesStaff] Raw sales staff:", salesStaff);
+    console.info("[getSalesStaff] Sales staff IDs:", salesStaff.map(staff => staff._id));
     
     if (salesStaff.length === 0) {
       console.info("[getSalesStaff] No sales staff found in directory");
