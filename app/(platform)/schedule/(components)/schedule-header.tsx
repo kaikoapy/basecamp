@@ -167,7 +167,7 @@ export function ScheduleHeader({
             Create Schedule
           </Button>
         )}
-        {!isEditMode && (
+        {!isEditMode && scheduleData !== null && (
           <Button
             onClick={onPrint}
             variant="outline"
@@ -176,7 +176,7 @@ export function ScheduleHeader({
             disabled={!scheduleData?.published && !isAdmin}
           >
             <Printer className="h-4 w-4 mr-2" />
-            Print Schedule
+            View Schedule
           </Button>
         )}
         {hasChanges && isEditMode && (
