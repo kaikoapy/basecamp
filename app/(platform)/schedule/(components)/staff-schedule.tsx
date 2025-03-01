@@ -77,32 +77,11 @@ const CalendarSchedule: React.FC = () => {
       return [];
     }
     
-    // Debug for Amr in salesStaffData
-    const amrRecord = salesStaffData.find(staff => 
-      staff.name && staff.name.includes("Amr") || 
-      String(staff._id) === "k577bd4dj73ar3d6jqbz4g5drh7b8s58"
-    );
-    
-    if (amrRecord) {
-      console.log("Found Amr in salesStaffData for defaultSalespeople:", amrRecord);
-    } else {
-      console.log("Amr not found in salesStaffData for defaultSalespeople");
-    }
-    
     // Map each staff member to their ID string
     const result = salesStaffData.map(staff => {
-      // Debug for Amr
-      if (staff.name && staff.name.includes("Amr")) {
-        console.log("Adding Amr to defaultSalespeople:", String(staff._id));
-      }
-      
       // Use the _id directly as the identifier
       return staff._id;
     });
-    
-    // Check if Amr's ID is in the result
-    const amrInResult = result.some(id => String(id) === "k577bd4dj73ar3d6jqbz4g5drh7b8s58");
-    console.log("Amr's ID in defaultSalespeople:", amrInResult);
     
     return result;
   }, [salesStaffData]);
@@ -127,53 +106,6 @@ const CalendarSchedule: React.FC = () => {
   // Single effect to handle both new and existing schedules
   useEffect(() => {
     if (!salesStaffData || scheduleData === undefined) return;
-
-    // Debug for Amr
-    if (salesStaffData) {
-      console.log("All staff data:", salesStaffData);
-      
-      // Look for any staff with "Amr" in their name
-      salesStaffData.forEach(staff => {
-        if (staff.name && staff.name.includes("Amr")) {
-          console.log("Found staff with Amr in name:", staff);
-          console.log("ID:", String(staff._id));
-        }
-      });
-      
-      // Try to find Amr in the staff data
-      const amrRecord = salesStaffData.find(staff => 
-        staff.name && staff.name.includes("Amr") || 
-        String(staff._id) === "k577bd4dj73ar3d6jqbz4g5drh7b8s58"
-      );
-      
-      if (amrRecord) {
-        console.log("Found Amr's record:", amrRecord);
-        console.log("Amr's ID:", String(amrRecord._id));
-        
-        // Check if Amr's ID is in the salespeople-list
-        if (scheduleData && scheduleData.containers && scheduleData.containers["salespeople-list"]) {
-          const amrInList = scheduleData.containers["salespeople-list"].includes(String(amrRecord._id));
-          console.log("Amr's ID in salespeople-list:", amrInList);
-        }
-        
-        // Check if Amr's ID is in any container
-        if (scheduleData && scheduleData.containers) {
-          Object.entries(scheduleData.containers).forEach(([containerId, items]) => {
-            if (containerId !== "salespeople-list" && containerId !== "special-labels-list") {
-              const amrItems = items.filter(item => 
-                item === String(amrRecord._id) || 
-                item.includes(String(amrRecord._id))
-              );
-              if (amrItems.length > 0) {
-                console.log(`Found Amr in container ${containerId}:`, amrItems);
-              }
-            }
-          });
-        }
-      } else {
-        console.log("Could not find Amr in staff data");
-      }
-    }
 
     // Don't update URL params if we're navigating to a non-existent schedule
     // This was causing issues with navigation
@@ -542,18 +474,6 @@ const CalendarSchedule: React.FC = () => {
 
   // Helper function to get display name from ID
   const getDisplayName = (id: string): string => {
-    // Debug for Amr's ID
-    if (id.includes("Amr") || id.includes("k577bd4dj73ar3d6jqbz4g5drh7b8s58")) {
-      console.log("Found Amr's ID in getDisplayName:", id);
-    }
-    
-    // Special case for Amr's ID
-    if (id === "k577bd4dj73ar3d6jqbz4g5drh7b8s58" || 
-        id.includes("k577bd4dj73ar3d6jqbz4g5drh7b8s58")) {
-      console.log("Returning Amr for ID:", id);
-      return "Amr";
-    }
-    
     // If it's a special label (handle both original and cloned special labels)
     if (id.startsWith("special:")) {
       // Extract the label name without the timestamp

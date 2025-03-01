@@ -45,9 +45,7 @@ export const speedDialContacts: SpeedDialContacts = {
     { name: "Ramon", phone: "(754) 368-6895" },
   ],
   salespeople: [
-    { name: "Ron", phone: "(239) 565-6765" },
     { name: "Juan", phone: "(305) 705-5822" }, 
-    { name: "Moudy", phone: "(786) 271-7515" },
     { name: "Kai", phone: "(786) 305-5161" },
     { name: "Gio", phone: "(786) 444-8322" },
     { name: "Amr", phone: "(305) 690-6038" },
@@ -57,8 +55,7 @@ export const speedDialContacts: SpeedDialContacts = {
     { name: "Steven", phone: "(310) 621-2905" },
   ],
   deliverySpecialists: [
-    { name: "Josh Sadov", phone: "(305) 690-6116" },
-    { name: "Daniel Arregoitia", phone: "(305) 651-2436" },
+    { name: "Daniel Arregoitia", phone: "(305) 690-6116" },
   ],
   external: {
     vfs: {
