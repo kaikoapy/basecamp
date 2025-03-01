@@ -107,6 +107,27 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     if (!salesStaffData || scheduleData === undefined) return;
 
+    // Log all staff data to inspect Amr's record
+    if (salesStaffData) {
+      console.log("DEBUG: All staff data:", salesStaffData);
+      
+      // Try to find Amr in the staff data
+      const amrRecord = salesStaffData.find(staff => 
+        staff.name && staff.name.includes("Amr") || 
+        String(staff._id) === "k57cd9h0m588y905ycmmv58res77jvxp" ||
+        String(staff._id) === "k578gxdhrb4rrbx38hy6fbtfnd7b2kdq"
+      );
+      
+      if (amrRecord) {
+        console.log("DEBUG: Found Amr's record:", amrRecord);
+        console.log("DEBUG: Amr's ID:", String(amrRecord._id));
+        console.log("DEBUG: Amr's name:", amrRecord.name);
+        console.log("DEBUG: Amr's displayName:", amrRecord.displayName);
+      } else {
+        console.log("DEBUG: Could not find Amr in staff data");
+      }
+    }
+
     // Don't update URL params if we're navigating to a non-existent schedule
     // This was causing issues with navigation
     if (scheduleData) {
@@ -484,6 +505,14 @@ const CalendarSchedule: React.FC = () => {
 
   // Helper function to get display name from ID
   const getDisplayName = (id: string): string => {
+    // Special case for Amr's ID
+    if (id === "k57cd9h0m588y905ycmmv58res77jvxp" || 
+        id.includes("k57cd9h0m588y905ycmmv58res77jvxp") ||
+        id === "k578gxdhrb4rrbx38hy6fbtfnd7b2kdq" || 
+        id.includes("k578gxdhrb4rrbx38hy6fbtfnd7b2kdq")) {
+      return "Amr";
+    }
+    
     // If it's a special label (handle both original and cloned special labels)
     if (id.startsWith("special:")) {
       // Extract the label name without the timestamp
