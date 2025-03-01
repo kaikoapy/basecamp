@@ -12,6 +12,7 @@ import {
 import { Protect } from "@clerk/nextjs";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   Tabs,
   TabsList,
@@ -143,6 +144,12 @@ export function ScheduleHeader({
   const handleSaveAndExit = () => {
     onSave();
     onToggleEditMode();
+    
+    // Show success toast
+    toast.success("Changes saved successfully", {
+      description: `The ${monthName} ${displayYear} schedule has been updated.`,
+      duration: 3000,
+    });
   };
 
   return (
@@ -284,7 +291,7 @@ export function ScheduleHeader({
             )}
             
             {hasChanges && isEditMode && (
-              <Button onClick={handleSaveAndExit} variant="default" className="bg-blue-600 hover:bg-blue-700" size="default">
+              <Button onClick={handleSaveAndExit} variant="default" className="bg-blue-500 hover:bg-blue-600" size="default">
                 Save Changes
               </Button>
             )}
