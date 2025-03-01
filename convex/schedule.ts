@@ -1,5 +1,6 @@
 import { mutation, query, internalAction } from "./_generated/server";
 import { v } from "convex/values";
+import { SalesStaffMember } from "./types";
 
 // Query to get schedule for a specific month/year
 export const getSchedule = query({
@@ -18,27 +19,34 @@ export const getSchedule = query({
 
 // Query to get all sales consultants from directory
 export const getSalesStaff = query({
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<SalesStaffMember[]> => {
+    console.info("[getSalesStaff] Starting query");
+    
     const salesStaff = await ctx.db
       .query("directory")
       .filter((q) => 
         q.or(
-          q.eq(q.field("position"), "New Car Sales Specialist"),
-          q.eq(q.field("position"), "Used Car Sales Specialist")
+          q.eq(q.field("position"), "New Sales Specialist"),
+          q.eq(q.field("position"), "Used Sales Specialist")
         )
       )
       .collect();
     
-    console.info("[getSalesStaff] Raw Sales Staff from Directory", { count: salesStaff.length });
+    console.info("[getSalesStaff] Raw sales staff:", salesStaff);
     
-    const mappedStaff = salesStaff.map(staff => ({
+    if (salesStaff.length === 0) {
+      console.info("[getSalesStaff] No sales staff found in directory");
+    }
+
+    const transformed = salesStaff.map(staff => ({
       ...staff,
-      type: staff.position.includes("New") ? "new" : "used"
+      type: staff.position.includes("New") ? "new" : "used" as "new" | "used",
+      displayName: staff.nickname || staff.name
     }));
     
-    console.info("[getSalesStaff] Mapped Sales Staff", { count: mappedStaff.length });
+    console.info("[getSalesStaff] Transformed sales staff:", transformed);
     
-    return mappedStaff;
+    return transformed;
   },
 });
 
@@ -133,6 +141,15 @@ export const getAllPositions = query({
     const positions = new Set(allStaff.map(staff => staff.position));
     console.info("[getAllPositions] Directory positions", { positions: Array.from(positions) });
     return Array.from(positions);
+  },
+});
+
+// Debug query to check directory contents
+export const debugDirectory = query({
+  handler: async (ctx) => {
+    const allStaff = await ctx.db.query("directory").collect();
+    console.info("[debugDirectory] All directory entries:", allStaff);
+    return allStaff;
   },
 });
 

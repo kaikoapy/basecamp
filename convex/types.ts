@@ -16,3 +16,17 @@ export interface Announcement {
     receivedAt: string;
   };
 }
+
+export interface SalesStaffMember {
+  _id: Id<"directory">;
+  name: string;
+  nickname?: string;
+  position: string;
+  type: "new" | "used";
+  displayName: string;
+  _creationTime: number;
+  number: string;
+  department: string;
+  extension: string;
+  email: string;
+}

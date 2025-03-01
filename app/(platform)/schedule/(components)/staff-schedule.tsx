@@ -13,7 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { SalespeopleList } from "./salespeople-list";
 import { SpecialLabels } from "./special-labels";
 import { CalendarDay } from "./calendar-day";
-import { parseName, getDaysInMonth, defaultSpecialLabels, daysOfWeek, defaultShifts } from "../utils";
+import { getDaysInMonth, defaultSpecialLabels, daysOfWeek, defaultShifts } from "../utils";
 import { isEqual } from "lodash";
 import { useQueryState } from "nuqs";
 import { createParser } from "nuqs";
@@ -55,7 +55,7 @@ const CalendarSchedule: React.FC = () => {
   // UI state
   const [activeId, setActiveId] = useState<string | null>(null);
   const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   // Load schedule and sales staff from Convex
   const scheduleData = useQuery(api.schedule.getSchedule, { 
@@ -70,12 +70,19 @@ const CalendarSchedule: React.FC = () => {
   const salesStaffData = useQuery(api.schedule.getSalesStaff);
   const createSchedule = useMutation(api.schedule.createSchedule);
 
-  // Transform sales staff data into the format we need - memoized to prevent unnecessary recalculations
+  // Memoize the default salespeople list
   const defaultSalespeople = useMemo(() => {
-    if (!salesStaffData) return [];
+    if (!salesStaffData || salesStaffData.length === 0) {
+      return [];
+    }
     
-    const transformed = salesStaffData.map(staff => `${staff.type}:${staff.name}`);
-    return transformed;
+    // Map each staff member to their ID string
+    const result = salesStaffData.map(staff => {
+      // Use the _id directly as the identifier
+      return staff._id;
+    });
+    
+    return result;
   }, [salesStaffData]);
 
   // Local state for all containers.
@@ -84,66 +91,82 @@ const CalendarSchedule: React.FC = () => {
     "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
   });
 
-  // When the sales staff data loads, update the salespeople list
+  // Update salespeople-list when defaultSalespeople changes
   useEffect(() => {
-    if (!salesStaffData) return;
-    
-    setContainers(prev => {
-      const newContainers = {
+    if (defaultSalespeople.length > 0 && containers["salespeople-list"].length === 0) {
+      setContainers(prev => ({
         ...prev,
         "salespeople-list": defaultSalespeople
-      };
-      return newContainers;
-    });
-  }, [defaultSalespeople, salesStaffData]);
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSalespeople]);
 
-  // When the DB schedule loads, merge it with our defaults
+  // Single effect to handle both new and existing schedules
   useEffect(() => {
-    if (scheduleData === undefined) return;
-    
-    const updateUrlParams = async () => {
-      if (scheduleData) {
-        await Promise.all([
-          setDisplayMonth(scheduleData.month),
-          setDisplayYear(scheduleData.year)
-        ]);
-      }
-    };
+    if (!salesStaffData || scheduleData === undefined) return;
 
+    // Update URL params if we have schedule data
+    if (scheduleData) {
+      setDisplayMonth(scheduleData.month);
+      setDisplayYear(scheduleData.year);
+    }
+
+    // For new schedules (scheduleData is null)
     if (scheduleData === null) {
+      console.log("Creating new schedule for", displayMonth, displayYear);
+      // Use current containers which should already have salespeople
       const initialContainers = {
-        "salespeople-list": defaultSalespeople,
-        "special-labels-list": defaultSpecialLabels.map(label => "special:" + label),
+        ...containers,
+        "salespeople-list": containers["salespeople-list"].length > 0 
+          ? containers["salespeople-list"] 
+          : defaultSalespeople,
+        "special-labels-list": containers["special-labels-list"].length > 0
+          ? containers["special-labels-list"]
+          : defaultSpecialLabels.map(label => "special:" + label),
       };
+      
       createSchedule({
         month: displayMonth,
         year: displayYear,
         containers: initialContainers,
       });
-      setContainers(initialContainers);
+      
+      // Only update containers if needed
+      if (JSON.stringify(containers) !== JSON.stringify(initialContainers)) {
+        setContainers(initialContainers);
+      }
       return;
     }
 
-    updateUrlParams();
-
+    // For existing schedules
     if (scheduleData.containers) {
-      const mergedSalespeople = [
-        ...new Set([
-          ...(scheduleData.containers["salespeople-list"] || []),
-          ...defaultSalespeople
-        ])
-      ];
+      console.log("Loading existing schedule for", scheduleData.month, scheduleData.year);
+      console.log("Schedule containers:", scheduleData.containers);
       
-      const newContainers = {
-        ...scheduleData.containers,
-        "salespeople-list": mergedSalespeople,
-        "special-labels-list": scheduleData.containers["special-labels-list"] || 
-          defaultSpecialLabels.map(label => "special:" + label),
-      };
+      // Check for any staff IDs in the schedule that don't match current staff
+      if (salesStaffData && salesStaffData.length > 0) {
+        const allStaffIds = new Set(salesStaffData.map(staff => String(staff._id)));
+        
+        // Check each container for staff IDs
+        Object.entries(scheduleData.containers).forEach(([containerId, items]) => {
+          if (containerId === "salespeople-list" || containerId === "special-labels-list") return;
+          
+          items.forEach(item => {
+            if (!item.startsWith("special:")) {
+              const baseId = item.includes("::") ? item.split("::")[0] : item;
+              if (!allStaffIds.has(baseId)) {
+                console.log("Staff ID not found in current staff:", baseId);
+              }
+            }
+          });
+        });
+      }
       
-      setContainers(newContainers);
+      setContainers(scheduleData.containers);
     }
-  }, [scheduleData, displayMonth, displayYear, createSchedule, defaultSalespeople, setDisplayMonth, setDisplayYear]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleData, salesStaffData, defaultSalespeople, displayMonth, displayYear, createSchedule]);
 
   // Get month name
   const monthName = new Date(displayYear, displayMonth - 1).toLocaleString('default', { month: 'long' });
@@ -199,12 +222,37 @@ const CalendarSchedule: React.FC = () => {
 
   // Memoize the filtered salespeople list
   const filteredSalespeople = useMemo(() => {
-    const list = containers["salespeople-list"] || [];
-    return list.filter(item => {
-      if (salesFilter === "all") return true;
-      return item.startsWith(salesFilter + ":");
+    // Get the list of salespeople to filter
+    const list = containers["salespeople-list"].length > 0 
+      ? containers["salespeople-list"] 
+      : defaultSalespeople;
+    
+    if (salesFilter === "all") {
+      return list;
+    }
+    
+    const filtered = list.filter(id => {
+      // Check for "new:" or "used:" prefix
+      if (id.startsWith("new:") && salesFilter === "new") return true;
+      if (id.startsWith("used:") && salesFilter === "used") return true;
+      
+      // Remove prefix if present
+      let cleanId = id;
+      if (id.startsWith("new:") || id.startsWith("used:")) {
+        cleanId = id.substring(id.indexOf(":") + 1);
+      }
+      
+      const staff = salesStaffData?.find(s => `${s._id}` === cleanId);
+      
+      // If staff not found, include in all filters to avoid hiding legacy data
+      if (!staff) return true;
+      
+      const matches = staff.type === salesFilter;
+      return matches;
     });
-  }, [containers, salesFilter]);
+    
+    return filtered;
+  }, [containers, salesFilter, defaultSalespeople, salesStaffData]);
 
   // Calendar days calculation
   const daysInMonth = getDaysInMonth(displayYear, displayMonth);
@@ -325,7 +373,7 @@ const CalendarSchedule: React.FC = () => {
     const fromContainer = active.data.current?.containerId;
     const toContainer = over.id.toString();
     const itemId = active.id.toString();
-    const originalName = parseName(itemId);
+    const originalName = getDisplayName(itemId);
 
     // If dropping into a sidebar, treat as removal.
     if (toContainer === "salespeople-list" || toContainer === "special-labels-list") {
@@ -349,19 +397,24 @@ const CalendarSchedule: React.FC = () => {
       // Dropping into a shift container.
       const targetDay = toContainer.split("-")[0];
       let duplicateFound = false;
-      Object.entries(containers).forEach(([key, items]) => {
-        if (key === "salespeople-list" || key === "special-labels-list") return;
-        const keyDay = key.split("-")[0];
-        if (keyDay === targetDay) {
-          if (fromContainer === key) return;
-          for (const item of items) {
-            if (parseName(item) === originalName) {
-              duplicateFound = true;
-              break;
+      
+      // Only check for duplicates if we have a valid name
+      if (originalName !== "Unknown") {
+        Object.entries(containers).forEach(([key, items]) => {
+          if (key === "salespeople-list" || key === "special-labels-list") return;
+          const keyDay = key.split("-")[0];
+          if (keyDay === targetDay) {
+            if (fromContainer === key) return;
+            for (const item of items) {
+              if (getDisplayName(item) === originalName) {
+                duplicateFound = true;
+                break;
+              }
             }
           }
-        }
-      });
+        });
+      }
+      
       if (duplicateFound) {
         setActiveId(null);
         return;
@@ -396,6 +449,44 @@ const CalendarSchedule: React.FC = () => {
 
   const handleDragCancel = () => {
     setActiveId(null);
+  };
+
+  // Helper function to get display name from ID
+  const getDisplayName = (id: string): string => {
+    // If it's a special label (handle both original and cloned special labels)
+    if (id.startsWith("special:")) {
+      // Extract the label name without the timestamp
+      const labelWithPossibleTimestamp = id.substring("special:".length);
+      // If it has a timestamp, remove it
+      return labelWithPossibleTimestamp.includes("::") 
+        ? labelWithPossibleTimestamp.split("::")[0] 
+        : labelWithPossibleTimestamp;
+    }
+    
+    // If it has a timestamp (cloned item)
+    const baseId = id.includes("::") ? id.split("::")[0] : id;
+    
+    // Check for "new:" or "used:" prefix and remove it
+    let cleanId = baseId;
+    if (baseId.startsWith("new:") || baseId.startsWith("used:")) {
+      cleanId = baseId.substring(baseId.indexOf(":") + 1);
+    }
+    
+    // Find the staff member
+    const staff = salesStaffData?.find(s => s._id === cleanId);
+    if (!staff) {
+      // For saved schedules, the ID might be in a different format
+      // Check if it's a string that contains a name
+      if (typeof cleanId === 'string' && cleanId.includes(" ")) {
+        // This might be a legacy format where the ID is actually a name
+        return cleanId.split(" ")[0]; // Return just the first name
+      }
+      return "Unknown";
+    }
+    
+    // Get only the first name
+    const displayName = staff.displayName || "";
+    return displayName.split(" ")[0];
   };
 
   return (
@@ -496,7 +587,7 @@ const CalendarSchedule: React.FC = () => {
         <DragOverlay>
           {activeId ? (
             <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm text-xs">
-              {parseName(activeId)}
+              {getDisplayName(activeId)}
             </div>
           ) : null}
         </DragOverlay>

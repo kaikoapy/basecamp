@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { DroppableContainer } from "./droppable-container";
 import { DraggableItem } from "./draggable-item";
-import { parseName, defaultShifts, daysOfWeek } from "../utils";
+import { defaultShifts, daysOfWeek } from "../utils";
 import { CopyScheduleButton } from "./copy-schedule-button";
 import { useMemo } from "react";
 import { api } from "@/convex/_generated/api";
@@ -32,6 +32,47 @@ export function CalendarDay({
 }: CalendarDayProps) {
   // Get shifts from database
   const shifts = useQuery(api.shifts.getShifts) ?? defaultShifts;
+  
+  // Get sales staff data for filtering
+  const salesStaffData = useQuery(api.schedule.getSalesStaff);
+
+  // Helper function to get display name from ID
+  const getDisplayName = (id: string): string => {
+    // If it's a special label
+    if (id.startsWith("special:")) {
+      // Extract the label name without the timestamp
+      const labelWithPossibleTimestamp = id.substring("special:".length);
+      // If it has a timestamp, remove it
+      return labelWithPossibleTimestamp.includes("::") 
+        ? labelWithPossibleTimestamp.split("::")[0] 
+        : labelWithPossibleTimestamp;
+    }
+    
+    // If it has a timestamp (cloned item)
+    const baseId = id.includes("::") ? id.split("::")[0] : id;
+    
+    // Check for "new:" or "used:" prefix and remove it
+    let cleanId = baseId;
+    if (baseId.startsWith("new:") || baseId.startsWith("used:")) {
+      cleanId = baseId.substring(baseId.indexOf(":") + 1);
+    }
+    
+    // Find the staff member
+    const staff = salesStaffData?.find(s => s._id === cleanId);
+    if (!staff) {
+      // For saved schedules, the ID might be in a different format
+      // Check if it's a string that contains a name
+      if (typeof cleanId === 'string' && cleanId.includes(" ")) {
+        // This might be a legacy format where the ID is actually a name
+        return cleanId.split(" ")[0]; // Return just the first name
+      }
+      return "Unknown";
+    }
+    
+    // Get only the first name
+    const displayName = staff.displayName || "";
+    return displayName.split(" ")[0];
+  };
 
   // Check if this is today's date
   const isToday = useMemo(() => {
@@ -46,7 +87,27 @@ export function CalendarDay({
     return items.filter(item => {
       if (item.startsWith("special:")) return true; // Always show special labels
       if (salesFilter === "all") return true;
-      return item.startsWith(salesFilter + ":");
+      
+      // Extract the base ID (remove timestamp if present)
+      const baseId = item.includes("::") ? item.split("::")[0] : item;
+      
+      // Check for "new:" or "used:" prefix
+      if (baseId.startsWith("new:") && salesFilter === "new") return true;
+      if (baseId.startsWith("used:") && salesFilter === "used") return true;
+      
+      // Remove prefix if present
+      let cleanId = baseId;
+      if (baseId.startsWith("new:") || baseId.startsWith("used:")) {
+        cleanId = baseId.substring(baseId.indexOf(":") + 1);
+      }
+      
+      // Find the staff member and check their type
+      const staff = salesStaffData?.find(s => s._id === cleanId);
+      
+      // If staff not found, show in all filters to avoid hiding legacy data
+      if (!staff) return true;
+      
+      return staff.type === salesFilter;
     });
   };
   
@@ -116,7 +177,7 @@ export function CalendarDay({
                           containerId={containerId}
                         >
                           <div className={`${getItemBgColor(isSpecial)} ${isSpecial ? "border border-black" : ""} text-gray-800 px-3 py-2 rounded-md shadow-sm text-xs`}>
-                            {parseName(item)}
+                            {getDisplayName(item)}
                           </div>
                         </DraggableItem>
                       );
@@ -132,7 +193,7 @@ export function CalendarDay({
                         key={item}
                         className={`${getItemBgColor(isSpecial)} ${isSpecial ? "border border-black" : ""} text-gray-900 px-3 py-1 rounded-md font-semibold shadow-sm text-sm`}
                       >
-                        {parseName(item)}
+                        {getDisplayName(item)}
                       </div>
                     );
                   })}

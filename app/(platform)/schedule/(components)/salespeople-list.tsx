@@ -2,36 +2,22 @@
 
 import { DroppableContainer } from "./droppable-container";
 import { DraggableItem } from "./draggable-item";
-import { parseName } from "../utils";
-import { Id } from "@/convex/_generated/dataModel";
+import { SalesStaffMember } from "@/convex/types";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface SalesStaffMember {
-  type: string;
-  _id: Id<"directory">;
-  _creationTime: number;
-  nickname?: string;
-  number: string;
-  name: string;
-  position: string;
-  department: string;
-  extension: string;
-  email: string;
-}
-
-interface SalespeopleListProps {
+export interface SalespeopleListProps {
   salesFilter: "all" | "new" | "used";
   setSalesFilter: (filter: "all" | "new" | "used") => void;
   filteredSalespeople: string[];
   salesStaffData: SalesStaffMember[] | undefined;
 }
 
-export function SalespeopleList({
+export const SalespeopleList: React.FC<SalespeopleListProps> = ({
   salesFilter,
   setSalesFilter,
   filteredSalespeople,
-  salesStaffData,
-}: SalespeopleListProps) {
+  salesStaffData
+}) => {
   return (
     <section className="p-4 bg-gray-50 rounded-md shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Salespeople</h2>
@@ -71,7 +57,7 @@ export function SalespeopleList({
                   className="transition-none"
                 >
                   <div className="bg-white text-gray-800 border border-gray-200 px-3 py-2 rounded-md shadow-sm hover:shadow-md text-xs">
-                    {parseName(item)}
+                    {salesStaffData?.find(staff => staff._id === item)?.displayName?.split(" ")[0] || "Unknown"}
                   </div>
                 </DraggableItem>
               ))
