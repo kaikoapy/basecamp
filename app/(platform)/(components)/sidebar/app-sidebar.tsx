@@ -211,7 +211,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           // },
           {
             title: "Dealer Trade Stores",
-            url: "/dealer-trade-stores",
+            action: () => showDialog("dealer-trade-stores"),
+            isModal: true,
           },
           {
             title: "Gas Savings Calculator",

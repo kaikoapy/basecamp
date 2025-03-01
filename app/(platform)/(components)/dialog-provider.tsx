@@ -27,6 +27,9 @@ export function DialogProvider() {
       <DialogWrapper name="gas-savings">
         {Dialogs.GasSavingsDialog}
       </DialogWrapper>
+      <DialogWrapper name="dealer-trade-stores">
+        {Dialogs.DealerTradeStoresDialog}
+      </DialogWrapper>
     </>
   );
 } 
