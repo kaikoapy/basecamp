@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Heebo, Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "@/components/providers";
 import { Suspense } from "react";
@@ -40,7 +40,7 @@ export default function RootLayout({
                 {children}
               </Providers>
             </NuqsAdapter>
-            <Toaster />
+            <Toaster richColors position="bottom-right" duration={6000} />
           </Suspense>
         </TooltipProvider>
       </body>
