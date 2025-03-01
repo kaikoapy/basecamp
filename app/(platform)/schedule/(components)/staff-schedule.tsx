@@ -114,8 +114,7 @@ const CalendarSchedule: React.FC = () => {
       // Try to find Amr in the staff data
       const amrRecord = salesStaffData.find(staff => 
         staff.name && staff.name.includes("Amr") || 
-        String(staff._id) === "k57cd9h0m588y905ycmmv58res77jvxp" ||
-        String(staff._id) === "k578gxdhrb4rrbx38hy6fbtfnd7b2kdq"
+        String(staff._id) === "k57en2kmp6esty9w7qg19gzb8s7af2fw"
       );
       
       if (amrRecord) {
@@ -506,10 +505,8 @@ const CalendarSchedule: React.FC = () => {
   // Helper function to get display name from ID
   const getDisplayName = (id: string): string => {
     // Special case for Amr's ID
-    if (id === "k57cd9h0m588y905ycmmv58res77jvxp" || 
-        id.includes("k57cd9h0m588y905ycmmv58res77jvxp") ||
-        id === "k578gxdhrb4rrbx38hy6fbtfnd7b2kdq" || 
-        id.includes("k578gxdhrb4rrbx38hy6fbtfnd7b2kdq")) {
+    if (id === "k57en2kmp6esty9w7qg19gzb8s7af2fw" || 
+        id.includes("k57en2kmp6esty9w7qg19gzb8s7af2fw")) {
       return "Amr";
     }
     
