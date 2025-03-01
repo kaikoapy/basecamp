@@ -68,6 +68,7 @@ const CalendarSchedule: React.FC = () => {
     year: Number(displayMonth) === 1 ? Number(displayYear) - 1 : Number(displayYear)
   });
   const salesStaffData = useQuery(api.schedule.getSalesStaff);
+  const updateSchedule = useMutation(api.schedule.updateSchedule);
   const createSchedule = useMutation(api.schedule.createSchedule);
 
   // Memoize the default salespeople list
@@ -106,17 +107,46 @@ const CalendarSchedule: React.FC = () => {
   useEffect(() => {
     if (!salesStaffData || scheduleData === undefined) return;
 
-    // Update URL params if we have schedule data
+    // Don't update URL params if we're navigating to a non-existent schedule
+    // This was causing issues with navigation
     if (scheduleData) {
-      setDisplayMonth(scheduleData.month);
-      setDisplayYear(scheduleData.year);
-    }
-
-    // For new schedules (scheduleData is null)
-    if (scheduleData === null) {
-      console.log("Creating new schedule for", displayMonth, displayYear);
-      // Create a clean initial container with ONLY salespeople and special labels
-      // Do NOT spread the entire containers object which would carry over previous month's assignments
+      // Only update URL params if the schedule exists and the values are different
+      if (scheduleData.month !== Number(displayMonth) || scheduleData.year !== Number(displayYear)) {
+        setDisplayMonth(scheduleData.month);
+        setDisplayYear(scheduleData.year);
+      }
+      
+      // For existing schedules, load the containers
+      if (scheduleData.containers) {
+        console.log("Loading existing schedule for", scheduleData.month, scheduleData.year);
+        console.log("Schedule containers:", scheduleData.containers);
+        
+        // Check for any staff IDs in the schedule that don't match current staff
+        if (salesStaffData && salesStaffData.length > 0) {
+          const allStaffIds = new Set(salesStaffData.map(staff => String(staff._id)));
+          
+          // Check each container for staff IDs
+          Object.entries(scheduleData.containers).forEach(([containerId, items]) => {
+            if (containerId === "salespeople-list" || containerId === "special-labels-list") return;
+            
+            items.forEach(item => {
+              if (!item.startsWith("special:")) {
+                const baseId = item.includes("::") ? item.split("::")[0] : item;
+                if (!allStaffIds.has(baseId)) {
+                  console.log("Staff ID not found in current staff:", baseId);
+                }
+              }
+            });
+          });
+        }
+        
+        setContainers(scheduleData.containers);
+      }
+    } else if (scheduleData === null) {
+      // For non-existent schedules, just initialize the containers with salespeople and special labels
+      // but DON'T create a new schedule in the database yet
+      console.log("Schedule doesn't exist for", displayMonth, displayYear);
+      
       const initialContainers = {
         "salespeople-list": containers["salespeople-list"].length > 0 
           ? containers["salespeople-list"] 
@@ -124,50 +154,15 @@ const CalendarSchedule: React.FC = () => {
         "special-labels-list": containers["special-labels-list"].length > 0
           ? containers["special-labels-list"]
           : defaultSpecialLabels.map(label => "special:" + label),
-        // No other containers from previous month are included
       };
-      
-      createSchedule({
-        month: displayMonth,
-        year: displayYear,
-        containers: initialContainers,
-      });
       
       // Only update containers if needed
       if (JSON.stringify(containers) !== JSON.stringify(initialContainers)) {
         setContainers(initialContainers);
       }
-      return;
-    }
-
-    // For existing schedules
-    if (scheduleData.containers) {
-      console.log("Loading existing schedule for", scheduleData.month, scheduleData.year);
-      console.log("Schedule containers:", scheduleData.containers);
-      
-      // Check for any staff IDs in the schedule that don't match current staff
-      if (salesStaffData && salesStaffData.length > 0) {
-        const allStaffIds = new Set(salesStaffData.map(staff => String(staff._id)));
-        
-        // Check each container for staff IDs
-        Object.entries(scheduleData.containers).forEach(([containerId, items]) => {
-          if (containerId === "salespeople-list" || containerId === "special-labels-list") return;
-          
-          items.forEach(item => {
-            if (!item.startsWith("special:")) {
-              const baseId = item.includes("::") ? item.split("::")[0] : item;
-              if (!allStaffIds.has(baseId)) {
-                console.log("Staff ID not found in current staff:", baseId);
-              }
-            }
-          });
-        });
-      }
-      
-      setContainers(scheduleData.containers);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheduleData, salesStaffData, defaultSalespeople, displayMonth, displayYear, createSchedule]);
+  }, [scheduleData, salesStaffData, defaultSalespeople, displayMonth, displayYear]);
 
   // Get month name
   const monthName = new Date(displayYear, displayMonth - 1).toLocaleString('default', { month: 'long' });
@@ -175,6 +170,8 @@ const CalendarSchedule: React.FC = () => {
   const handlePrevMonth = async () => {
     const newMonth = Number(displayMonth) === 1 ? 12 : Number(displayMonth) - 1;
     const newYear = Number(displayMonth) === 1 ? Number(displayYear) - 1 : Number(displayYear);
+    
+    console.log("Navigating to previous month:", newMonth, newYear);
     
     await Promise.all([
       setDisplayMonth(newMonth),
@@ -185,6 +182,8 @@ const CalendarSchedule: React.FC = () => {
   const handleNextMonth = async () => {
     const newMonth = Number(displayMonth) === 12 ? 1 : Number(displayMonth) + 1;
     const newYear = Number(displayMonth) === 12 ? Number(displayYear) + 1 : Number(displayYear);
+    
+    console.log("Navigating to next month:", newMonth, newYear);
     
     await Promise.all([
       setDisplayMonth(newMonth),
@@ -200,9 +199,15 @@ const CalendarSchedule: React.FC = () => {
 
   // Compute hasChanges by comparing current state with database state
   const hasChanges = useMemo(() => {
-    if (!scheduleData?.containers) return false;
+    if (!scheduleData?.containers) {
+      // If there's no schedule in the database, consider it changed if there are any assignments
+      const hasAssignments = Object.entries(containers).some(([key, items]) => {
+        return key !== "salespeople-list" && key !== "special-labels-list" && items.length > 0;
+      });
+      return hasAssignments;
+    }
 
-    // Get schedule-only containers (excluding salespeople and special labels)@
+    // Get schedule-only containers (excluding salespeople and special labels)
     const getScheduleContainers = (containers: Record<string, string[]>) => {
       const cleaned: Record<string, string[]> = {};
       Object.entries(containers).forEach(([key, items]) => {
@@ -218,8 +223,6 @@ const CalendarSchedule: React.FC = () => {
 
     return !isEqual(currentSchedule, dbSchedule);
   }, [containers, scheduleData]);
-
-  const updateSchedule = useMutation(api.schedule.updateSchedule);
 
   // Memoize the filtered salespeople list
   const filteredSalespeople = useMemo(() => {
@@ -314,11 +317,31 @@ const CalendarSchedule: React.FC = () => {
       }
     });
 
-    await updateSchedule({ 
-      month: displayMonth, 
-      year: displayYear, 
-      containers: cleanedContainers 
-    });
+    // Ensure salespeople-list and special-labels-list are included
+    if (!cleanedContainers["salespeople-list"]) {
+      cleanedContainers["salespeople-list"] = defaultSalespeople;
+    }
+    
+    if (!cleanedContainers["special-labels-list"]) {
+      cleanedContainers["special-labels-list"] = defaultSpecialLabels.map(label => "special:" + label);
+    }
+
+    if (scheduleData === null) {
+      // Create a new schedule if it doesn't exist
+      console.log("Creating new schedule with containers:", cleanedContainers);
+      await createSchedule({ 
+        month: displayMonth, 
+        year: displayYear, 
+        containers: cleanedContainers 
+      });
+    } else {
+      // Update existing schedule
+      await updateSchedule({ 
+        month: displayMonth, 
+        year: displayYear, 
+        containers: cleanedContainers 
+      });
+    }
   };
 
   const handlePrint = () => {
@@ -351,6 +374,13 @@ const CalendarSchedule: React.FC = () => {
 
   const handleTogglePublish = async () => {
     if (!scheduleData) return;
+    
+    // Don't try to toggle publish for a non-existent schedule
+    if (scheduleData === null) {
+      console.log("Cannot toggle publish for a non-existent schedule");
+      return;
+    }
+    
     await togglePublish({
       month: displayMonth,
       year: displayYear,
@@ -557,10 +587,27 @@ const CalendarSchedule: React.FC = () => {
               onPrint={handlePrint}
               onSave={handleSave}
             />
+            
+            {/* Notification banner for non-existent schedule */}
+            {scheduleData === null && isAdmin && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded mb-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium">This schedule doesn&apos;t exist yet</p>
+                  <p className="text-sm">Click &quot;Create Schedule&quot; to create it.</p>
+                </div>
+              </div>
+            )}
+            
             <div className="overflow-auto h-[calc(100vh-100px)]">
               {!scheduleData?.published && !isAdmin ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-lg text-gray-500 font-medium">Schedule Not Available</p>
+                </div>
+              ) : scheduleData === null && !isAdmin ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4">
+                  <p className="text-lg text-gray-500 font-medium">
+                    This schedule doesn&apos;t exist yet
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-7 gap-1">

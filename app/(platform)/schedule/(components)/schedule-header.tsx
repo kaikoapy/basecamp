@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ChevronLeft, ChevronRight, Pencil, Plus, Printer } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Printer } from "lucide-react";
 import { Protect } from "@clerk/nextjs";
 import { Doc } from "@/convex/_generated/dataModel";
 
@@ -47,7 +47,8 @@ export function ScheduleHeader({
   onPrint,
   onSave,
 }: ScheduleHeaderProps) {
-  const isNextButtonDisabled = !scheduleData || (!scheduleData.published && !isAdmin);
+  // Always allow navigation for admins
+  const isNextButtonDisabled = !isAdmin && (!scheduleData || !scheduleData.published);
 
   return (
     <div className="flex justify-between items-center mb-4 pb-4 border-b">
@@ -60,7 +61,8 @@ export function ScheduleHeader({
             onClick={onPrevMonth}
             variant="outline"
             size="icon"
-            disabled={!prevScheduleData?.published && !isAdmin}
+            // Always allow navigation for admins
+            disabled={!isAdmin && (!prevScheduleData || !prevScheduleData.published)}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -70,16 +72,12 @@ export function ScheduleHeader({
             size="icon"
             disabled={isNextButtonDisabled}
           >
-            {scheduleData ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <Plus className="h-4 w-4" />
-            )}
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
       <div className="flex items-center gap-4">
-        {scheduleData && (
+        {scheduleData ? (
           <>
             <Protect role="org:admin">
               <Button
@@ -102,6 +100,11 @@ export function ScheduleHeader({
               </div>
             </Protect>
           </>
+        ) : isAdmin && (
+          // Show create button for non-existent schedules
+          <Button onClick={onSave} variant="default" size="default">
+            Create Schedule
+          </Button>
         )}
         <Button
           onClick={onPrint}
