@@ -1,6 +1,7 @@
 import { mutation, query, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { SalesStaffMember } from "./types";
+import { Id } from "./_generated/dataModel";
 
 // Query to get schedule for a specific month/year
 export const getSchedule = query({
@@ -47,6 +48,54 @@ export const getSalesStaff = query({
     
     if (salesStaff.length === 0) {
       console.info("[getSalesStaff] No sales staff found in directory");
+      
+      // Check if we're in production and need to handle legacy data
+      // This is a fallback for production where the directory might be empty or different
+      const schedules = await ctx.db.query("schedule").collect();
+      
+      if (schedules.length > 0) {
+        console.info("[getSalesStaff] Found schedules, checking for legacy salespeople data");
+        
+        // Extract unique salespeople from all schedules
+        const legacySalespeople = new Set<string>();
+        
+        schedules.forEach(schedule => {
+          if (schedule.containers && schedule.containers["salespeople-list"]) {
+            schedule.containers["salespeople-list"].forEach((id: string) => {
+              // If it's a name with a prefix (like "used:Alex Reynaldos")
+              if ((id.startsWith("new:") || id.startsWith("used:")) && id.includes(" ")) {
+                legacySalespeople.add(id);
+              }
+            });
+          }
+        });
+        
+        if (legacySalespeople.size > 0) {
+          console.info("[getSalesStaff] Found legacy salespeople:", Array.from(legacySalespeople));
+          
+          // Convert legacy salespeople to SalesStaffMember format
+          const legacyStaff = Array.from(legacySalespeople).map(id => {
+            const isNew = id.startsWith("new:");
+            const name = id.substring(id.indexOf(":") + 1);
+            
+            return {
+              _id: id as unknown as Id<"directory">, // Cast to the proper type
+              name,
+              position: isNew ? "New Sales Specialist" : "Used Sales Specialist",
+              type: isNew ? "new" : "used",
+              displayName: name,
+              _creationTime: 0,
+              // Add missing required fields with default values
+              number: "",
+              department: isNew ? "New Car Sales" : "Used Car Sales",
+              extension: "",
+              email: ""
+            } as SalesStaffMember;
+          });
+          
+          return legacyStaff;
+        }
+      }
     }
 
     const transformed = salesStaff.map(staff => ({
