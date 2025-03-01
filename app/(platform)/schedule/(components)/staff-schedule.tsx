@@ -10,8 +10,6 @@ import {
 } from "@dnd-kit/core";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { SalespeopleList } from "./salespeople-list";
-import { SpecialLabels } from "./special-labels";
 import { CalendarDay } from "./calendar-day";
 import { getDaysInMonth, defaultSpecialLabels, daysOfWeek, defaultShifts } from "../utils";
 import { isEqual } from "lodash";
@@ -20,6 +18,8 @@ import { createParser } from "nuqs";
 import { useAdmin } from "@/hooks/use-admin";
 import { ScheduleHeader } from "./schedule-header";
 import { generateSchedulePDF } from "../utils/generate-pdf";
+import { Button } from "@/components/ui/button";
+import { Filter } from "lucide-react";
 
 const numberParser = createParser({
   parse: (value: string) => parseInt(value),
@@ -56,6 +56,7 @@ const CalendarSchedule: React.FC = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
   const [isEditMode, setIsEditMode] = useState(true);
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   // Load schedule and sales staff from Convex
   const scheduleData = useQuery(api.schedule.getSchedule, { 
@@ -215,40 +216,6 @@ const CalendarSchedule: React.FC = () => {
 
     return !isEqual(currentSchedule, dbSchedule);
   }, [containers, scheduleData]);
-
-  // Memoize the filtered salespeople list
-  const filteredSalespeople = useMemo(() => {
-    // Get the list of salespeople to filter
-    const list = containers["salespeople-list"].length > 0 
-      ? containers["salespeople-list"] 
-      : defaultSalespeople;
-    
-    if (salesFilter === "all") {
-      return list;
-    }
-    
-    const filtered = list.filter(id => {
-      // Check for "new:" or "used:" prefix
-      if (id.startsWith("new:") && salesFilter === "new") return true;
-      if (id.startsWith("used:") && salesFilter === "used") return true;
-      
-      // Remove prefix if present
-      let cleanId = id;
-      if (id.startsWith("new:") || id.startsWith("used:")) {
-        cleanId = id.substring(id.indexOf(":") + 1);
-      }
-      
-      const staff = salesStaffData?.find(s => `${s._id}` === cleanId);
-      
-      // If staff not found, include in all filters to avoid hiding legacy data
-      if (!staff) return true;
-      
-      const matches = staff.type === salesFilter;
-      return matches;
-    });
-    
-    return filtered;
-  }, [containers, salesFilter, defaultSalespeople, salesStaffData]);
 
   // Calendar days calculation
   const daysInMonth = getDaysInMonth(displayYear, displayMonth);
@@ -591,22 +558,8 @@ const CalendarSchedule: React.FC = () => {
           <p className="text-lg text-gray-500 font-medium">Loading...</p>
         </div>
       ) : (
-        <div className="flex h-screen">
-          {/* Sidebar - only show in edit mode */}
-          {isEditMode && (
-            <div className="w-1/5 p-4 border-r">
-              <SalespeopleList
-                salesFilter={salesFilter}
-                setSalesFilter={setSalesFilter}
-                filteredSalespeople={filteredSalespeople}
-                salesStaffData={salesStaffData}
-                lastUpdated={scheduleData?.updatedAt}
-              />
-              <SpecialLabels labels={containers["special-labels-list"] || []} />
-            </div>
-          )}
-          {/* Calendar */}
-          <div className={isEditMode ? "w-4/5 p-4" : "w-full p-4"}>
+        <div className="flex flex-col h-screen">
+          <div className="p-4">
             <ScheduleHeader 
               monthName={monthName}
               displayYear={displayYear}
@@ -624,6 +577,58 @@ const CalendarSchedule: React.FC = () => {
               onSave={handleSave}
             />
             
+            {/* Filter button */}
+            {isEditMode && (
+              <div className="flex justify-end mb-2 relative">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-1"
+                  onClick={() => setShowFilterOptions(!showFilterOptions)}
+                >
+                  <Filter className="h-4 w-4" />
+                  Filter: {salesFilter === "all" ? "All" : salesFilter === "new" ? "New" : "Used"}
+                </Button>
+                
+                {showFilterOptions && (
+                  <div className="absolute right-0 top-10 bg-white shadow-md rounded-md border border-gray-200 p-2 z-50">
+                    <div className="flex flex-col gap-1">
+                      <Button 
+                        variant={salesFilter === "all" ? "default" : "ghost"} 
+                        size="sm"
+                        onClick={() => {
+                          setSalesFilter("all");
+                          setShowFilterOptions(false);
+                        }}
+                      >
+                        All
+                      </Button>
+                      <Button 
+                        variant={salesFilter === "new" ? "default" : "ghost"} 
+                        size="sm"
+                        onClick={() => {
+                          setSalesFilter("new");
+                          setShowFilterOptions(false);
+                        }}
+                      >
+                        New
+                      </Button>
+                      <Button 
+                        variant={salesFilter === "used" ? "default" : "ghost"} 
+                        size="sm"
+                        onClick={() => {
+                          setSalesFilter("used");
+                          setShowFilterOptions(false);
+                        }}
+                      >
+                        Used
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
             {/* Notification banner for non-existent schedule */}
             {scheduleData === null && isAdmin && (
               <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded mb-4 flex items-center justify-between">
@@ -634,7 +639,7 @@ const CalendarSchedule: React.FC = () => {
               </div>
             )}
             
-            <div className="overflow-auto h-[calc(100vh-100px)]">
+            <div className="overflow-auto h-[calc(100vh-150px)]">
               {!scheduleData?.published && !isAdmin ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-lg text-gray-500 font-medium">Schedule Not Available</p>
@@ -664,6 +669,7 @@ const CalendarSchedule: React.FC = () => {
                           onUpdateContainers={() => {}}
                           isEditMode={false}
                           salesFilter={salesFilter}
+                          setSalesFilter={setSalesFilter}
                         />
                       </div>
                     ) : (
@@ -682,6 +688,7 @@ const CalendarSchedule: React.FC = () => {
                         }}
                         isEditMode={isEditMode}
                         salesFilter={salesFilter}
+                        setSalesFilter={setSalesFilter}
                       />
                     )
                   ))}
