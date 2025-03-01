@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ChevronLeft, ChevronRight, Pencil, Printer, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Printer, ChevronDown } from "lucide-react";
 import { Protect } from "@clerk/nextjs";
 import { Doc } from "@/convex/_generated/dataModel";
 
@@ -91,48 +91,52 @@ export function ScheduleHeader({
             <div className="relative">
               <Button 
                 variant="outline" 
-                size="sm" 
-                className="flex items-center gap-1"
+                size="default" 
+                className="flex items-center gap-1 bg-white border-gray-300 hover:bg-gray-50"
                 onClick={() => setShowFilterOptions(!showFilterOptions)}
               >
-                <Filter className="h-4 w-4" />
-                Filter: {salesFilter === "all" ? "All" : salesFilter === "new" ? "New" : "Used"}
+                <span className="text-gray-700">
+                  {salesFilter === "all" ? "All Sales Staff" : 
+                   salesFilter === "new" ? "New Car Sales" : "Used Car Sales"}
+                </span>
+                <ChevronDown className="h-4 w-4 ml-1 text-gray-500" />
               </Button>
               
               {showFilterOptions && (
-                <div className="absolute right-0 top-10 bg-white shadow-md rounded-md border border-gray-200 p-2 z-50">
-                  <div className="flex flex-col gap-1">
-                    <Button 
-                      variant={salesFilter === "all" ? "default" : "ghost"} 
-                      size="sm"
-                      onClick={() => {
-                        setSalesFilter("all");
-                        setShowFilterOptions(false);
-                      }}
-                    >
-                      All
-                    </Button>
-                    <Button 
-                      variant={salesFilter === "new" ? "default" : "ghost"} 
-                      size="sm"
-                      onClick={() => {
-                        setSalesFilter("new");
-                        setShowFilterOptions(false);
-                      }}
-                    >
-                      New
-                    </Button>
-                    <Button 
-                      variant={salesFilter === "used" ? "default" : "ghost"} 
-                      size="sm"
-                      onClick={() => {
-                        setSalesFilter("used");
-                        setShowFilterOptions(false);
-                      }}
-                    >
-                      Used
-                    </Button>
-                  </div>
+                <div className="absolute right-0 top-full mt-1 bg-white shadow-md rounded-md border border-gray-200 p-1 z-50 min-w-[180px]">
+                  <Button 
+                    variant={salesFilter === "all" ? "default" : "ghost"} 
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setSalesFilter("all");
+                      setShowFilterOptions(false);
+                    }}
+                  >
+                    All Sales Staff
+                  </Button>
+                  <Button 
+                    variant={salesFilter === "new" ? "default" : "ghost"} 
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setSalesFilter("new");
+                      setShowFilterOptions(false);
+                    }}
+                  >
+                    New Car Sales
+                  </Button>
+                  <Button 
+                    variant={salesFilter === "used" ? "default" : "ghost"} 
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setSalesFilter("used");
+                      setShowFilterOptions(false);
+                    }}
+                  >
+                    Used Car Sales
+                  </Button>
                 </div>
               )}
             </div>
@@ -168,10 +172,11 @@ export function ScheduleHeader({
             onClick={onPrint}
             variant="outline"
             size="default"
+            className="bg-black text-white hover:bg-zinc-800 hover:text-white border-black transition-colors"
             disabled={!scheduleData?.published && !isAdmin}
           >
             <Printer className="h-4 w-4 mr-2" />
-            Download Schedule
+            Print Schedule
           </Button>
         )}
         {hasChanges && isEditMode && (

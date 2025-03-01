@@ -53,7 +53,7 @@ const CalendarSchedule: React.FC = () => {
   // UI state
   const [activeId, setActiveId] = useState<string | null>(null);
   const [salesFilter, setSalesFilter] = useState<"all" | "new" | "used">("all");
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
 
   // Load schedule and sales staff from Convex
@@ -300,7 +300,7 @@ const CalendarSchedule: React.FC = () => {
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     if (!shifts) return;
     
     // Convert CalendarDayInfo[] to (number | null)[]
@@ -313,7 +313,8 @@ const CalendarSchedule: React.FC = () => {
       containers: scheduleData.containers
     } : null;
     
-    generateSchedulePDF({
+    // Generate PDF and get the blob URL
+    const pdfUrl = await generateSchedulePDF({
       monthName,
       currentYear: displayYear,
       currentMonth: displayMonth,
@@ -323,6 +324,9 @@ const CalendarSchedule: React.FC = () => {
       salesFilter,
       shifts: shifts,
     });
+    
+    // Simply open in a new tab - let the PDF metadata handle the display name
+    window.open(pdfUrl, '_blank');
   };
 
   // Add togglePublish mutation

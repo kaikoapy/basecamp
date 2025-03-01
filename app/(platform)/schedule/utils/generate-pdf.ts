@@ -97,6 +97,15 @@ export async function generateSchedulePDF({
     format: "a4",
   });
 
+  // Set PDF metadata for better browser display
+  const title = `${monthName.toLowerCase()}-${salesFilter}-sales-schedule`;
+  doc.setProperties({
+    title: title,
+    subject: `Sales Schedule for ${monthName} ${currentYear}`,
+    author: "Volvo Cars North Miami",
+    creator: "Schedule Manager"
+  });
+
   // Define a blue color palette.
   const primaryBlue: [number, number, number] = [0, 48, 87];
   const lightBlue: [number, number, number] = [210, 225, 245];
@@ -340,5 +349,7 @@ export async function generateSchedulePDF({
     }
   });
 
-  doc.save(`${monthName.toLowerCase()}-${salesFilter}-sales-schedule.pdf`);
+  // Return blob URL instead of saving
+  const pdfBlob = doc.output('blob');
+  return URL.createObjectURL(pdfBlob);
 }
