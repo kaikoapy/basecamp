@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ChevronLeft, ChevronRight, Pencil, Printer } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Printer, Filter } from "lucide-react";
 import { Protect } from "@clerk/nextjs";
 import { Doc } from "@/convex/_generated/dataModel";
 
@@ -30,6 +30,10 @@ interface ScheduleHeaderProps {
   onTogglePublish: () => void;
   onPrint: () => void;
   onSave: () => void;
+  salesFilter: "all" | "new" | "used";
+  setSalesFilter: (filter: "all" | "new" | "used") => void;
+  showFilterOptions: boolean;
+  setShowFilterOptions: (show: boolean) => void;
 }
 
 export function ScheduleHeader({
@@ -46,6 +50,10 @@ export function ScheduleHeader({
   onTogglePublish,
   onPrint,
   onSave,
+  salesFilter,
+  setSalesFilter,
+  showFilterOptions,
+  setShowFilterOptions
 }: ScheduleHeaderProps) {
   // Always allow navigation for admins
   const isNextButtonDisabled = !isAdmin && (!scheduleData || !scheduleData.published);
@@ -79,25 +87,74 @@ export function ScheduleHeader({
       <div className="flex items-center gap-4">
         {scheduleData ? (
           <>
-            <Protect role="org:admin">
-              <Button
-                onClick={onToggleEditMode}
-                variant="outline"
-                size="default"
+            {/* Filter dropdown - always visible */}
+            <div className="relative">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => setShowFilterOptions(!showFilterOptions)}
               >
-                <Pencil className="h-4 w-4 mr-2" />
-                {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
+                <Filter className="h-4 w-4" />
+                Filter: {salesFilter === "all" ? "All" : salesFilter === "new" ? "New" : "Used"}
               </Button>
+              
+              {showFilterOptions && (
+                <div className="absolute right-0 top-10 bg-white shadow-md rounded-md border border-gray-200 p-2 z-50">
+                  <div className="flex flex-col gap-1">
+                    <Button 
+                      variant={salesFilter === "all" ? "default" : "ghost"} 
+                      size="sm"
+                      onClick={() => {
+                        setSalesFilter("all");
+                        setShowFilterOptions(false);
+                      }}
+                    >
+                      All
+                    </Button>
+                    <Button 
+                      variant={salesFilter === "new" ? "default" : "ghost"} 
+                      size="sm"
+                      onClick={() => {
+                        setSalesFilter("new");
+                        setShowFilterOptions(false);
+                      }}
+                    >
+                      New
+                    </Button>
+                    <Button 
+                      variant={salesFilter === "used" ? "default" : "ghost"} 
+                      size="sm"
+                      onClick={() => {
+                        setSalesFilter("used");
+                        setShowFilterOptions(false);
+                      }}
+                    >
+                      Used
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <Protect role="org:admin">
               <div className="flex items-center space-x-2">
                 <Switch
                   id="publish-schedule"
                   checked={scheduleData.published ?? false}
                   onCheckedChange={onTogglePublish}
                 />
-                <Label htmlFor="publish-schedule" className="w-16 text-sm">
+                <Label htmlFor="publish-schedule" className="text-sm">
                   {scheduleData.published ? "Published" : "Draft"}
                 </Label>
               </div>
+              <Button
+                onClick={onToggleEditMode}
+                variant={isEditMode ? "destructive" : "outline"}
+                size="default"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                {isEditMode ? "Exit Edit Mode" : "Edit Schedule"}
+              </Button>
             </Protect>
           </>
         ) : isAdmin && (
@@ -106,17 +163,19 @@ export function ScheduleHeader({
             Create Schedule
           </Button>
         )}
-        <Button
-          onClick={onPrint}
-          variant="outline"
-          size="default"
-          disabled={!scheduleData?.published && !isAdmin}
-        >
-          <Printer className="h-4 w-4 mr-2" />
-          Download Schedule
-        </Button>
+        {!isEditMode && (
+          <Button
+            onClick={onPrint}
+            variant="outline"
+            size="default"
+            disabled={!scheduleData?.published && !isAdmin}
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Download Schedule
+          </Button>
+        )}
         {hasChanges && isEditMode && (
-          <Button onClick={onSave} variant="default" size="default">
+          <Button onClick={onSave} variant="default" className="bg-blue-600 hover:bg-blue-700" size="default">
             Save Changes
           </Button>
         )}

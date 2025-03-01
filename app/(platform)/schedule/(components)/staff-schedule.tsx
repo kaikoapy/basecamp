@@ -18,8 +18,6 @@ import { createParser } from "nuqs";
 import { useAdmin } from "@/hooks/use-admin";
 import { ScheduleHeader } from "./schedule-header";
 import { generateSchedulePDF } from "../utils/generate-pdf";
-import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
 
 const numberParser = createParser({
   parse: (value: string) => parseInt(value),
@@ -575,59 +573,11 @@ const CalendarSchedule: React.FC = () => {
               onTogglePublish={handleTogglePublish}
               onPrint={handlePrint}
               onSave={handleSave}
+              salesFilter={salesFilter}
+              setSalesFilter={setSalesFilter}
+              showFilterOptions={showFilterOptions}
+              setShowFilterOptions={setShowFilterOptions}
             />
-            
-            {/* Filter button */}
-            {isEditMode && (
-              <div className="flex justify-end mb-2 relative">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex items-center gap-1"
-                  onClick={() => setShowFilterOptions(!showFilterOptions)}
-                >
-                  <Filter className="h-4 w-4" />
-                  Filter: {salesFilter === "all" ? "All" : salesFilter === "new" ? "New" : "Used"}
-                </Button>
-                
-                {showFilterOptions && (
-                  <div className="absolute right-0 top-10 bg-white shadow-md rounded-md border border-gray-200 p-2 z-50">
-                    <div className="flex flex-col gap-1">
-                      <Button 
-                        variant={salesFilter === "all" ? "default" : "ghost"} 
-                        size="sm"
-                        onClick={() => {
-                          setSalesFilter("all");
-                          setShowFilterOptions(false);
-                        }}
-                      >
-                        All
-                      </Button>
-                      <Button 
-                        variant={salesFilter === "new" ? "default" : "ghost"} 
-                        size="sm"
-                        onClick={() => {
-                          setSalesFilter("new");
-                          setShowFilterOptions(false);
-                        }}
-                      >
-                        New
-                      </Button>
-                      <Button 
-                        variant={salesFilter === "used" ? "default" : "ghost"} 
-                        size="sm"
-                        onClick={() => {
-                          setSalesFilter("used");
-                          setShowFilterOptions(false);
-                        }}
-                      >
-                        Used
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
             
             {/* Notification banner for non-existent schedule */}
             {scheduleData === null && isAdmin && (
