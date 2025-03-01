@@ -1,5 +1,4 @@
 import { jsPDF } from "jspdf";
-import { parseName } from "../utils";
 
 const fullDaysOfWeek = [
   "Sunday",
@@ -25,6 +24,12 @@ interface ShiftsData {
   sunday: string[];
 }
 
+interface SalesStaff {
+  _id: string;
+  name: string;
+  displayName?: string;
+}
+
 interface GeneratePDFParams {
   monthName: string;
   currentYear: number;
@@ -34,6 +39,7 @@ interface GeneratePDFParams {
   scheduleData: ScheduleData | null;
   salesFilter: "all" | "new" | "used";
   shifts: ShiftsData;
+  salesStaffData?: SalesStaff[];
 }
 
 // Helper function to load an image as a Base64 data URL.
@@ -69,7 +75,7 @@ function filterItems(items: string[], salesFilter: "all" | "new" | "used") {
   });
 }
 
-// Helper function to get the team name based on filter
+// Helper function to get team name based on filter
 function getTeamName(salesFilter: "all" | "new" | "used") {
   switch (salesFilter) {
     case "new":
@@ -81,6 +87,109 @@ function getTeamName(salesFilter: "all" | "new" | "used") {
   }
 }
 
+// Helper function to get display name from ID (similar to staff-schedule.tsx)
+function getDisplayName(id: string, salesStaffData?: SalesStaff[], salespeopleList?: string[]): string {
+  // If it's a special label (handle both original and cloned special labels)
+  if (id.startsWith("special:")) {
+    // Extract the label name without the timestamp
+    const labelWithPossibleTimestamp = id.substring("special:".length);
+    // If it has a timestamp, remove it
+    const result = labelWithPossibleTimestamp.includes("::") 
+      ? labelWithPossibleTimestamp.split("::")[0] 
+      : labelWithPossibleTimestamp;
+    return result;
+  }
+  
+  // If it has a timestamp (cloned item)
+  const baseId = id.includes("::") ? id.split("::")[0] : id;
+  
+  // Check for "new:" or "used:" prefix and remove it
+  let cleanId = baseId;
+  let prefix = "";
+  if (baseId.startsWith("new:")) {
+    cleanId = baseId.substring(baseId.indexOf(":") + 1);
+    prefix = "new:";
+  } else if (baseId.startsWith("used:")) {
+    cleanId = baseId.substring(baseId.indexOf(":") + 1);
+    prefix = "used:";
+  }
+  
+  // First try to find by ID - this should work for Convex IDs like k57cd9h0m588y905ycmmv58res77jvxp
+  if (salesStaffData && salesStaffData.length > 0) {
+    // Try to find by exact ID match
+    const staffById = salesStaffData.find(s => String(s._id) === cleanId);
+    if (staffById) {
+      // Handle the case where displayName is an empty string
+      const displayName = staffById.displayName === "" 
+        ? staffById.name 
+        : (staffById.displayName || staffById.name || "");
+      const firstName = displayName.split(" ")[0];
+      return firstName;
+    }
+    
+    // If not found by exact ID, try case-insensitive comparison
+    const staffByIdCaseInsensitive = salesStaffData.find(
+      s => String(s._id).toLowerCase() === cleanId.toLowerCase()
+    );
+    if (staffByIdCaseInsensitive) {
+      // Handle the case where displayName is an empty string
+      const displayName = staffByIdCaseInsensitive.displayName === "" 
+        ? staffByIdCaseInsensitive.name 
+        : (staffByIdCaseInsensitive.displayName || staffByIdCaseInsensitive.name || "");
+      const firstName = displayName.split(" ")[0];
+      return firstName;
+    }
+  }
+  
+  // If not found by ID, check if the ID itself is a name (legacy format)
+  if (typeof cleanId === 'string' && cleanId.includes(" ")) {
+    const firstName = cleanId.split(" ")[0];
+    return firstName;
+  }
+  
+  // For production environment, if we have a prefix and a name, use that
+  if (prefix && typeof cleanId === 'string') {
+    // This might be a case where the ID is actually "used:Alex Reynaldos" format
+    // or where the ID is a Convex ID but we need to use it directly
+    if (cleanId.includes(" ")) {
+      const firstName = cleanId.split(" ")[0];
+      return firstName;
+    } else if (/^k[a-z0-9]+$/.test(cleanId)) {
+      // If it's a Convex ID format, try to find the corresponding staff member again
+      // This is a fallback for production where the ID format might be different
+      if (salesStaffData) {
+        // If the ID is in the salespeople list, it might be a valid staff member
+        if (salespeopleList && (salespeopleList.includes(cleanId) || salespeopleList.includes(baseId) || salespeopleList.includes(id))) {
+          // Try to find by any property that might match
+          for (const staff of salesStaffData) {
+            if (
+              String(staff._id) === cleanId || 
+              String(staff.name).includes(cleanId) || 
+              (staff.displayName && String(staff.displayName).includes(cleanId))
+            ) {
+              // Handle the case where displayName is an empty string
+              const displayName = staff.displayName === "" 
+                ? staff.name 
+                : (staff.displayName || staff.name || "");
+              const firstName = displayName.split(" ")[0];
+              return firstName;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Last resort: check if this ID exists in the salespeople-list
+  // If it does, it might be a valid ID that we're just not matching correctly
+  if (salespeopleList && (salespeopleList.includes(cleanId) || salespeopleList.includes(baseId) || salespeopleList.includes(id))) {
+    // Return the ID itself as a last resort
+    return cleanId.substring(0, 10); // Truncate long IDs
+  }
+  
+  return "Unknown";
+}
+
 export async function generateSchedulePDF({
   monthName,
   currentYear,
@@ -90,12 +199,16 @@ export async function generateSchedulePDF({
   scheduleData,
   salesFilter,
   shifts,
+  salesStaffData = [],
 }: GeneratePDFParams) {
   const doc = new jsPDF({
     orientation: "landscape",
     unit: "mm",
     format: "a4",
   });
+
+  // Extract salespeople list from scheduleData for name resolution
+  const salespeopleList = scheduleData?.containers?.["salespeople-list"] || [];
 
   // Set PDF metadata for better browser display
   const title = `${monthName.toLowerCase()}-${salesFilter}-sales-schedule`;
@@ -236,7 +349,10 @@ export async function generateSchedulePDF({
       const containerId = `${day}-${shiftIndex}`;
       const items = scheduleData?.containers?.[containerId] || [];
       const filteredItems = filterItems(items, salesFilter);
-      const parsedNames = filteredItems.map((item) => parseName(item));
+      // Use getDisplayName instead of parseName
+      const displayNames = filteredItems.map(item => 
+        getDisplayName(item, salesStaffData, salespeopleList)
+      );
       
       const isOffShift = shiftIndex === shiftsForDay.length - 1;
       const offShiftOffset = isOffShift ? 1 : 0;
@@ -263,8 +379,8 @@ export async function generateSchedulePDF({
       doc.setTextColor(...darkColor);
       doc.text(shift, x + 2, shiftY + shiftPadding);
 
-      if (parsedNames.length > 0) {
-        const sortedNames = [...parsedNames].sort((a, b) => a.length - b.length);
+      if (displayNames.length > 0) {
+        const sortedNames = [...displayNames].sort((a, b) => a.length - b.length);
         const shiftWidth = doc.getTextWidth(shift + " ");
         doc.setFont("helvetica", "normal");
         doc.setFontSize(namesFontSize);

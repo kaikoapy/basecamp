@@ -323,6 +323,7 @@ const CalendarSchedule: React.FC = () => {
       scheduleData: printScheduleData,
       salesFilter,
       shifts: shifts,
+      salesStaffData,
     });
     
     // Simply open in a new tab - let the PDF metadata handle the display name
