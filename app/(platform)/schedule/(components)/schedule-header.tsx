@@ -176,7 +176,7 @@ export function ScheduleHeader({
             disabled={!scheduleData?.published && !isAdmin}
           >
             <Printer className="h-4 w-4 mr-2" />
-            View Schedule
+            Print Schedule
           </Button>
         )}
         {hasChanges && isEditMode && (
