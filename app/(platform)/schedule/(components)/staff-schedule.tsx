@@ -115,15 +115,16 @@ const CalendarSchedule: React.FC = () => {
     // For new schedules (scheduleData is null)
     if (scheduleData === null) {
       console.log("Creating new schedule for", displayMonth, displayYear);
-      // Use current containers which should already have salespeople
+      // Create a clean initial container with ONLY salespeople and special labels
+      // Do NOT spread the entire containers object which would carry over previous month's assignments
       const initialContainers = {
-        ...containers,
         "salespeople-list": containers["salespeople-list"].length > 0 
           ? containers["salespeople-list"] 
           : defaultSalespeople,
         "special-labels-list": containers["special-labels-list"].length > 0
           ? containers["special-labels-list"]
           : defaultSpecialLabels.map(label => "special:" + label),
+        // No other containers from previous month are included
       };
       
       createSchedule({

@@ -56,7 +56,16 @@ function filterItems(items: string[], salesFilter: "all" | "new" | "used") {
   return items.filter(item => {
     if (item.startsWith("special:")) return true; // Always show special labels
     if (salesFilter === "all") return true;
-    return item.startsWith(salesFilter + ":");
+    
+    // Extract the base ID (remove timestamp if present)
+    const baseId = item.includes("::") ? item.split("::")[0] : item;
+    
+    // Check for "new:" or "used:" prefix
+    if (baseId.startsWith("new:") && salesFilter === "new") return true;
+    if (baseId.startsWith("used:") && salesFilter === "used") return true;
+    
+    // For items without a prefix, assume they're in the format we expect
+    return baseId.startsWith(salesFilter + ":");
   });
 }
 
