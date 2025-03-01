@@ -172,7 +172,7 @@ export function ScheduleHeader({
             onClick={onPrint}
             variant="outline"
             size="default"
-            className="bg-black text-white hover:bg-zinc-800 hover:text-white border-black transition-colors"
+            className="bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white border-black transition-colors"
             disabled={!scheduleData?.published && !isAdmin}
           >
             <Printer className="h-4 w-4 mr-2" />
