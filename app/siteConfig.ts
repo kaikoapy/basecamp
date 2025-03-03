@@ -6,6 +6,9 @@ export const siteConfig = {
     home: "/",
     overview: "/overview",
     details: "/details",
+    about: "/about",
+    pricing: "/pricing",
+    changelog: "/changelog",
     settings: {
       general: "/settings/general",
       billing: "/settings/billing",

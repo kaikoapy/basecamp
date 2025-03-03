@@ -9,7 +9,11 @@ export default function Home() {
   const { user } = useUser();
 
   if (!user) {
-    return <SignIn />;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <SignIn />
+      </div>
+    );
   }
 
   return (
