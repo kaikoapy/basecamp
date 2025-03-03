@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./dropdown-menu"
-
+import Image from "next/image"
 export function UserNav({
   image,
   name,
@@ -30,7 +30,7 @@ export function UserNav({
           <Avatar className="h-10 w-10">
             <AvatarImage src={image} alt={name} />
             <AvatarFallback>
-              <img src={"/images/profile.png"} alt={name} />
+              <Image src={"/images/profile.png"} alt={name} />
             </AvatarFallback>
           </Avatar>
         </Button>
