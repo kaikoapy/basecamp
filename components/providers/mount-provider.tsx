@@ -17,7 +17,9 @@ export function MountProvider({ children }: MountProviderProps) {
 
   return (
     <>
-      <NavHeader />
+      <div className="print:hidden">
+        <NavHeader />
+      </div>
       {children}
     </>
   );
