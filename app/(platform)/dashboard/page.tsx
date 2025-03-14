@@ -4,9 +4,11 @@ import Loading from "./loading";
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<Loading />}>
-      <DashboardContent searchQuery="" />
-    </Suspense>
+    <div className="min-h-screen bg-gray-50">
+      <Suspense fallback={<Loading />}>
+        <DashboardContent searchQuery="" />
+      </Suspense>
+    </div>
   );
 }
 

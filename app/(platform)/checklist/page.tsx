@@ -1,14 +1,16 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect, useMemo } from "react"
-import { Check, Printer, Car, CarFront } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState, useEffect, useMemo, memo } from "react"
+import { Printer, Car, CarFront } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Pill from "./_components/Pill"
 import Confetti from "react-confetti"
 import { BlobProvider, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import "./styles.css"
 
 interface ChecklistItem {
@@ -24,27 +26,33 @@ interface ChecklistItems {
 }
 
 interface PrintViewProps {
-  activeTab: string
-  tradeOption: string | null
+  activeTab: "new" | "used"
+  tradeOption: "none" | "trade" | "lease"
   selectedItems: { [key: string]: boolean }
   checklistItems: ChecklistItems
 }
 
+interface DealType {
+  value: "new" | "used"
+  label: string
+}
+
+interface TradeType {
+  value: "none" | "trade" | "lease"
+  label: string
+}
+
+type TradeOptionType = "none" | "trade" | "lease";
+
 const styles = StyleSheet.create({
   page: {
     padding: 40,
+    flexDirection: 'column'
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
-  },
-  content: {
-    flexDirection: 'row',
-  },
-  column: {
-    flex: 1,
-    marginRight: 20,
   },
   section: {
     marginBottom: 20,
@@ -56,6 +64,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     marginBottom: 8,
+    paddingLeft: 20,
   },
   checkbox: {
     width: 12,
@@ -63,6 +72,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000',
     marginRight: 8,
+    backgroundColor: '#fff',
   },
   checkmark: {
     fontSize: 10,
@@ -74,75 +84,95 @@ const styles = StyleSheet.create({
   }
 });
 
-const PDFDocument = React.memo(function PDFDocument({ activeTab, tradeOption, selectedItems, checklistItems }: PrintViewProps) {
-  const items = checklistItems[activeTab as keyof typeof checklistItems];
+const PDFDocument = memo(function PDFDocument({ activeTab, tradeOption, selectedItems, checklistItems }: PrintViewProps) {
+  const items = checklistItems[activeTab];
   const mainItems = items.filter(item => item.category === "new");
-  const tradeItems = tradeOption === "Trade In" 
+  const tradeItems = tradeOption === "trade" 
     ? items.filter(item => item.category === "trade")
-    : tradeOption === "Lease Return"
+    : tradeOption === "lease"
       ? items.filter(item => item.category === "lease")
       : [];
+
+  const getTradeOptionLabel = (option: TradeOptionType) => {
+    if (option === "trade") return "Trade In";
+    if (option === "lease") return "Lease Return";
+    return "";
+  };
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>
           {activeTab === "new" ? "New" : "Used"} Car Checklist
-          {tradeOption ? ` with ${tradeOption}` : ""}
+          {tradeOption !== "none" ? ` with ${getTradeOptionLabel(tradeOption)}` : ""}
         </Text>
         
-        <View style={styles.content}>
-          <View style={[styles.column, !tradeOption && { marginRight: 0 }]}>
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {activeTab === "new" ? "New" : "Used"} Car Items
-              </Text>
-              {mainItems.map((item) => (
-                <View key={item.id} style={styles.item}>
-                  <View style={styles.checkbox}>
-                    {selectedItems[item.id] && (
-                      <Text style={styles.checkmark}>×</Text>
-                    )}
-                  </View>
-                  <Text style={styles.text}>{item.label}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-
-          {tradeOption && tradeItems.length > 0 && (
-            <View style={styles.column}>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>
-                  {tradeOption} Items
-                </Text>
-                {tradeItems.map((item) => (
-                  <View key={item.id} style={styles.item}>
-                    <View style={styles.checkbox}>
-                      {selectedItems[item.id] && (
-                        <Text style={styles.checkmark}>×</Text>
-                      )}
-                    </View>
-                    <Text style={styles.text}>{item.label}</Text>
-                  </View>
-                ))}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            {activeTab === "new" ? "New" : "Used"} Car Items
+          </Text>
+          {mainItems.map((item) => (
+            <View key={item.id} style={styles.item}>
+              <View style={styles.checkbox}>
+                {selectedItems[item.id] && (
+                  <Text style={styles.checkmark}>×</Text>
+                )}
               </View>
+              <Text style={styles.text}>{item.label}</Text>
             </View>
-          )}
+          ))}
         </View>
+
+        {tradeOption !== "none" && tradeItems.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {getTradeOptionLabel(tradeOption)} Items
+            </Text>
+            {tradeItems.map((item) => (
+              <View key={item.id} style={styles.item}>
+                <View style={styles.checkbox}>
+                  {selectedItems[item.id] && (
+                    <Text style={styles.checkmark}>×</Text>
+                  )}
+                </View>
+                <Text style={styles.text}>{item.label}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </Page>
     </Document>
   );
+}, (prevProps, nextProps) => {
+  // Deep comparison of props to prevent unnecessary re-renders
+  return (
+    prevProps.activeTab === nextProps.activeTab &&
+    prevProps.tradeOption === nextProps.tradeOption &&
+    JSON.stringify(prevProps.selectedItems) === JSON.stringify(nextProps.selectedItems)
+  )
 });
 
+const dealTypes: DealType[] = [
+  { value: "new", label: "New Deal" },
+  { value: "used", label: "Used Deal" },
+]
+
+const tradeTypes: TradeType[] = [
+  { value: "none", label: "N/A" },
+  { value: "trade", label: "Trade In" },
+  { value: "lease", label: "Lease Return" },
+]
+
 export default function DealChecklist() {
-  const [tradeOption, setTradeOption] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<"new" | "used">("new")
+  const [tradeOption, setTradeOption] = useState<TradeOptionType>("none")
   const [selectedItems, setSelectedItems] = useState<{
     [key: string]: boolean
   }>({})
   const [confetti, setConfetti] = useState<boolean>(false)
   const [confettiFadeOut, setConfettiFadeOut] = useState<boolean>(false)
-  const [activeTab, setActiveTab] = useState<string>("new")
+  const [isPrinting, setIsPrinting] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
   const checklistItems: ChecklistItems = useMemo(
     () => ({
@@ -233,32 +263,40 @@ export default function DealChecklist() {
         { id: "20", label: "ODO Disclosure", category: "lease" },
       ],
     }),
-    [],
+    []
   )
-
-  const toggleTradeOption = (option: string) => {
-    setTradeOption(tradeOption === option ? null : option)
-  }
 
   const playChime = () => {
     try {
-      const chime = new Audio("/chime.mp3")
-      chime.play().catch((error) => {
-        console.error("Error playing chime sound:", error)
-      })
+      const audio = new Audio("/chime.mp3")
+      // Only attempt to play if the browser supports the audio format
+      if (audio.canPlayType("audio/mpeg")) {
+        audio.volume = 0.5 // Reduce volume to 50%
+        audio.play().catch((error) => {
+          // Silently fail - don't log errors for audio
+          console.debug("Audio playback prevented:", error)
+        })
+      }
     } catch (error) {
-      console.error("Error creating Audio object:", error)
+      // Silently fail - don't log errors for audio
+      console.debug("Audio creation prevented:", error)
     }
   }
 
   const playConfettiSound = () => {
     try {
-      const confettiSound = new Audio("/confetti.mp3")
-      confettiSound.play().catch((error) => {
-        console.error("Error playing confetti sound:", error)
-      })
+      const audio = new Audio("/confetti.mp3")
+      // Only attempt to play if the browser supports the audio format
+      if (audio.canPlayType("audio/mpeg")) {
+        audio.volume = 0.5 // Reduce volume to 50%
+        audio.play().catch((error) => {
+          // Silently fail - don't log errors for audio
+          console.debug("Audio playback prevented:", error)
+        })
+      }
     } catch (error) {
-      console.error("Error creating Audio object:", error)
+      // Silently fail - don't log errors for audio
+      console.debug("Audio creation prevented:", error)
     }
   }
 
@@ -267,6 +305,7 @@ export default function DealChecklist() {
       ...prev,
       [id]: e.target.checked,
     }))
+    // Only play sound when checking the box, not unchecking
     if (e.target.checked) {
       playChime()
     }
@@ -276,8 +315,8 @@ export default function DealChecklist() {
     const allItems = checklistItems[activeTab as keyof typeof checklistItems]
 
     const filteredItems = allItems.filter((item: ChecklistItem) => {
-      if (tradeOption === "Trade In" && item.category === "trade") return true
-      if (tradeOption === "Lease Return" && item.category === "lease") return true
+      if (tradeOption === "trade" && item.category === "trade") return true
+      if (tradeOption === "lease" && item.category === "lease") return true
       if (item.category === "new") return true
       return false
     })
@@ -295,6 +334,15 @@ export default function DealChecklist() {
 
   const noClipboardIconItems = ["Validate Pin(s)", "Sign CarFax", "Forms"]
 
+  // Handle PDF URL changes
+  useEffect(() => {
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+      setPdfUrl(null);
+      setIsPrinting(false);
+    }
+  }, [pdfUrl]);
+
   return (
     <div className="flex flex-col items-center py-6 w-5xl selection:bg-purple-300 min-h-screen">
       {confetti && (
@@ -307,14 +355,21 @@ export default function DealChecklist() {
         />
       )}
 
-      <div className="w-full max-w-5xl px-4 sm:px-6 pb-12">
-        <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
-          Deal Checklist
-        </h1>
+      <div className="container mx-auto py-8 max-w-4xl print:py-0 print:max-w-full">
+        <div className="flex justify-between items-center mb-8 print:hidden">
+          <h1 className="text-3xl font-bold">Deal Checklist</h1>
+          <Button 
+            onClick={() => setIsPrinting(true)}
+            size="lg"
+            className="print:hidden"
+          >
+            <Printer className="mr-2 h-5 w-5" />
+            Print Checklist
+          </Button>
+        </div>
 
-        <div className="flex justify-center mb-4">
+        {isPrinting && (
           <BlobProvider
-            key={`${activeTab}-${tradeOption}`}
             document={
               <PDFDocument
                 activeTab={activeTab}
@@ -324,334 +379,201 @@ export default function DealChecklist() {
               />
             }
           >
-            {({ url, loading }) => (
-              <button
-                onClick={() => url && window.open(url, '_blank')}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors duration-200 shadow-sm hover:shadow-md"
-                disabled={loading}
-              >
-                <Printer className="h-4 w-4" />
-                {loading ? "Generating PDF..." : "Open PDF"}
-              </button>
-            )}
+            {({ url, loading, error }) => {
+              if (loading) return null;
+              if (error) {
+                // Schedule state update for next tick
+                setTimeout(() => setIsPrinting(false), 0);
+                return null;
+              }
+              if (url) {
+                // Update URL through state instead of direct window.open
+                setPdfUrl(url);
+                return null;
+              }
+              return null;
+            }}
           </BlobProvider>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 print:hidden">
+          <Card className="shadow-md">
+            <CardHeader className="bg-muted/50 pb-4">
+              <CardTitle>Deal Type</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <RadioGroup
+                value={activeTab}
+                onValueChange={(value: "new" | "used") => {
+                  setActiveTab(value);
+                  setSelectedItems({}); // Reset selections when switching tabs
+                }}
+                className="flex space-x-8"
+              >
+                {dealTypes.map((type) => (
+                  <div key={type.value} className="flex items-center space-x-2">
+                    <RadioGroupItem value={type.value} id={type.value} />
+                    <Label htmlFor={type.value} className="text-base font-medium">
+                      {type.label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-md">
+            <CardHeader className="bg-muted/50 pb-4">
+              <CardTitle>Trade Option</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <RadioGroup
+                value={tradeOption}
+                onValueChange={(value: TradeOptionType) => setTradeOption(value)}
+                className="flex space-x-8"
+              >
+                {tradeTypes.map((type) => (
+                  <div key={type.value} className="flex items-center space-x-2">
+                    <RadioGroupItem value={type.value} id={type.value} />
+                    <Label htmlFor={type.value} className="text-base font-medium">
+                      {type.label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </CardContent>
+          </Card>
         </div>
 
-        <Tabs defaultValue="new" onValueChange={setActiveTab}>
-          <TabsList className="flex space-x-1 justify-center items-center rounded-xl bg-transparent p-1 mb-4 w-full">
-            <TabsTrigger
-              value="new"
-              className={cn(
-                "w-full text-center rounded-lg py-2.5 text-sm font-medium leading-5 select-none",
-                "ring-white/60 focus:outline-none focus:ring-none transition-all",
-                activeTab === "new"
-                  ? "bg-gradient-to-r from-pink-300 border border-pink-200 via-pink-400/80 via-50% to-pink-300 text-white shadow-sm hover:shadow-md"
-                  : "text-gray-500 bg-white border shadow-sm hover:shadow-md hover:text-gray-700",
-              )}
-            >
-              New Deal
-            </TabsTrigger>
-            <TabsTrigger
-              value="used"
-              className={cn(
-                "w-full text-center rounded-lg py-2.5 text-sm font-medium leading-5 select-none",
-                "ring-white/60 focus:outline-none focus:ring-none transition-all",
-                activeTab === "used"
-                  ? "bg-red-400 text-white shadow-sm border border-red-300 hover:shadow-md"
-                  : "text-gray-500 bg-white border shadow-sm hover:shadow-md hover:text-gray-700",
-              )}
-            >
-              Used Deal
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="flex gap-4 mt-4 justify-center">
-            <button
-              className={`px-4 w-36 py-2 text-sm select-none rounded-xl transition ${
-                tradeOption === "Lease Return"
-                  ? "bg-green-500 text-white border border-emerald-500 shadow-md hover:shadow-lg"
-                  : "bg-white text-gray-500 hover:text-gray-700 shadow-md hover:shadow-lg border rounded-xl"
-              }`}
-              onClick={() => toggleTradeOption("Lease Return")}
-            >
-              Lease Return {tradeOption === "Lease Return" && <Check className="inline-block ml-1 h-4 w-4" />}
-            </button>
-            <button
-              className={`px-4 py-2 w-36 text-sm select-none rounded-xl transition ${
-                tradeOption === "Trade In"
-                  ? "bg-green-500 text-white border border-emerald-500 shadow-md hover:shadow-lg"
-                  : "bg-white text-gray-500 hover:text-gray-700 shadow-md hover:shadow-lg border rounded-xl"
-              }`}
-              onClick={() => toggleTradeOption("Trade In")}
-            >
-              Trade In {tradeOption === "Trade In" && <Check className="inline-block ml-1 h-4 w-4" />}
-            </button>
+        <div className={cn(
+          "grid gap-6",
+          tradeOption !== "none" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:max-w-2xl md:mx-auto"
+        )}>
+          <div className={cn(
+            tradeOption ? "" : "md:max-w-2xl md:mx-auto"
+          )}>
+            <div className="flex items-center mb-3">
+              <Car className="h-5 w-5 text-pink-500 mr-2" />
+              <h2 className="text-lg font-semibold text-gray-800">{activeTab === "new" ? "New" : "Used"} Car Checklist</h2>
+            </div>
+            <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+              {checklistItems[activeTab]
+                .filter((item) => item.category === "new")
+                .map((item: ChecklistItem) => (
+                  <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-gray-50">
+                    <input
+                      id={`${activeTab}-${item.id}`}
+                      type="checkbox"
+                      className="mr-2 custom-checkbox"
+                      checked={selectedItems[item.id] || false}
+                      onChange={(e) => handleCheckboxChange(e, item.id)}
+                    />
+                    <label
+                      htmlFor={`${activeTab}-${item.id}`}
+                      className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
+                    >
+                      {item.label}
+                    </label>
+                    {!selectedItems[item.id] && item.link && (
+                      <Pill
+                        label={item.label}
+                        link={item.link}
+                        showClipboardIcon={!noClipboardIconItems.includes(item.label)}
+                      />
+                    )}
+                    {item.label === "A-Plan/Affinity Pin" && !selectedItems[item.id] && (
+                      <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
+                        View Links
+                      </button>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
 
-          <TabsContent value="new" className="mt-6">
-            <div className={cn(
-              "grid gap-6",
-              tradeOption ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:max-w-2xl md:mx-auto"
-            )}>
-              <div className={cn(
-                tradeOption ? "" : "md:max-w-2xl md:mx-auto"
-              )}>
-                <div className="flex items-center mb-3">
-                  <Car className="h-5 w-5 text-pink-500 mr-2" />
-                  <h2 className="text-lg font-semibold text-gray-800">New Car Checklist</h2>
-                </div>
-                <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                  {checklistItems.new
-                    .filter((item) => item.category === "new")
-                    .map((item: ChecklistItem) => (
-                      <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-gray-50">
-                        <input
-                          id={`new-${item.id}`}
-                          type="checkbox"
-                          className="mr-2 custom-checkbox"
-                          checked={selectedItems[item.id] || false}
-                          onChange={(e) => handleCheckboxChange(e, item.id)}
-                        />
-                        <label
-                          htmlFor={`new-${item.id}`}
-                          className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                        >
-                          {item.label}
-                        </label>
-                        {!selectedItems[item.id] && item.link && (
-                          <Pill
-                            label={item.label}
-                            link={item.link}
-                            showClipboardIcon={!noClipboardIconItems.includes(item.label)}
+          {tradeOption && (
+            <div>
+              {tradeOption === "trade" && (
+                <div className="mb-6">
+                  <div className="flex items-center mb-3">
+                    <CarFront className="h-5 w-5 text-green-500 mr-2" />
+                    <h2 className="text-lg font-semibold text-gray-800">Trade In Checklist</h2>
+                  </div>
+                  <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-green-100">
+                    {checklistItems[activeTab]
+                      .filter((item) => item.category === "trade")
+                      .map((item: ChecklistItem) => (
+                        <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-green-50">
+                          <input
+                            id={`${activeTab}-trade-${item.id}`}
+                            type="checkbox"
+                            className="mr-2 custom-checkbox"
+                            checked={selectedItems[item.id] || false}
+                            onChange={(e) => handleCheckboxChange(e, item.id)}
                           />
-                        )}
-                        {item.label === "A-Plan/Affinity Pin" && !selectedItems[item.id] && (
-                          <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
-                            View Links
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                          <label
+                            htmlFor={`${activeTab}-trade-${item.id}`}
+                            className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
+                          >
+                            {item.label}
+                          </label>
+                          {!selectedItems[item.id] && item.link && (
+                            <Pill
+                              label={item.label}
+                              link={item.link}
+                              showClipboardIcon={!noClipboardIconItems.includes(item.label)}
+                            />
+                          )}
+                          {item.label === "Trade Pay-Off Form" && !selectedItems[item.id] && (
+                            <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
+                              View Numbers
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {tradeOption && (
-                <div>
-                  {tradeOption === "Trade In" && (
-                    <div className="mb-6">
-                      <div className="flex items-center mb-3">
-                        <CarFront className="h-5 w-5 text-green-500 mr-2" />
-                        <h2 className="text-lg font-semibold text-gray-800">Trade In Checklist</h2>
-                      </div>
-                      <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-green-100">
-                        {checklistItems.new
-                          .filter((item) => item.category === "trade")
-                          .map((item: ChecklistItem) => (
-                            <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-green-50">
-                              <input
-                                id={`new-trade-${item.id}`}
-                                type="checkbox"
-                                className="mr-2 custom-checkbox"
-                                checked={selectedItems[item.id] || false}
-                                onChange={(e) => handleCheckboxChange(e, item.id)}
-                              />
-                              <label
-                                htmlFor={`new-trade-${item.id}`}
-                                className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                              >
-                                {item.label}
-                              </label>
-                              {!selectedItems[item.id] && item.link && (
-                                <Pill
-                                  label={item.label}
-                                  link={item.link}
-                                  showClipboardIcon={!noClipboardIconItems.includes(item.label)}
-                                />
-                              )}
-                              {item.label === "Trade Pay-Off Form" && !selectedItems[item.id] && (
-                                <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
-                                  View Numbers
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {tradeOption === "Lease Return" && (
-                    <div className="mb-6">
-                      <div className="flex items-center mb-3">
-                        <CarFront className="h-5 w-5 text-blue-500 mr-2" />
-                        <h2 className="text-lg font-semibold text-gray-800">Lease Return Checklist</h2>
-                      </div>
-                      <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-blue-100">
-                        {checklistItems.new
-                          .filter((item) => item.category === "lease")
-                          .map((item: ChecklistItem) => (
-                            <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-blue-50">
-                              <input
-                                id={`new-lease-${item.id}`}
-                                type="checkbox"
-                                className="mr-2 custom-checkbox"
-                                checked={selectedItems[item.id] || false}
-                                onChange={(e) => handleCheckboxChange(e, item.id)}
-                              />
-                              <label
-                                htmlFor={`new-lease-${item.id}`}
-                                className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                              >
-                                {item.label}
-                              </label>
-                              {!selectedItems[item.id] && item.link && (
-                                <Pill
-                                  label={item.label}
-                                  link={item.link}
-                                  showClipboardIcon={!noClipboardIconItems.includes(item.label)}
-                                />
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
+              {tradeOption === "lease" && (
+                <div className="mb-6">
+                  <div className="flex items-center mb-3">
+                    <CarFront className="h-5 w-5 text-blue-500 mr-2" />
+                    <h2 className="text-lg font-semibold text-gray-800">Lease Return Checklist</h2>
+                  </div>
+                  <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-blue-100">
+                    {checklistItems[activeTab]
+                      .filter((item) => item.category === "lease")
+                      .map((item: ChecklistItem) => (
+                        <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-blue-50">
+                          <input
+                            id={`${activeTab}-lease-${item.id}`}
+                            type="checkbox"
+                            className="mr-2 custom-checkbox"
+                            checked={selectedItems[item.id] || false}
+                            onChange={(e) => handleCheckboxChange(e, item.id)}
+                          />
+                          <label
+                            htmlFor={`${activeTab}-lease-${item.id}`}
+                            className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
+                          >
+                            {item.label}
+                          </label>
+                          {!selectedItems[item.id] && item.link && (
+                            <Pill
+                              label={item.label}
+                              link={item.link}
+                              showClipboardIcon={!noClipboardIconItems.includes(item.label)}
+                            />
+                          )}
+                        </div>
+                      ))}
+                  </div>
                 </div>
               )}
             </div>
-          </TabsContent>
-
-          <TabsContent value="used" className="mt-6">
-            <div className={cn(
-              "grid gap-6",
-              tradeOption ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:max-w-2xl md:mx-auto"
-            )}>
-              <div className={cn(
-                tradeOption ? "" : "md:max-w-2xl md:mx-auto"
-              )}>
-                <div className="flex items-center mb-3">
-                  <Car className="h-5 w-5 text-red-500 mr-2" />
-                  <h2 className="text-lg font-semibold text-gray-800">Used Car Checklist</h2>
-                </div>
-                <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                  {checklistItems.used
-                    .filter((item) => item.category === "new")
-                    .map((item: ChecklistItem) => (
-                      <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-gray-50">
-                        <input
-                          id={`used-${item.id}`}
-                          type="checkbox"
-                          className="mr-2 custom-checkbox"
-                          checked={selectedItems[item.id] || false}
-                          onChange={(e) => handleCheckboxChange(e, item.id)}
-                        />
-                        <label
-                          htmlFor={`used-${item.id}`}
-                          className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                        >
-                          {item.label}
-                        </label>
-                        {!selectedItems[item.id] && item.link && (
-                          <Pill
-                            label={item.label}
-                            link={item.link}
-                            showClipboardIcon={!noClipboardIconItems.includes(item.label)}
-                          />
-                        )}
-                        {item.label === "A-Plan/Affinity Pin" && !selectedItems[item.id] && (
-                          <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
-                            View Links
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {tradeOption && (
-                <div>
-                  {tradeOption === "Trade In" && (
-                    <div className="mb-6">
-                      <div className="flex items-center mb-3">
-                        <CarFront className="h-5 w-5 text-green-500 mr-2" />
-                        <h2 className="text-lg font-semibold text-gray-800">Trade In Checklist</h2>
-                      </div>
-                      <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-green-100">
-                        {checklistItems.used
-                          .filter((item) => item.category === "trade")
-                          .map((item: ChecklistItem) => (
-                            <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-green-50">
-                              <input
-                                id={`used-trade-${item.id}`}
-                                type="checkbox"
-                                className="mr-2 custom-checkbox"
-                                checked={selectedItems[item.id] || false}
-                                onChange={(e) => handleCheckboxChange(e, item.id)}
-                              />
-                              <label
-                                htmlFor={`used-trade-${item.id}`}
-                                className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                              >
-                                {item.label}
-                              </label>
-                              {!selectedItems[item.id] && item.link && (
-                                <Pill
-                                  label={item.label}
-                                  link={item.link}
-                                  showClipboardIcon={!noClipboardIconItems.includes(item.label)}
-                                />
-                              )}
-                              {item.label === "Trade Pay-Off Form" && !selectedItems[item.id] && (
-                                <button className="border border-gray-200 text-gray-700 px-2.5 py-1.5 ml-4 rounded-xl text-xs hover:shadow-lg hover:text-gray-800 hover:scale-105 hover:bg-white transition-transform duration-300 ease-in-out select-none">
-                                  View Numbers
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {tradeOption === "Lease Return" && (
-                    <div className="mb-6">
-                      <div className="flex items-center mb-3">
-                        <CarFront className="h-5 w-5 text-blue-500 mr-2" />
-                        <h2 className="text-lg font-semibold text-gray-800">Lease Return Checklist</h2>
-                      </div>
-                      <div id="checklist" className="w-full bg-white rounded-xl p-3 shadow-sm border border-blue-100">
-                        {checklistItems.used
-                          .filter((item) => item.category === "lease")
-                          .map((item: ChecklistItem) => (
-                            <div key={item.id} className="flex items-center mb-0 rounded-lg p-2.5 hover:bg-blue-50">
-                              <input
-                                id={`used-lease-${item.id}`}
-                                type="checkbox"
-                                className="mr-2 custom-checkbox"
-                                checked={selectedItems[item.id] || false}
-                                onChange={(e) => handleCheckboxChange(e, item.id)}
-                              />
-                              <label
-                                htmlFor={`used-lease-${item.id}`}
-                                className={cn("text-gray-700 cursor-pointer", selectedItems[item.id] && "text-gray-400")}
-                              >
-                                {item.label}
-                              </label>
-                              {!selectedItems[item.id] && item.link && (
-                                <Pill
-                                  label={item.label}
-                                  link={item.link}
-                                  showClipboardIcon={!noClipboardIconItems.includes(item.label)}
-                                />
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   )
