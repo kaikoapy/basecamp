@@ -60,18 +60,19 @@ function loadImageAsBase64(url: string): Promise<string> {
 // Helper function to filter items based on salesFilter
 function filterItems(items: string[], salesFilter: "all" | "new" | "used") {
   return items.filter(item => {
-    if (item.startsWith("special:")) return true; // Always show special labels
+    // Always show special labels
+    if (item.startsWith("special:")) return true;
+    // Show all items if filter is set to all
     if (salesFilter === "all") return true;
     
     // Extract the base ID (remove timestamp if present)
     const baseId = item.includes("::") ? item.split("::")[0] : item;
     
     // Check for "new:" or "used:" prefix
-    if (baseId.startsWith("new:") && salesFilter === "new") return true;
-    if (baseId.startsWith("used:") && salesFilter === "used") return true;
+    if (salesFilter === "new" && (baseId.startsWith("new:") || !baseId.includes(":"))) return true;
+    if (salesFilter === "used" && (baseId.startsWith("used:") || !baseId.includes(":"))) return true;
     
-    // For items without a prefix, assume they're in the format we expect
-    return baseId.startsWith(salesFilter + ":");
+    return false;
   });
 }
 
