@@ -19,7 +19,7 @@ import {
   Ambulance,
   Building2,
   LifeBuoy,
-  FileText,
+  Mail,
 } from "lucide-react";
 import {
   Popover,
@@ -272,14 +272,21 @@ export function AffinityMenu() {
                     variant="outline"
                     size="icon"
                     className="h-7 w-7 hover:bg-transparent p-0"
-                    onClick={() => {
-                      navigator.clipboard.writeText(SUPPORT_EMAIL_TEMPLATE);
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const params = new URLSearchParams({
+                        to: SUPPORT_EMAIL,
+                        subject: "Pin Generation Request",
+                        body: SUPPORT_EMAIL_TEMPLATE
+                      });
+                      const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&${params.toString()}`;
+                      window.open(gmailUrl, '_blank', 'noopener,noreferrer');
                       toast({
-                        description: "Email template copied to clipboard",
+                        description: "Opening Gmail",
                       });
                     }}
                   >
-                    <FileText size={14} strokeWidth={2} aria-hidden="true" />
+                    <Mail size={14} strokeWidth={2} aria-hidden="true" className="text-muted-foreground" />
                   </Button>
                 </HoverCardTrigger>
                 <HoverCardContent
