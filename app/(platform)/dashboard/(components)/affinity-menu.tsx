@@ -27,10 +27,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CopyButton } from "@/components/copy-button";
 import { OpenLinkButton } from "./open-link-button";
 import { useToast } from "@/hooks/use-toast";
@@ -266,8 +266,8 @@ export function AffinityMenu() {
             <span>{SUPPORT_EMAIL}</span>
             <div className="ml-auto flex items-center gap-1">
               <CopyButton value={SUPPORT_EMAIL} tooltipText="email" />
-              <HoverCard openDelay={0} closeDelay={0}>
-                <HoverCardTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     variant="outline"
                     size="icon"
@@ -286,30 +286,13 @@ export function AffinityMenu() {
                       });
                     }}
                   >
-                    <Mail size={14} strokeWidth={2} aria-hidden="true" className="text-muted-foreground" />
+                    <Mail size={14} strokeWidth={2} aria-hidden="true" className="opacity-60" />
                   </Button>
-                </HoverCardTrigger>
-                <HoverCardContent
-                  className="w-[280px] p-3 shadow-none"
-                  side="right"
-                  align="start"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">Email Template</h4>
-                      <CopyButton
-                        value={SUPPORT_EMAIL_TEMPLATE}
-                        tooltipText="template"
-                      />
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      <pre className="whitespace-pre-wrap font-mono bg-muted p-2 rounded-md">
-                        {SUPPORT_EMAIL_TEMPLATE}
-                      </pre>
-                    </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Open Gmail and email support</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </DropdownMenuItem>
         </DropdownMenuGroup>
