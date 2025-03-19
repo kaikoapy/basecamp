@@ -26,7 +26,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { NewPositionDialog } from "./new-position-dialog";
 import { Plus } from "lucide-react";
 
@@ -77,7 +77,6 @@ interface EditFormProps {
 export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
   const update = useMutation(api.directory.update);
   const create = useMutation(api.directory.create);
-  const { toast } = useToast();
 
   // Fetch positions and departments from the database
   const config = useQuery(api.position_config.getAll);
@@ -157,24 +156,22 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
           id: contact._id,
           ...data,
         });
+        toast.success("Contact Updated", {
+          description: "The directory contact has been successfully updated.",
+        });
       } else {
         await create(data);
+        toast.success("Contact Added", {
+          description: "The new contact has been successfully added.",
+        });
       }
       onClose();
       reset();
-      
-      toast({
-        variant: "success",
-        title: "Contact Updated",
-        description: "The directory contact has been successfully updated.",
-      });
     } catch (error) {
       console.error("Error saving contact:", error);
       
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update contact. Please try again.",
+      toast.error("Error", {
+        description: "Failed to save contact. Please try again.",
       });
     }
   };

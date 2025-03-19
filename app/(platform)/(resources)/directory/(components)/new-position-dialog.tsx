@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(1, "Position name is required"),
@@ -38,7 +38,6 @@ interface NewPositionDialogProps {
 
 export function NewPositionDialog({ isOpen, onClose, departments }: NewPositionDialogProps) {
   const addPosition = useMutation(api.position_config.addPosition);
-  const { toast } = useToast();
 
   const {
     register,
@@ -60,17 +59,13 @@ export function NewPositionDialog({ isOpen, onClose, departments }: NewPositionD
       onClose();
       reset();
       
-      toast({
-        variant: "success",
-        title: "Position Added",
+      toast.success("Position Added", {
         description: "The new position has been successfully added.",
       });
     } catch (error) {
       console.error("Error adding position:", error);
       
-      toast({
-        variant: "destructive",
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to add position. Please try again.",
       });
     }

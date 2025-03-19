@@ -20,9 +20,9 @@ export function UpdateChecker() {
         // Compare versions and show toast if different
         if (currentVersion && latestVersion && currentVersion !== latestVersion) {
           toast.message("Update Available", {
-            description: "A new version of the app is available.",
+            description: "A new version of Basecamp is available.",
             action: {
-              label: "Update Now",
+              label: "Refresh Now",
               onClick: () => window.location.reload(),
             },
             duration: Infinity, // Keep the toast until user acts
