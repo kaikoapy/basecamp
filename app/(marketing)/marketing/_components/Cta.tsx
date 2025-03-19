@@ -34,15 +34,14 @@ export default function Cta() {
               <h3
                 id="cta-title"
                 className="inline-block bg-gradient-to-t from-gray-900 to-gray-800 bg-clip-text p-2 text-4xl font-bold tracking-tighter text-transparent md:text-6xl dark:from-gray-50 dark:to-gray-300"
-                >
-                  Ready to boost your Volvo sales?
-                </h3>
-                <p className="mx-auto mt-4 max-w-2xl text-gray-600 sm:text-lg dark:text-gray-400">
-                  <Balancer>
-                    Start organizing your dealership tools or upgrade your team&apos;s workflow with Basecamp today.
-                  </Balancer>
-                </p>
-                
+              >
+                Ready to simplify your workflow?
+              </h3>
+              <p className="mx-auto mt-4 max-w-2xl text-gray-600 sm:text-lg dark:text-gray-400">
+                <Balancer>
+                  Start bringing all your dealership resources together in one place. Less switching, more selling.
+                </Balancer>
+              </p>
             </div>
             <div className="mt-14 w-full rounded-[16px] bg-gray-300/5 p-1.5 ring-1 ring-black/[3%] backdrop-blur dark:bg-gray-900/10 dark:ring-white/[3%]">
               <div className="rounded-xl bg-white p-4 shadow-lg shadow-indigo-500/10 ring-1 ring-black/5 dark:bg-gray-950 dark:shadow-indigo-500/10 dark:ring-white/5">

@@ -65,28 +65,28 @@ const featureComparison = `# Volvo Basecamp Plan Comparison
 
 const features = [
   {
-    name: "Works with Your Sales Stack",
+    name: "All-in-One Hub",
     description:
-      "Basecamp links seamlessly to the tools your Volvo dealership team relies on, like Carfax and inventory sites.",
-    icon: RiStackLine, // Represents a stack of tools/resources
+      "Access everything your team needs - from inventory to customer data - in one centralized dashboard.",
+    icon: RiStackLine,
   },
   {
-    name: "Plug-and-Play Simplicity",
+    name: "Instant Access",
     description:
-      "Customize Basecamp to fit your team—add tool links, tweak layouts, or update resources right from the dashboard.",
-    icon: RiPlugLine, // Stays relevant for plug-and-play ease
+      "No more switching between tools. All your dealership resources are just one click away.",
+    icon: RiPlugLine,
   },
   {
-    name: "Pre-Built Connections",
+    name: "Smart Integration",
     description:
-      "Sync Basecamp with your dealership's platforms, from CRM and Volvo portals to Slack and email—all in one hub.",
-    icon: RiLinksLine, // Perfect for connections/links
+      "Seamlessly connects with your existing tools while keeping everything organized in one place.",
+    icon: RiLinksLine,
   },
   {
-    name: "Secure and Reliable",
+    name: "Always Available",
     description:
-      "Keep your team's schedules and links safe with top-tier encryption and access controls you can trust.",
-    icon: RiShieldKeyholeLine, // Still works for security
+      "Access your unified dashboard anywhere, anytime, with enterprise-grade security.",
+    icon: RiShieldKeyholeLine,
   },
 ];
 
@@ -96,16 +96,15 @@ export default function CodeExample() {
       aria-labelledby="code-example-title"
       className="mx-auto mt-28 w-full max-w-6xl px-3"
     >
-      <Badge>Sales-first</Badge>
+      <Badge>Simplified Workflow</Badge>
       <h2
         id="code-example-title"
         className="mt-2 inline-block bg-gradient-to-br from-gray-900 to-gray-800 bg-clip-text py-2 text-4xl font-bold tracking-tighter text-transparent sm:text-6xl md:text-6xl dark:from-gray-50 dark:to-gray-300"
       >
-        Built for Volvo dealerships, <br /> for sales teams
+        Everything You Need, <br /> Right Where You Need It
       </h2>
       <p className="mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
-        Everything your sales team needs in one place - from inventory tracking to Volvo resources, 
-        all tailored to streamline your dealership&apos;s workflow and boost performance.
+        Stop wasting time switching between tools. Basecamp brings all your dealership resources together in one intuitive interface, making your team more efficient and productive.
       </p>
       <CodeExampleTabs
         tab1={

@@ -3,16 +3,16 @@ import { Badge } from "./Badge";
 
 const stats = [
   {
-    name: "Faster deal prep",
-    value: "+50%",
+    name: "Fewer tools to manage",
+    value: "80%",
   },
   {
-    name: "Team efficiency boost",
-    value: "2x",
+    name: "Time saved daily",
+    value: "2hrs",
   },
   {
-    name: "Tools in one hub",
-    value: "100+",
+    name: "Team productivity",
+    value: "3x",
   },
 ];
 
@@ -22,15 +22,15 @@ export default function Features() {
       aria-labelledby="features-title"
       className="mx-auto mt-44 w-full max-w-6xl px-3"
     >
-      <Badge>Sales at Scale</Badge>
+      <Badge>Unified Experience</Badge>
       <h2
         id="features-title"
         className="mt-2 inline-block bg-gradient-to-br from-gray-900 to-gray-800 bg-clip-text py-2 text-4xl font-bold tracking-tighter text-transparent sm:text-6xl md:text-6xl dark:from-gray-50 dark:to-gray-300"
       >
-        Built for Volvo sales speed and success
+        One Platform, <br /> Zero Friction
       </h2>
       <p className="mt-6 max-w-3xl text-lg leading-7 text-gray-600 dark:text-gray-400">
-        Basecamp eliminates the chaos of scattered tools and schedules, streamlining your Volvo dealership’s sales process. This design drives productivity and performance, keeping your team focused on closing deals.
+        Stop juggling between different tools and platforms. Basecamp brings all your essential dealership resources together in one intuitive interface, letting your team focus on what matters most - closing deals.
       </p>
       <dl className="mt-12 grid grid-cols-1 gap-y-8 md:grid-cols-3 md:border-y md:border-gray-200 md:py-14 dark:border-gray-800">
         {stats.map((stat, index) => (

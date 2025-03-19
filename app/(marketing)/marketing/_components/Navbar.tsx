@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { RiCloseLine, RiMenuLine } from "@remixicon/react";
 import Link from "next/link";
 import React from "react";
-import { BasecampLogo } from "../../../../public/BasecampLogo"; // Adjust path as needed
+import Image from "next/image";
 import { Button } from "./Button";
 import { useUser } from "@clerk/nextjs";
 import { UserNav } from "./UserNav";
@@ -44,7 +44,14 @@ export function Navigation() {
         <div className="relative flex items-center justify-between">
           <Link href={siteConfig.baseLinks.home} aria-label="Home">
             <span className="sr-only">Company logo</span>
-            <BasecampLogo className="w-28 md:w-40" />
+            <Image
+              src="/Basecamp.Logo.png"
+              alt="Basecamp Logo"
+              width={160}
+              height={40}
+              className="w-28 md:w-40 dark:invert"
+              priority
+            />
           </Link>
           <nav className="hidden md:absolute md:left-1/2 md:top-1/2 md:block md:-translate-x-1/2 md:-translate-y-1/2 md:transform">
             <div className="flex items-center gap-10 font-medium">
@@ -72,28 +79,32 @@ export function Navigation() {
           {user ? (
             <div className="hidden items-center gap-4 md:flex">
               <Link href="/uplist">
-                <Button className="h-10 font-semibold">Open Basecamp</Button>
+                <Button variant="primary" className="h-10 font-medium">
+                  Open Basecamp
+                </Button>
               </Link>
             </div>
           ) : (
             <div className="hidden items-center gap-4 md:flex">
               <Link href="/sign-in">
-                <Button variant="primary" className="h-10 font-semibold">
+                <Button variant="ghost" className="h-10 font-medium">
                   Sign in
                 </Button>
               </Link>
               <Link href="/about">
-                <Button className="h-10 font-semibold">Book Demo</Button>
+                <Button variant="primary" className="h-10 font-medium">
+                  Book Demo
+                </Button>
               </Link>
             </div>
           )}
 
           <div className="flex gap-x-2 md:hidden">
-            <Button>Book demo</Button>
+            <Button variant="primary" className="h-10 font-medium">Book demo</Button>
             <Button
               onClick={() => setOpen(!open)}
-              variant="light"
-              className="aspect-square p-2"
+              variant="ghost"
+              className="h-10 aspect-square p-2"
             >
               {open ? (
                 <RiCloseLine aria-hidden="true" className="size-5" />
