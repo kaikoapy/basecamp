@@ -6,6 +6,10 @@ import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "@/components/providers";
 import { Suspense } from "react";
+import { UpdateChecker } from "./components/update-checker";
+
+// Use Vercel's commit SHA in production, fallback to timestamp for development
+const BUILD_VERSION = process.env.VERCEL_GIT_COMMIT_SHA || Date.now().toString();
 
 const heebo = Heebo({
   subsets: ["latin"],
@@ -29,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-version={BUILD_VERSION}>
       <body
         className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
       >
@@ -38,6 +42,7 @@ export default function RootLayout({
             <NuqsAdapter>
               <Providers>
                 {children}
+                <UpdateChecker />
               </Providers>
             </NuqsAdapter>
             <Toaster richColors position="bottom-right" duration={6000} />
