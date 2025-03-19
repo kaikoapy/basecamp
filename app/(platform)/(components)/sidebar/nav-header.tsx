@@ -5,6 +5,7 @@ import { CalendarDays, Building, Users, Search } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
+import Image from "next/image";
 import { SearchBar, SearchBarHandle } from "@/components/command-search"; // Import SearchBarHandle
 import { DealerInfo } from "@/app/(platform)/(components)/dealer-info";
 import { SpeedDial } from "@/app/(platform)/(components)/speed-dial";
@@ -100,12 +101,15 @@ export function NavHeader() {
           </Tooltip>
 
           <Link href="/dashboard">
-            <h1
-              className="text-2xl font-semibold tracking-tight -ml-2"
-              style={{ fontFamily: "var(--font-heebo)" }}
-            >
-              <span className="text-RoadeoPurple font-[900]">Basecamp</span>
-            </h1>
+            <Image
+              src="/Basecamp.Logo.png"
+              alt="Basecamp Logo"
+              width={160}
+              height={46}
+              className="dark:invert h-[46px] w-auto"
+              priority
+              quality={100}
+            />
           </Link>
           <div className="w-full sm:w-[400px] max-w-full">
             {/* Attach ref to SearchBar */}
