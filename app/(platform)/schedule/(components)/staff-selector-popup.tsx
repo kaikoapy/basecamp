@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SalesStaffMember } from "@/convex/types";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, ArrowRight } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { daysOfWeek } from "../utils";
 
 interface StaffSelectorPopupProps {
@@ -218,7 +218,7 @@ export function StaffSelectorPopup({
                     {isInCurrentShift ? (
                       <Trash2 className="h-3 w-3 ml-1 text-red-500" />
                     ) : isInOtherShift ? (
-                      <ArrowRight className="h-3 w-3 ml-1 text-gray-400" />
+                      null
                     ) : (
                       <Plus className="h-3 w-3 ml-1" />
                     )}
@@ -274,7 +274,7 @@ export function StaffSelectorPopup({
                     {isInCurrentShift ? (
                       <Trash2 className="h-3 w-3 ml-1 text-red-500" />
                     ) : isInOtherShift ? (
-                      <ArrowRight className="h-3 w-3 ml-1 text-gray-400" />
+                      null
                     ) : (
                       <Plus className="h-3 w-3 ml-1" />
                     )}
