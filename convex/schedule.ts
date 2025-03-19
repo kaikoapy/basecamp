@@ -120,11 +120,15 @@ export const createSchedule = mutation({
   handler: async (ctx, args) => {
     const { month, year, containers } = args;
     
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+    
     return await ctx.db.insert("schedule", {
       month,
       year,
       containers,
       updatedAt: Date.now(),
+      updatedBy: identity.name || "Unknown User",
       published: false, // New schedules are unpublished by default
     });
   },
@@ -140,6 +144,9 @@ export const updateSchedule = mutation({
   handler: async (ctx, args) => {
     const { month, year, containers } = args;
     
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+    
     // Look for an existing schedule for the given month/year.
     const existingSchedule = await ctx.db
       .query("schedule")
@@ -154,6 +161,7 @@ export const updateSchedule = mutation({
         year,
         containers,
         updatedAt: Date.now(),
+        updatedBy: identity.name || "Unknown User",
         published: false,
       });
       return;
@@ -163,6 +171,7 @@ export const updateSchedule = mutation({
     await ctx.db.patch(existingSchedule._id, {
       containers,
       updatedAt: Date.now(),
+      updatedBy: identity.name || "Unknown User",
     });
   },
 });
@@ -177,6 +186,9 @@ export const togglePublishSchedule = mutation({
   handler: async (ctx, args) => {
     const { month, year, published } = args;
     
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+    
     const existingSchedule = await ctx.db
       .query("schedule")
       .filter((q) => q.eq(q.field("month"), month))
@@ -190,6 +202,7 @@ export const togglePublishSchedule = mutation({
     await ctx.db.patch(existingSchedule._id, {
       published,
       updatedAt: Date.now(),
+      updatedBy: identity.name || "Unknown User",
     });
   },
 });

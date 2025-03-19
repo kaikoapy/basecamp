@@ -106,6 +106,7 @@ export default defineSchema({
     year: v.number(),  // e.g., 2023
     containers: v.record(v.string(), v.array(v.string())), // e.g. { "salespeople-list": [...], "1-0": [...] }
     updatedAt: v.optional(v.number()),
+    updatedBy: v.optional(v.string()), // Clerk User ID
     published: v.optional(v.boolean()),
   }),
 

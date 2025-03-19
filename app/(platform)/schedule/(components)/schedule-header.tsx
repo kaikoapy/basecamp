@@ -41,6 +41,7 @@ interface ScheduleData extends Doc<"schedule"> {
   year: number;
   containers: Record<string, string[]>;
   updatedAt?: number;
+  updatedBy?: string; // Clerk User ID
   published?: boolean;
 }
 
@@ -96,6 +97,22 @@ interface ScheduleHeaderProps {
   setSalesFilter: (filter: "all" | "new" | "used") => void;
   showFilterOptions?: boolean;
   setShowFilterOptions?: (show: boolean) => void;
+}
+
+function LastUpdated({ 
+  updatedAt, 
+  updatedBy 
+}: { 
+  updatedAt?: number; 
+  updatedBy?: string;
+}) {
+  if (!updatedAt) return null;
+
+  return (
+    <p className="text-sm text-muted-foreground">
+      Last updated {new Date(updatedAt).toLocaleDateString()} at {new Date(updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} by {updatedBy || "Unknown User"}
+    </p>
+  );
 }
 
 export function ScheduleHeader({
@@ -154,12 +171,20 @@ export function ScheduleHeader({
 
   return (
     <div className="mb-4 pb-4 border-b">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold">
-            {monthName} {displayYear} Sales Schedule
-          </h1>
-          <div className="flex items-center gap-2">
+      <div className="flex justify-between items-start">
+        <div className="flex items-start gap-4">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold">
+              {monthName} {displayYear} Sales Schedule
+            </h1>
+            {scheduleData && (
+              <LastUpdated 
+                updatedAt={scheduleData.updatedAt} 
+                updatedBy={scheduleData.updatedBy} 
+              />
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-1">
             <Button
               onClick={onPrevMonth}
               variant="outline"
