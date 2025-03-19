@@ -625,11 +625,12 @@ const CalendarSchedule: React.FC = () => {
                           isEditMode={false}
                           salesFilter={salesFilter}
                           setSalesFilter={setSalesFilter}
+                          prevScheduleData={prevScheduleData ? { containers: prevScheduleData.containers } : undefined}
                         />
                       </div>
                     ) : (
                       <CalendarDay
-                        key={dayInfo.day}
+                        key={`${dayInfo.day}-${dayInfo.month}-${dayInfo.year}`}
                         day={dayInfo.day}
                         dayOfWeek={new Date(dayInfo.year, dayInfo.month - 1, dayInfo.day).getDay()}
                         containers={containers}
@@ -644,6 +645,7 @@ const CalendarSchedule: React.FC = () => {
                         isEditMode={isEditMode}
                         salesFilter={salesFilter}
                         setSalesFilter={setSalesFilter}
+                        prevScheduleData={prevScheduleData ? { containers: prevScheduleData.containers } : undefined}
                       />
                     )
                   ))}

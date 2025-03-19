@@ -21,6 +21,7 @@ interface CalendarDayProps {
   isEditMode: boolean;
   salesFilter: "all" | "new" | "used";
   setSalesFilter: (filter: "all" | "new" | "used") => void;
+  prevScheduleData?: { containers: Record<string, string[]> };
 }
 
 export function CalendarDay({ 
@@ -32,7 +33,8 @@ export function CalendarDay({
   onUpdateContainers,
   isEditMode,
   salesFilter,
-  setSalesFilter
+  setSalesFilter,
+  prevScheduleData
 }: CalendarDayProps) {
   // Get shifts from database
   const shifts = useQuery(api.shifts.getShifts) ?? defaultShifts;
@@ -197,6 +199,50 @@ export function CalendarDay({
     onUpdateContainers(updatedContainers);
   };
 
+  // Add this helper function to count scheduled staff
+  const getScheduledStaffCount = () => {
+    // Get all unique staff IDs scheduled for this day (across all shifts)
+    const scheduledStaffIds = new Set<string>();
+    
+    Object.entries(containers).forEach(([key, items]) => {
+      if (key === "salespeople-list" || key === "special-labels-list") return;
+      
+      const [containerDay] = key.split("-");
+      if (containerDay === String(day)) {
+        items.forEach(item => {
+          if (!item.startsWith("special:")) {
+            // Extract the base ID without timestamp
+            const baseId = item.includes("::") ? item.split("::")[0] : item;
+            // Remove "new:" or "used:" prefix if present
+            const cleanId = baseId.startsWith("new:") || baseId.startsWith("used:") 
+              ? baseId.substring(baseId.indexOf(":") + 1)
+              : baseId;
+            
+            // Find the staff member
+            const staff = salesStaffData?.find(s => s._id === cleanId);
+            if (staff) {
+              // Only add if it matches the current filter
+              if (salesFilter === "all" || staff.type === salesFilter) {
+                scheduledStaffIds.add(cleanId);
+              }
+            }
+          }
+        });
+      }
+    });
+
+    // Filter staff based on current filter
+    const availableStaff = (salesStaffData || []).filter(staff => {
+      if (salesFilter === "all") return true;
+      return staff.type === salesFilter;
+    });
+
+    return {
+      scheduled: scheduledStaffIds.size,
+      total: availableStaff.length
+    };
+  };
+
   return (
     <Card key={`day-${day}`} className="m-1 calendar-card">
       <CardContent className="p-2">
@@ -211,18 +257,36 @@ export function CalendarDay({
               </div>
             )}
           </div>
-          {isEditMode && (
-            <div className="no-print">
-              <DayActionsMenu
-                day={day}
-                containers={containers}
-                onCopySchedule={(newContainers) => {
-                  onUpdateContainers(newContainers);
-                }}
-                onClearDay={handleClearDay}
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {isEditMode && (
+              <div className="text-xs text-gray-500">
+                {(() => {
+                  const { scheduled, total } = getScheduledStaffCount();
+                  const isComplete = scheduled === total;
+                  return (
+                    <span className={isComplete ? "text-green-600" : "text-amber-600"}>
+                      {scheduled}/{total} scheduled
+                    </span>
+                  );
+                })()}
+              </div>
+            )}
+            {isEditMode && (
+              <div className="no-print">
+                <DayActionsMenu
+                  day={day}
+                  containers={containers}
+                  prevMonthContainers={prevScheduleData?.containers}
+                  onCopySchedule={(newContainers) => {
+                    onUpdateContainers(newContainers);
+                  }}
+                  onClearDay={handleClearDay}
+                  currentMonth={currentMonth}
+                  currentYear={currentYear}
+                />
+              </div>
+            )}
+          </div>
         </div>
         {shiftsForDay.map((shift: string, index: number) => {
           const containerId = `${day}-${index}`;
