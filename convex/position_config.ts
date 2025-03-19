@@ -240,4 +240,92 @@ export const updateDepartment = mutation({
       updatedAt: Date.now(),
     });
   },
+});
+
+// Update multiple positions at once
+export const updatePositions = mutation({
+  args: {
+    positions: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        isActive: v.boolean(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const orgId = identity.subject;
+    const config = await ctx.db
+      .query("positionConfig")
+      .filter((q) => q.eq(q.field("orgId"), orgId))
+      .first();
+
+    if (!config) throw new Error("Configuration not found");
+
+    // Update each position while preserving other fields
+    const positions = config.positions.map((pos: Position) => {
+      const update = args.positions.find((p) => p.id === pos.id);
+      if (update) {
+        return {
+          ...pos,
+          name: update.name,
+          isActive: update.isActive,
+          updatedAt: Date.now(),
+        };
+      }
+      return pos;
+    });
+
+    await ctx.db.patch(config._id, {
+      positions,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+// Update multiple departments at once
+export const updateDepartments = mutation({
+  args: {
+    departments: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        isActive: v.boolean(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const orgId = identity.subject;
+    const config = await ctx.db
+      .query("positionConfig")
+      .filter((q) => q.eq(q.field("orgId"), orgId))
+      .first();
+
+    if (!config) throw new Error("Configuration not found");
+
+    // Update each department while preserving other fields
+    const departments = config.departments.map((dept: Department) => {
+      const update = args.departments.find((d) => d.id === dept.id);
+      if (update) {
+        return {
+          ...dept,
+          name: update.name,
+          isActive: update.isActive,
+          updatedAt: Date.now(),
+        };
+      }
+      return dept;
+    });
+
+    await ctx.db.patch(config._id, {
+      departments,
+      updatedAt: Date.now(),
+    });
+  },
 }); 

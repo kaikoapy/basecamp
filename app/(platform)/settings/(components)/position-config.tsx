@@ -33,7 +33,7 @@ interface Department {
 }
 
 export function PositionConfig() {
-  const config = useQuery(api.position_config.get);
+  const config = useQuery(api.position_config.getAll);
   const initialize = useMutation(api.position_config.initialize);
   const updatePositions = useMutation(api.position_config.updatePositions);
   const updateDepartments = useMutation(api.position_config.updateDepartments);
