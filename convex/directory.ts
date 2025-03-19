@@ -21,6 +21,7 @@ export const POSITIONS = [
   "Porter",
   "Detail Manager",
   "Receptionist",
+  "BDC"
 ] as const;
 
 export const DEPARTMENTS = [

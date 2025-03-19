@@ -17,16 +17,35 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectSeparator,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { DEPARTMENTS, POSITIONS } from "@/convex/directory";
 import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { useEffect } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { NewPositionDialog } from "./new-position-dialog";
+import { Plus } from "lucide-react";
+
+interface Position {
+  id: string;
+  name: string;
+  originalName: string;
+  isActive: boolean;
+  department: string;
+  updatedAt: number;
+}
+
+interface Department {
+  id: string;
+  name: string;
+  originalName: string;
+  isActive: boolean;
+  updatedAt: number;
+}
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -60,6 +79,21 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
   const create = useMutation(api.directory.create);
   const { toast } = useToast();
 
+  // Fetch positions and departments from the database
+  const config = useQuery(api.position_config.getAll);
+  const initialize = useMutation(api.position_config.initialize);
+
+  // Initialize if no config exists
+  useEffect(() => {
+    if (config === null) {
+      initialize();
+    }
+  }, [config, initialize]);
+  
+  const activeDepartments = config?.departments
+    .filter((dept: Department) => dept.isActive)
+    .map((dept: Department) => dept.name) || [];
+
   const {
     register,
     handleSubmit,
@@ -82,6 +116,12 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
 
   // Watch the department value
   const currentDepartment = watch("department");
+
+  // Get the department for a position
+  const getDepartmentForPosition = (positionName: string) => {
+    const position = config?.positions.find(pos => pos.name === positionName);
+    return position?.department || "";
+  };
 
   // Set initial values when contact changes
   useEffect(() => {
@@ -107,6 +147,8 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
       });
     }
   }, [contact, reset]);
+
+  const [isNewPositionDialogOpen, setIsNewPositionDialogOpen] = useState(false);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -136,6 +178,20 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
       });
     }
   };
+
+  // Group positions by department
+  const positionsByDepartment = config?.positions
+    .filter((pos: Position) => pos.isActive)
+    .reduce((acc: Record<string, string[]>, pos: Position) => {
+      if (!acc[pos.department]) {
+        acc[pos.department] = [];
+      }
+      acc[pos.department].push(pos.name);
+      return acc;
+    }, {});
+
+  // Sort departments for consistent ordering
+  const sortedDepartments = Object.keys(positionsByDepartment || {}).sort();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -168,19 +224,44 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="position">Position</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="position">Position</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  onClick={() => setIsNewPositionDialogOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add New
+                </Button>
+              </div>
               <Select
                 defaultValue={contact?.position}
-                onValueChange={(value) => setValue("position", value)}
+                onValueChange={(value) => {
+                  setValue("position", value);
+                  // Auto-select the department based on the position
+                  const department = getDepartmentForPosition(value);
+                  setValue("department", department);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a position" />
                 </SelectTrigger>
                 <SelectContent>
-                  {POSITIONS.map((position) => (
-                    <SelectItem key={position} value={position}>
-                      {position}
-                    </SelectItem>
+                  {sortedDepartments.map((department, index) => (
+                    <div key={department}>
+                      {index > 0 && <SelectSeparator />}
+                      <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                        {department}
+                      </div>
+                      {positionsByDepartment?.[department].sort().map((position) => (
+                        <SelectItem key={position} value={position}>
+                          {position}
+                        </SelectItem>
+                      ))}
+                    </div>
                   ))}
                 </SelectContent>
               </Select>
@@ -195,12 +276,13 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
               <Select
                 value={currentDepartment}
                 onValueChange={(value) => setValue("department", value)}
+                disabled={!!watch("position")} // Disable department selection when position is selected
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DEPARTMENTS.map((department) => (
+                  {activeDepartments.map((department: string) => (
                     <SelectItem key={department} value={department}>
                       {department}
                     </SelectItem>
@@ -244,6 +326,11 @@ export function EditForm({ contact, isOpen, onClose }: EditFormProps) {
           </DialogFooter>
         </form>
       </DialogContent>
+      <NewPositionDialog
+        isOpen={isNewPositionDialogOpen}
+        onClose={() => setIsNewPositionDialogOpen(false)}
+        departments={activeDepartments}
+      />
     </Dialog>
   );
 }
