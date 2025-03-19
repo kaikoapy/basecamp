@@ -38,7 +38,12 @@ export function UpdateChecker() {
             description: "A new version of Basecamp is available.",
             action: {
               label: "Refresh Now",
-              onClick: () => window.location.reload(),
+              onClick: () => {
+                // Clear cache and force reload
+                window.location.href = window.location.href;
+                // Clear any query parameters
+                window.history.replaceState({}, '', window.location.pathname);
+              },
             },
             duration: Infinity, // Keep the toast until user acts
           });
