@@ -27,7 +27,7 @@ export function OnboardingDialog({
 
   const stepContent = [
     {
-      title: "Welcome to Dealer Hub",
+      title: "Welcome to Basecamp",
       description:
         "Here's your go-to spot for all the tools and resources you need, all in one place.",
       video: "https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yzHt38s0hjmS4fOLN1qgvdriDbFCVGYJwQlXH",

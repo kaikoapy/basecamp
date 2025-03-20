@@ -102,11 +102,11 @@ export function NavHeader() {
 
           <Link href="/dashboard">
             <Image
-              src="/Basecamp.Logo.png"
+              src="/Basecamp.Logo.svg"
               alt="Basecamp Logo"
-              width={160}
-              height={46}
-              className="dark:invert h-[46px] w-auto"
+              width={120}
+              height={34}
+              className="dark:invert h-[34px] w-auto"
               priority
               quality={100}
             />

@@ -20,7 +20,7 @@ export default function Hero() {
         className="mt-6 max-w-lg animate-slide-up-fade text-lg text-gray-700 dark:text-gray-400"
         style={{ animationDuration: "900ms" }}
       >
-        Basecamp unites every dealership resource and tool in one place. Less questions, more action.
+        Basecamp unites your dealership&apos;s resources and tools. No more tabs, no more searching — just everything in one place.
       </p>
       <div
         className="mt-8 flex w-full animate-slide-up-fade flex-col justify-center gap-3 px-3 sm:flex-row"

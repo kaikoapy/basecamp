@@ -67,26 +67,26 @@ const features = [
   {
     name: "All-in-One Hub",
     description:
-      "Access everything your team needs - from inventory to customer data - in one centralized dashboard.",
+      "Access everything your sales team needs - from tool links, store announcements, documents, contact directory, and more - in one centralized dashboard.",
     icon: RiStackLine,
   },
   {
-    name: "Instant Access",
+    name: "Tools",
     description:
-      "No more switching between tools. All your dealership resources are just one click away.",
-    icon: RiPlugLine,
+      "Built in tools for your team to use, including a schedule builder, directory, gas calculator, and more.",
+    icon: RiShieldKeyholeLine,
   },
   {
-    name: "Smart Integration",
+    name: "Product Knowledge",
     description:
-      "Seamlessly connects with your existing tools while keeping everything organized in one place.",
+      "Access up to date and accurate Volvo product knowledge that your team needs to sell more cars.",
     icon: RiLinksLine,
   },
   {
-    name: "Always Available",
+    name: "New-Hire Onboarding",
     description:
-      "Access your unified dashboard anywhere, anytime, with enterprise-grade security.",
-    icon: RiShieldKeyholeLine,
+      "Onboarding new hires is faster and easier with our intuitive platform that makes it easy to learn the ropes.",
+    icon: RiPlugLine,
   },
 ];
 
@@ -104,7 +104,7 @@ export default function CodeExample() {
         Everything You Need, <br /> Right Where You Need It
       </h2>
       <p className="mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
-        Stop wasting time switching between tools. Basecamp brings all your dealership resources together in one intuitive interface, making your team more efficient and productive.
+        Stop wasting time remembering and searching for the right tools and resources. Basecamp brings all your dealership resources together in one intuitive interface, making your team more efficient and productive.
       </p>
       <CodeExampleTabs
         tab1={

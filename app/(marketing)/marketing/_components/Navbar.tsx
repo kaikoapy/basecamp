@@ -45,7 +45,7 @@ export function Navigation() {
           <Link href={siteConfig.baseLinks.home} aria-label="Home">
             <span className="sr-only">Company logo</span>
             <Image
-              src="/Basecamp.Logo.png"
+              src="/Basecamp.Logo.svg"
               alt="Basecamp Logo"
               width={160}
               height={40}
