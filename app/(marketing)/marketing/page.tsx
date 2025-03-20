@@ -1,4 +1,3 @@
-import Cta from "./_components/Cta"
 import Features from "./_components/FounderLetter"
 import ImageSection from "./_components/FeatureImages"
 import Hero from "./_components/Hero"
@@ -13,7 +12,7 @@ export default function Home() {
       <ImageSection />
       <BentoDemo />
       <Features />
-      <Cta />
+  
     </main>
   )
 }

@@ -8,11 +8,7 @@ export default function Features() {
     >
       <div className="space-y-12 w-full py-12">
         <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="flex flex-col items-center space-y-2 max-w-3xl">
-            <div className="rounded-lg bg-foreground text-background px-4 py-1.5 text-sm">
-              Founder Memo
-            </div>
-          </div>
+         
           
           {/* Letter Container */}
           <div className="relative w-full max-w-3xl">
@@ -24,12 +20,16 @@ export default function Features() {
               
               {/* Letter content */}
               <div className="relative space-y-6">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-8">
-                  Simplifying Dealership Life
-                </h2>
+                <div className="space-y-6 text-purple-950/90 font-mono">
+                  <div className="text-sm">Founder Letter</div>
+                  <h2 className="text-xl font-normal tracking-tight">
+                    Simplifying Dealership Life
+                  </h2>
+                  <div className="h-px w-24 bg-purple-950/40" />
+                </div>
                 <div className="space-y-6 text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   <p className="mb-4">
-                    Hey everyone... Let&apos;s talk about the chaos of the modern dealership.
+                    Let&apos;s talk about the chaos of the modern dealership.
                   </p>
                   <p className="mb-4">
                     Remember when selling cars meant focusing on customers, not hunting through endless tabs and bookmarks? I couldn&apos;t. My bookmark bar ran out of space years ago.
@@ -56,12 +56,17 @@ export default function Features() {
                     Now there is.
                   </p>
                 </div>
-              </div>
 
-              {/* Signature */}
-              <div className="mt-12 flex flex-col items-start border-t border-gray-200 pt-6">
-                <p className="font-medium">Kai Koa</p>
-                <p className="text-sm text-muted-foreground">Founder</p>
+                {/* Signature */}
+                <div className="mt-12 space-y-3 font-mono text-purple-950/90">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-purple-950/30" />
+                    <div>
+                      <p className="text-base">Kai Koa</p>
+                      <p className="text-xs">Founder</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
