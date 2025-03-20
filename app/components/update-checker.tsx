@@ -8,6 +8,11 @@ const VERSION_KEY = 'basecamp_version_shown';
 
 export function UpdateChecker() {
   useEffect(() => {
+    // Skip update checking in development
+    if (process.env.NODE_ENV === 'development') {
+      return;
+    }
+
     // Function to check for new version
     const checkForUpdate = async () => {
       try {
