@@ -317,7 +317,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             isModal: true,
           },
           {
-            title: "Dealerhip Configuration",
+            title: "Dealership Configuration",
             action: () => showDialog("dealership-configuration"),
             isModal: true,
           },
