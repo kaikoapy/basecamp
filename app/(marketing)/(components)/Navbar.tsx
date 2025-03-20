@@ -41,7 +41,7 @@ export default function Navbar() {
                 </Button>
               </SignInButton>
               <SignInButton mode="modal">
-                <Button className="text-sm font-medium">Start Now</Button>
+                <Button className="text-sm font-medium bg-[#6a68f1] hover:bg-[#6a68f1]/90">Start Now</Button>
               </SignInButton>
             </SignedOut>
             <SignedIn>

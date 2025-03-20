@@ -24,9 +24,9 @@ const buttonVariants = tv({
         // text color
         "text-white",
         // background color
-        "bg-indigo-600",
+        "bg-[#6a68f1]",
         // hover color
-        "hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-500/20",
+        "hover:bg-[#6a68f1]/90 hover:shadow-md hover:shadow-[#6a68f1]/20",
         // active state
         "active:scale-[0.98]",
       ],

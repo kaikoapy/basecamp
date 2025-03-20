@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { BadgeDollarSign, BookOpenText, Rss } from "lucide-react"
+import { BookOpen, Calendar, LayoutDashboard, Library, Users } from "lucide-react"
 import { useState } from "react"
 
 const ImageSection = () => {
@@ -10,23 +10,23 @@ const ImageSection = () => {
   const ImageTabs = [
     {
       name: "Dashboard",
-      icon: <Rss />,
+      icon: <LayoutDashboard />,
     },
     {
       name: "Product Knowledge",
-      icon: <BadgeDollarSign />,
+      icon: <BookOpen />,
     },
     {
       name: "Document Library",
-      icon: <BadgeDollarSign />,
+      icon: <Library />,
     },
     {
       name: "Contact Directory",
-      icon: <BadgeDollarSign />,
+      icon: <Users />,
     },
     {
       name: "Schedule Builder",
-      icon: <BookOpenText />,
+      icon: <Calendar />,
     },
   ]
 
@@ -70,7 +70,7 @@ const ImageSection = () => {
         {/* Top pill/badge */}
         <div className="z-10 inline-block rounded-lg border border-indigo-400/20 bg-indigo-800/20 px-3 py-1.5 font-semibold uppercase leading-4 tracking-tight sm:text-sm">
           <span className="bg-gradient-to-b from-indigo-200 to-indigo-400 bg-clip-text text-transparent">
-            Powerful UI Components
+            Core Features
           </span>
         </div>
 

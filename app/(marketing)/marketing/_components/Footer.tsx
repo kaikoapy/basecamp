@@ -1,23 +1,19 @@
 import { RiArrowRightUpLine } from "@remixicon/react"
 import Link from "next/link"
 import Image from "next/image"
-import ThemeSwitch from "./ThemeSwitch"
 
 const navigation = {
   product: [
-    { name: "Enterprise", href: "#", external: false },
     { name: "Pricing", href: "/pricing", external: false },
     { name: "Docs", href: "#", external: false },
     { name: "Changelog", href: "/changelog", external: false },
   ],
   resources: [
     { name: "FAQs", href: "/pricing#faq-title", external: false },
-    { name: "GitHub", href: "#", external: true },
-    { name: "Discord", href: "#", external: true },
-    { name: "YouTube", href: "#", external: true },
+    { name: "About", href: "#", external: true },
   ],
   company: [
-    { name: "About", href: "/about", external: false },
+    { name: "Roadmap", href: "/roadmap", external: false },
     { name: "Careers", href: "#", external: true },
     { name: "Contact", href: "#", external: false },
     { name: "Status", href: "#", external: false },
@@ -44,10 +40,9 @@ export default function Footer() {
               className="w-32 sm:w-40"
             />
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
-    Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
-  </p>
+              Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
+            </p>
             <div className="flex space-x-6">
-              <ThemeSwitch />
             </div>
             <div></div>
           </div>

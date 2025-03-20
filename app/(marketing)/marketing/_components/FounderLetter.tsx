@@ -20,19 +20,16 @@ export default function Features() {
               
               {/* Letter content */}
               <div className="relative space-y-6">
-                <div className="space-y-6 text-purple-950/90 font-mono">
-                  <div className="text-sm">Founder Letter</div>
+                <div className="space-y-6 text-black font-mono">
+                  <div className="text-sm">Founder Memo</div>
                   <h2 className="text-xl font-normal tracking-tight">
                     Simplifying Dealership Life
                   </h2>
-                  <div className="h-px w-24 bg-purple-950/40" />
+                  <div className="h-px w-24 bg-black/40" />
                 </div>
-                <div className="space-y-6 text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <div className="space-y-6 text-muted-foreground md:text-lg/relaxed lg:text-sm/relaxed xl:text-lg/relaxed">
                   <p className="mb-4">
                     Let&apos;s talk about the chaos of the modern dealership.
-                  </p>
-                  <p className="mb-4">
-                    Remember when selling cars meant focusing on customers, not hunting through endless tabs and bookmarks? I couldn&apos;t. My bookmark bar ran out of space years ago.
                   </p>
                   <p className="mb-4">
                     Every day, I watched talented sales professionals waste time searching through countless systems just to answer basic questions—the same questions asked yesterday, with answers buried somewhere in our digital sprawl. Training new hires meant overwhelming them with dozens of separate tools instead of helping them connect with customers.
@@ -58,9 +55,9 @@ export default function Features() {
                 </div>
 
                 {/* Signature */}
-                <div className="mt-12 space-y-3 font-mono text-purple-950/90">
+                <div className="mt-12 space-y-3 font-mono text-black">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-purple-950/30" />
+                    <div className="h-8 w-8 rounded-full bg-black/30" />
                     <div>
                       <p className="text-base">Kai Koa</p>
                       <p className="text-xs">Founder</p>

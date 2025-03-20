@@ -4,7 +4,7 @@ import { CalendarIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { BellIcon, Share2Icon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Marquee } from "./magicui/marquee";
-import { AnimatedListDemo } from "./animated-list-demo";
+import { AnimatedList } from "./magicui/animated-list";
 import { AnimatedBeamMultipleOutputDemo } from "./animated-beam-multiple-outputs";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +46,30 @@ const files = [
     name: "out-of-state-reciprocity.pdf",
     body: "Quarterly financial report with revenue projections and cost analysis.",
   },
+];
+
+const notifications = [
+  { 
+    id: 1, 
+    subject: "2025 XC90 Weekend Push - $1000 Spiffs",
+    to: "Sales Team",
+    from: "General Manager",
+    preview: "Team, To push our remaining 2024 XC90s, we're doubling spiffs this weekend. We have 15 XC90s still on the lot that we need to move...",
+  },
+  { 
+    id: 2, 
+    subject: "Monthly Sales Update - Great Numbers!",
+    to: "Sales Team",
+    from: "Sales Manager",
+    preview: "Team, Outstanding month so far! Current standings: Gio (22 units), Tito (18), Alex (15), Juan (14). Keep pushing for those year-end bonuses...",
+  },
+  { 
+    id: 3, 
+    subject: "Mandatory Sales Meeting - February Results",
+    to: "Sales Team",
+    from: "General Manager",
+    preview: "Team, February was a F***ing disaster at 42 units vs our 75 unit goal. Sweden's so ashamed, they're holding a nationwide silence to grieve our failure. Mandatory meeting tomorrow 8:30am. No excuses for missing this one...",
+  }
 ];
 
 const features = [
@@ -92,7 +116,30 @@ const features = [
     cta: "View Notifications",
     className: "col-span-3 lg:col-span-2",
     background: (
-      <AnimatedListDemo className="absolute right-2 top-4 h-[300px] w-full scale-75 border-none transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_10%,#000_100%)] group-hover:scale-90" />
+      <AnimatedList delay={4000} className="absolute right-2 top-4 h-[300px] w-full scale-75 border-none transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_10%,#000_100%)] group-hover:scale-90">
+        {notifications.map((item) => (
+          <div
+            key={item.id}
+            className="flex w-full flex-col gap-1 rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+          >
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-blue-500" />
+              <span className="font-medium text-gray-900 dark:text-gray-100">{item.subject}</span>
+            </div>
+            <div className="ml-4 space-y-1">
+              <div className="flex gap-2 text-sm">
+                <span className="font-medium text-gray-700 dark:text-gray-300">To:</span>
+                <span className="text-gray-600 dark:text-gray-400">{item.to}</span>
+              </div>
+              <div className="flex gap-2 text-sm">
+                <span className="font-medium text-gray-700 dark:text-gray-300">From:</span>
+                <span className="text-gray-600 dark:text-gray-400">{item.from}</span>
+              </div>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-500 line-clamp-2">{item.preview}</p>
+            </div>
+          </div>
+        ))}
+      </AnimatedList>
     ),
   },
   {
