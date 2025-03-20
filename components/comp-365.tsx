@@ -1,4 +1,5 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import Image from "next/image";
 
 export default function HoverCardDemo() {
   return (
@@ -6,7 +7,7 @@ export default function HoverCardDemo() {
       <HoverCard>
         <HoverCardTrigger asChild>
           <a className="flex size-16 overflow-hidden rounded-lg" href="#">
-            <img
+            <Image
               className="h-full w-full object-cover"
               src="/dialog-content.png"
               width={382}
