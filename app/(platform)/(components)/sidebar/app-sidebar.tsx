@@ -361,12 +361,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
               <Link href="/" aria-label="Home">
                 <Image
-                  src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yibR7egrGWDJBSPkiAbVLgH6UvF7dCXhEYpIQ"
+                  src="/Basecamp-Logo.svg"
                   alt="Basecamp Logo"
                   width={120}
                   height={30}
                   className="h-6 w-auto dark:invert"
                   priority
+                  unoptimized
                 />
               </Link>
             </SidebarMenuButton>

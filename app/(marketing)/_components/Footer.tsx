@@ -32,11 +32,13 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-20">
           <div className="space-y-8">
             <Image
-              src="https://4ztip6noaf.ufs.sh/f/WTe1MV8FTP1yibR7egrGWDJBSPkiAbVLgH6UvF7dCXhEYpIQ"
+              src="/Basecamp-Logo.svg"
               alt="Basecamp Logo"
               width={160}
               height={40}
               className="w-32 sm:w-40"
+              priority
+              unoptimized
             />
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
               Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
