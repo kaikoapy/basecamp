@@ -360,7 +360,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
               <Link href="/" aria-label="Home">
-                <BasecampLogo className="h-8 w-auto dark:invert" />
+                <BasecampLogo className="h-12 w-auto dark:invert" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
