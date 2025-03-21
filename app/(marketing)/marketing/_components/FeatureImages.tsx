@@ -9,7 +9,7 @@ const ImageSection = () => {
 
   const ImageTabs = [
     {
-      name: "Dashboard",
+      name: "Seamless Dashboard",
       icon: <LayoutDashboard />,
     },
     {
