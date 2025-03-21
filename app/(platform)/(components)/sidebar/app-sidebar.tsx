@@ -19,8 +19,8 @@ import {
 } from "lucide-react";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
+import { BasecampLogo } from "@/public/BasecampLogo";
 
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
@@ -360,15 +360,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
               <Link href="/" aria-label="Home">
-                <Image
-                  src="/Basecamp-Logo.svg"
-                  alt="Basecamp Logo"
-                  width={120}
-                  height={30}
-                  className="h-6 w-auto dark:invert"
-                  priority
-                  unoptimized
-                />
+                <BasecampLogo className="h-6 w-auto dark:invert" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

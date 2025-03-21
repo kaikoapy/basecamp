@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { RiCloseLine, RiMenuLine, RiTaskLine } from "@remixicon/react";
 import Link from "next/link";
 import React from "react";
-import Image from "next/image";
+import { BasecampLogo } from "@/public/BasecampLogo";
 import { Button } from "./Button";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -119,15 +119,7 @@ export function Navigation() {
         <div className="relative flex items-center justify-between">
           <Link href={siteConfig.baseLinks.home} aria-label="Home" prefetch={true}>
             <span className="sr-only">Company logo</span>
-            <Image
-              src="/Basecamp-Logo.svg"
-              alt="Basecamp Logo"
-              width={160}
-              height={40}
-              className="w-28 md:w-40 dark:invert"
-              priority
-              unoptimized
-            />
+            <BasecampLogo className="w-28 md:w-40 dark:invert" />
           </Link>
 
           <NavigationMenu className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">

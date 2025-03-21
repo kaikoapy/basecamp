@@ -1,6 +1,6 @@
 import { RiArrowRightUpLine } from "@remixicon/react"
 import Link from "next/link"
-import Image from "next/image"
+import { BasecampLogo } from "@/public/BasecampLogo"
 
 const navigation = {
   product: [
@@ -31,15 +31,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-3 pb-8 pt-16 sm:pt-24 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-20">
           <div className="space-y-8">
-            <Image
-              src="/Basecamp-Logo.svg"
-              alt="Basecamp Logo"
-              width={160}
-              height={40}
-              className="w-32 sm:w-40"
-              priority
-              unoptimized
-            />
+            <BasecampLogo className="w-32 sm:w-40" />
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
               Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
             </p>
