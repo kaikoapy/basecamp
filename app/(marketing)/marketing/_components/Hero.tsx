@@ -11,14 +11,15 @@ export default function Hero() {
     >
       <Link
         href="#"
-        className="group mb-8 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-blue-400/20 backdrop-blur-[1px] transition-colors hover:bg-blue-500/[2.5%]"
+        className="group mb-8 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-[#6a68f1]/20 backdrop-blur-[1px] transition-colors hover:bg-[#6a68f1]/[2.5%]"
       >
         <span className="shrink-0 rounded-full border bg-gray-50 px-2.5 py-1 text-sm text-gray-600 sm:text-xs">
           New
         </span>
         <span className="flex items-center gap-1 truncate text-sm">
           <span className="w-full truncate">
-          Powering modern Volvo dealerships          </span>
+            Powering modern Volvo dealerships
+          </span>
           <svg
             className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +52,7 @@ export default function Hero() {
         className="mt-8 flex w-full animate-slide-up-fade flex-col justify-center gap-3 px-3 sm:flex-row"
         style={{ animationDuration: "1100ms" }}
       >
-        <Button className="h-10 font-semibold">
+        <Button className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
           <Link href="/sign-up">Start 14-day trial</Link>
         </Button>
         <Button

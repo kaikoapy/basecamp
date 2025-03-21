@@ -33,7 +33,7 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-20">
           <div className="space-y-8">
             <Image
-              src="/Basecamp.Logo.svg"
+              src="/Basecamp-Logo.svg"
               alt="Basecamp Logo"
               width={160}
               height={40}

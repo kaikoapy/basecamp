@@ -115,7 +115,7 @@ export function Navigation() {
           <Link href={siteConfig.baseLinks.home} aria-label="Home" prefetch={true}>
             <span className="sr-only">Company logo</span>
             <Image
-              src="/Basecamp.Logo.svg"
+              src="/Basecamp-Logo.svg"
               alt="Basecamp Logo"
               width={160}
               height={40}
@@ -192,7 +192,7 @@ export function Navigation() {
           {user ? (
             <div className="hidden items-center gap-4 md:flex">
               <Link href="/dashboard">
-                <Button variant="primary" className="h-10 font-medium">
+                <Button variant="primary" className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
                   Open Basecamp
                 </Button>
               </Link>
