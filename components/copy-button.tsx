@@ -180,8 +180,8 @@ export function CopyButtonWithText({
   };
 
   const AnimatedCopyIcon = () => (
-    <div className="relative flex items-cente justify-center gap-1.5 py-1">
-      <span className="font-medium text-xs">
+    <div className="relative flex items-center justify-center gap-1.5 py-1">
+      <span className="font-medium text-xs hidden sm:inline">
         {copied ? "Copied!" : "Copy link"}
       </span>
       {copied ? (
