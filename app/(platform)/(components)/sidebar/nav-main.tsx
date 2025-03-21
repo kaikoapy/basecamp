@@ -14,7 +14,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { DynamicModal } from "@/app/(platform)/(components)/dynamic-modal";
 import { useEffect, useState } from "react";
@@ -32,6 +31,7 @@ interface NavMainItem {
     isModal?: boolean;
     action?: () => void;
   }[];
+  onMouseDown?: boolean;
 }
 
 function isExternalUrl(url: string) {
@@ -39,7 +39,6 @@ function isExternalUrl(url: string) {
 }
 
 export function NavMain({ items }: { items: NavMainItem[] }) {
-  const { state } = useSidebar();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -61,11 +60,6 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
       [title]: !prev[title],
     }));
   };
-
-  // Hide the entire component when sidebar is collapsed
-  if (state === "collapsed") {
-    return null;
-  }
 
   const renderItem = (item: NavMainItem) => {
     const content = !item.items?.length ? (

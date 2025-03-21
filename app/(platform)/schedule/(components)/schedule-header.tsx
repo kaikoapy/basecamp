@@ -188,8 +188,8 @@ export function ScheduleHeader({
             <Button
               onClick={onPrevMonth}
               variant="outline"
-              size="icon"
-              // Always allow navigation for admins
+              size="sm"
+              className="px-2.5"
               disabled={!isAdmin && (!prevScheduleData || !prevScheduleData.published)}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -197,7 +197,8 @@ export function ScheduleHeader({
             <Button
               onClick={onNextMonth}
               variant="outline"
-              size="icon"
+              size="sm"
+              className="px-2.5"
               disabled={isNextButtonDisabled}
             >
               <ChevronRight className="h-4 w-4" />

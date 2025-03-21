@@ -240,6 +240,10 @@ export function SpeedDial() {
           <Link
             href="/directory"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              window.location.href = "/directory";
+            }}
           >
             View Complete Directory →
           </Link>

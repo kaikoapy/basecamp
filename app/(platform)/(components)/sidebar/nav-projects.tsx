@@ -17,9 +17,9 @@ export interface NavProject {
   name: string;
   icon: LucideIcon;
   section: string;
-  iconColor: string;
-  iconBgColor: string;
-  onClick?: () => void;
+  iconColor?: string;
+  iconBgColor?: string;
+  onMouseDown?: () => void;
 }
 
 export function NavProjects({ projects }: { projects: NavProject[] }) {
@@ -53,12 +53,12 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
   }, [searchParams]);
 
   const handleClick = (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.PointerEvent<HTMLButtonElement>,
     item: NavProject
   ) => {
     e.preventDefault();
-    if (item.onClick) {
-      item.onClick();
+    if (item.onMouseDown) {
+      item.onMouseDown();
     } else {
       scrollToSection(item.section);
       const params = new URLSearchParams(searchParams);
@@ -75,11 +75,11 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild
-              onClick={(e) => handleClick(e, item)}
+              onPointerDown={(e) => handleClick(e, item)}
               tooltip={item.name}
               onMouseEnter={() => setHoveredItem(item.name)}
               onMouseLeave={() => setHoveredItem(null)}
-              className="hover:bg-slate-200/80 transition-colors" // Added hover style
+              className="hover:bg-slate-200/80 transition-colors"
             >
               <button className="flex w-full items-center text-sm font-medium text-gray-700">
                 <div

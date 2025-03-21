@@ -119,6 +119,11 @@ export function NavHeader() {
                         <Link
                           href={item.href}
                           className="w-full flex items-center justify-center"
+                          onPointerDown={(e) => {
+                            // Prevent default to avoid any delay
+                            e.preventDefault();
+                            window.location.href = item.href!;
+                          }}
                         >
                           {item.component}
                         </Link>
@@ -150,13 +155,17 @@ export function NavHeader() {
                 <Link
                   href={item.href}
                   className="w-full flex flex-col items-center justify-center"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    window.location.href = item.href!;
+                  }}
                 >
                   <item.icon className="h-5 w-5" />
                   <span className="text-xs mt-1">{item.label}</span>
                 </Link>
               ) : (
                 <button
-                  onClick={() => {
+                  onMouseDown={() => {
                     // Find and trigger the click on the corresponding desktop nav item
                     const desktopItem = document.querySelector(
                       `[data-id="${item.id}"] .absolute`
@@ -179,7 +188,7 @@ export function NavHeader() {
           ))}
           <button
             className="flex-1 flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-950 active:text-zinc-950"
-            onClick={handleSearchClick} // Use the ref's focus method
+            onMouseDown={handleSearchClick}
             aria-label="Open Search"
           >
             <Search className="h-5 w-5" />

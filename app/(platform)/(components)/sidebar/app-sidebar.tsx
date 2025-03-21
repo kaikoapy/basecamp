@@ -74,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "dashboard",
       iconColor: "#8B6DFF", // RoadeoPurple
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("dashboard"),
+      onMouseDown: () => handleSectionNavigation("dashboard"),
     },
     {
       name: "Announcements",
@@ -82,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "announcements",
       iconColor: "#FF6B6B", // Coral Red
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("announcements"),
+      onMouseDown: () => handleSectionNavigation("announcements"),
     },
     {
       name: "Quick Access",
@@ -90,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "quick-access",
       iconColor: "#4CAF50", // Green
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("quick-access"),
+      onMouseDown: () => handleSectionNavigation("quick-access"),
     },
     {
       name: "Dealer Sites",
@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "dealer-sites",
       iconColor: "#2196F3", // Blue
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("dealer-sites"),
+      onMouseDown: () => handleSectionNavigation("dealer-sites"),
     },
     {
       name: "Communication",
@@ -106,7 +106,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "communication",
       iconColor: "#9C27B0", // Purple
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("communication"),
+      onMouseDown: () => handleSectionNavigation("communication"),
     },
     {
       name: "Incentives",
@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "incentives",
       iconColor: "#FF9800", // Orange
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("incentives"),
+      onMouseDown: () => handleSectionNavigation("incentives"),
     },
     {
       name: "Tools",
@@ -122,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "tools",
       iconColor: "#607D8B", // Blue Gray
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("tools"),
+      onMouseDown: () => handleSectionNavigation("tools"),
     },
     {
       name: "Volvo Sites",
@@ -130,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       section: "volvo-sites",
       iconColor: "#00BCD4", // Cyan
       iconBgColor: "white",
-      onClick: () => handleSectionNavigation("volvo-sites"),
+      onMouseDown: () => handleSectionNavigation("volvo-sites"),
     },
   ];
 
@@ -181,21 +181,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             title: "Business Applications",
             action: () => showDialog("business-applications"),
             isModal: true,
+            onMouseDown: true,
           },
           {
             title: "Out of State Deals",
             action: () => showDialog("out-of-state"),
             isModal: true,
+            onMouseDown: true,
           },
           {
             title: "Wire Instructions",
             action: () => showDialog("wire-instructions"),
             isModal: true,
+            onMouseDown: true,
           },
           {
             title: "3rd Party Payoffs",
             action: () => showDialog("third-party-payoffs"),
             isModal: true,
+            onMouseDown: true,
           },
           {
             title: "Contact Directory",
@@ -350,7 +354,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" className="text-gray-800" {...props}>
+    <Sidebar collapsible="offcanvas" className="text-gray-800" {...props}>
       <SidebarHeader className="h-12 bg-white">
         <SidebarMenu>
           <SidebarMenuItem>
