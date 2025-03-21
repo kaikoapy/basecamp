@@ -4,16 +4,15 @@ import Image from "next/image"
 
 const navigation = {
   product: [
+    { name: "Features", href: "#", external: false },
     { name: "Pricing", href: "/pricing", external: false },
-    { name: "Docs", href: "#", external: false },
-    { name: "Changelog", href: "/changelog", external: false },
+    { name: "Roadmap", href: "/roadmap", external: false },
   ],
   resources: [
     { name: "FAQs", href: "/pricing#faq-title", external: false },
     { name: "About", href: "#", external: true },
   ],
   company: [
-    { name: "Roadmap", href: "/roadmap", external: false },
     { name: "Careers", href: "#", external: true },
     { name: "Contact", href: "#", external: false },
     { name: "Status", href: "#", external: false },

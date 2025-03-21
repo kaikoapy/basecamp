@@ -21,37 +21,42 @@ import {
 
 const features = [
   {
-    title: "Task Management",
-    href: "/features/tasks",
-    description: "Organize and track your team's work with powerful task management tools.",
+    title: "Sales Hub",
+    href: "/features/sales-hub",
+    description: "Centralize all your Volvo sales tools and resources in one powerful dashboard.",
   },
   {
-    title: "Team Collaboration",
-    href: "/features/collaboration",
-    description: "Work together seamlessly with real-time collaboration features.",
+    title: "Resource Management",
+    href: "/features/resources",
+    description: "Access Carfax reports, schedules, and dealership tools seamlessly in one place.",
   },
   {
-    title: "File Sharing",
-    href: "/features/files",
-    description: "Share and organize files with your team in one central location.",
+    title: "Team Efficiency",
+    href: "/features/efficiency",
+    description: "Streamline your sales team's workflow with our dealership-focused platform.",
   },
 ];
 
 const resources = [
   {
-    title: "Documentation",
+    title: "Dealership Guide",
     href: "/docs",
-    description: "Learn how to use Basecamp effectively with our comprehensive guides.",
+    description: "Learn how to maximize your Volvo sales team's efficiency with our comprehensive guides.",
   },
   {
-    title: "API Reference",
-    href: "/docs/api",
-    description: "Integrate Basecamp with your tools using our robust API.",
+    title: "Integration Hub",
+    href: "/docs/integrations",
+    description: "Connect Basecamp with your existing dealership tools and CRM systems.",
   },
   {
-    title: "Community",
+    title: "FAQ",
+    href: "/faq",
+    description: "Find quick answers to common questions about using Basecamp in your dealership.",
+  },
+  {
+    title: "Dealer Network",
     href: "/community",
-    description: "Join our community of users and share best practices.",
+    description: "Join our network of Volvo dealerships and share sales strategies and best practices.",
   },
 ];
 
