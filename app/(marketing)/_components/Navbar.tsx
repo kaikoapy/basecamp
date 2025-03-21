@@ -117,8 +117,7 @@ export function Navigation() {
     >
       <div className="w-full md:my-auto">
         <div className="relative flex items-center justify-between">
-          <Link href={siteConfig.baseLinks.home} aria-label="Home" prefetch={true}>
-            <span className="sr-only">Company logo</span>
+          <Link href="/" aria-label="Home">
             <BasecampLogo className="w-28 md:w-40 dark:invert" />
           </Link>
 
