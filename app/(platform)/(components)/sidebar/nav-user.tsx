@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChevronsUpDown, LogOut, User, Building } from "lucide-react";
+import { MoreVertical, LogOut, User, Building } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -123,7 +123,7 @@ export function NavUser() {
                         {user.primaryEmailAddress?.emailAddress}
                       </span>
                     </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
+                    <MoreVertical className="ml-auto size-4" />
                   </>
                 )}
               </SidebarMenuButton>

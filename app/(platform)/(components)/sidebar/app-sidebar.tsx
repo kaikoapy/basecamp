@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
@@ -28,6 +30,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { DOCUMENT_URLS } from "@/app/data/document-urls";
@@ -345,15 +350,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" className="text-gray-800 " {...props}>
-      <SidebarHeader className="h-16 border-b border-sidebar-border bg-white">
-        <NavUser />
+    <Sidebar collapsible="icon" className="text-gray-800" {...props}>
+      <SidebarHeader className="h-12 bg-white">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
+              <Link href="/" aria-label="Home">
+                <Image
+                  src="/Basecamp.Logo.svg"
+                  alt="Basecamp Logo"
+                  width={120}
+                  height={30}
+                  className="h-6 w-auto dark:invert"
+                  priority
+                />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={navigationItems} />
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter></SidebarFooter>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
