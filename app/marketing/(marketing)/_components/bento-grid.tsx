@@ -28,23 +28,23 @@ interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
 const files = [
   {
     name: "wire-instructions.pdf",
-    body: "Monthly sales performance report showing revenue growth and customer acquisition metrics.",
+    body: "Instructions for processing wire transfers and bank routing information.",
   },
   {
     name: "Credit-Application.pdf",
-    body: "Current vehicle inventory status with detailed specifications and availability.",
+    body: "Standard credit application form for vehicle financing and leasing options.",
   },
   {
     name: "2025.5-XC90-brochure.pdf",
-    body: "Customer database with contact information and purchase history.",
+    body: "Product brochure detailing features, specifications, and pricing for the 2025.5 XC90 model.",
   },
   {
     name: "business-application.pdf",
-    body: "Strategic marketing plan for upcoming vehicle launches and promotions.",
+    body: "Commercial account application form for business and fleet customers.",
   },
   {
     name: "out-of-state-reciprocity.pdf",
-    body: "Quarterly financial report with revenue projections and cost analysis.",
+    body: "Guidelines for handling out-of-state transactions and reciprocal tax agreements.",
   },
 ];
 
