@@ -38,7 +38,11 @@ export default function RootLayout({
         className={`${heebo.variable} ${inter.variable} antialiased font-sans`}
       >
         <TooltipProvider>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={
+            <div className="fixed inset-0 flex items-center justify-center bg-background">
+              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+          }>
             <NuqsAdapter>
               <Providers>
                 {children}

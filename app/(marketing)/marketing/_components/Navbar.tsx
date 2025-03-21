@@ -191,7 +191,7 @@ export function Navigation() {
 
           {user ? (
             <div className="hidden items-center gap-4 md:flex">
-              <Link href="/uplist">
+              <Link href="/dashboard">
                 <Button variant="primary" className="h-10 font-medium">
                   Open Basecamp
                 </Button>

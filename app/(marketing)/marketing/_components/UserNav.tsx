@@ -48,10 +48,10 @@ export function UserNav({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/uplist">
+        <Link href="/dashboard">
           <DropdownMenuItem className="hover:cursor-pointer hover:bg-gray-200">
             <Paintbrush2 className="mr-2 h-4 w-4 text-black" />
-            <span className="text-black">Uplist</span>
+            <span className="text-black">Dashboard</span>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuItem
