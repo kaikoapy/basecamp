@@ -7,8 +7,33 @@ export default function Hero() {
   return (
     <section
       aria-labelledby="hero-title"
-      className="mt-32 flex flex-col items-center justify-center text-center sm:mt-40"
+      className="mt-32 flex flex-col items-center justify-center text-center sm:mt-30"
     >
+      <Link
+        href="#"
+        className="group mb-8 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-blue-400/20 backdrop-blur-[1px] transition-colors hover:bg-blue-500/[2.5%]"
+      >
+        <span className="shrink-0 rounded-full border bg-gray-50 px-2.5 py-1 text-sm text-gray-600 sm:text-xs">
+          New
+        </span>
+        <span className="flex items-center gap-1 truncate text-sm">
+          <span className="w-full truncate">
+          Powering modern Volvo dealerships          </span>
+          <svg
+            className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 17L17 7" />
+            <path d="M7 7h10v10" />
+          </svg>
+        </span>
+      </Link>
       <h1
         id="hero-title"
         className="inline-block animate-slide-up-fade bg-gradient-to-br from-gray-900 to-gray-800 bg-clip-text p-2 text-4xl font-bold tracking-tighter text-transparent sm:text-6xl md:text-7xl dark:from-gray-50 dark:to-gray-300"

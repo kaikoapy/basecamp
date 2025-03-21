@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 export default function Features() {
   return (
@@ -57,7 +58,13 @@ export default function Features() {
                 {/* Signature */}
                 <div className="mt-12 space-y-3 font-mono text-black">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-black/30" />
+                    <Image
+                      src="/Founder.JPG"
+                      alt="Kai Koa - Founder"
+                      width={32}
+                      height={32}
+                      className="size-8 rounded-full object-cover ring-1 ring-black/10"
+                    />
                     <div>
                       <p className="text-base">Kai Koa</p>
                       <p className="text-xs">Founder</p>

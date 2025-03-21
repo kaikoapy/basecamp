@@ -34,23 +34,23 @@ const ImageSection = () => {
   const Images = [
     {
       imageNumber: 1,
-      imageSource: "https://dashboardsdesign.com/img/dashboards/dashboard-05-custom.png",
+      imageSource: "/BC-Dashboard-FeatureImages.png",
     },
     {
       imageNumber: 2,
-      imageSource: "https://dashboardsdesign.com/img/dashboards/dashboard-02.png",
+      imageSource: "/BC-Training-FeatureImages.png",
     },
     {
       imageNumber: 3,
-      imageSource: "https://dashboardsdesign.com/img/dashboards/dashboard-03.png",
+      imageSource: "/BC-Documents-FeatureImages.png",
     },
     {
       imageNumber: 4,
-      imageSource: "https://dashboardsdesign.com/img/dashboards/dashboard-04.png",
+      imageSource: "/BC-Directory-FeatureImages.png",
     },
     {
       imageNumber: 5,
-      imageSource: "https://dashboardsdesign.com/img/dashboards/dashboard-05.png",
+      imageSource: "/BC-Schedule-FeatureImages.png",
     },
   ]
 
