@@ -6,7 +6,6 @@ import {
   BookOpen,
   Command,
   GalleryVerticalEnd,
-
   Bookmark,
   Wrench,
   Tag,
@@ -19,7 +18,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useDialog } from "@/components/providers/dialog-provider";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
@@ -35,14 +34,14 @@ import { DOCUMENT_URLS } from "@/app/data/document-urls";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const router = useRouter();
   // const { openOrganizationProfile } = useClerk();
   const { showDialog } = useDialog();
 
   const handleSectionNavigation = async (section: string) => {
     if (section === "dashboard") {
       if (pathname !== "/dashboard") {
-        // Navigate to dashboard
-        window.location.href = "/dashboard";
+        router.push("/dashboard");
       } else {
         // Already on dashboard, scroll to top
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -51,9 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     if (pathname !== "/dashboard") {
-      // Force navigation to dashboard with the section parameter
+      // Navigate to dashboard with the section parameter
       const url = `/dashboard?section=${encodeURIComponent(section)}`;
-      window.location.href = url;
+      router.push(url);
     } else {
       // If already on dashboard, just scroll to section
       const element = document.getElementById(section);

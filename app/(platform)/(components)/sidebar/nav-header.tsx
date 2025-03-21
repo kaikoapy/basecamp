@@ -104,9 +104,9 @@ export function NavHeader() {
             <Image
               src="/Basecamp.Logo.svg"
               alt="Basecamp Logo"
-              width={120}
-              height={34}
-              className="dark:invert h-[34px] w-auto"
+              width={100}
+              height={28}
+              className="dark:invert h-[28px] w-auto"
               priority
               quality={100}
             />

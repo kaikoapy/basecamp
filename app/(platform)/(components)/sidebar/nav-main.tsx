@@ -82,7 +82,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                   target: "_blank",
                   rel: "noopener noreferrer",
                 }
-              : {})}
+              : { prefetch: true })}
             className="text-sm text-left"
           >
             <item.icon className="size-4" />
@@ -148,7 +148,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                             target: "_blank",
                             rel: "noopener noreferrer",
                           }
-                        : {})}
+                        : { prefetch: true })}
                       className="text-sm text-left"
                     >
                       <span>{subItem.title}</span>

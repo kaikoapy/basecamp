@@ -112,7 +112,7 @@ export function Navigation() {
     >
       <div className="w-full md:my-auto">
         <div className="relative flex items-center justify-between">
-          <Link href={siteConfig.baseLinks.home} aria-label="Home">
+          <Link href={siteConfig.baseLinks.home} aria-label="Home" prefetch={true}>
             <span className="sr-only">Company logo</span>
             <Image
               src="/Basecamp.Logo.svg"
@@ -135,6 +135,7 @@ export function Navigation() {
                         <Link
                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                           href="/features"
+                          prefetch={true}
                         >
                           <RiTaskLine className="h-6 w-6 text-primary" />
                           <div className="mb-2 mt-4 text-lg font-medium">

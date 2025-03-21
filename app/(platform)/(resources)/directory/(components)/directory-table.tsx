@@ -211,9 +211,7 @@ export default function DirectoryTable() {
     pageSize: 100,
   });
   const inputRef = useRef<HTMLInputElement>(null);
-  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
-    null
-  );
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
   const [isAddingContact, setIsAddingContact] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -228,14 +226,17 @@ export default function DirectoryTable() {
 
   const { toast } = useToast();
 
-  // Fetch data from Convex
+  // Fetch data from Convex with caching
   const rawData = useQuery(api.directory.getAll);
-  const data = useMemo(() => rawData ?? [], [rawData]);
+  const data = rawData ?? [];
+
   const deleteMany = useMutation(api.directory.deleteMany);
 
-  // Get unique departments
+  // Get unique departments with proper typing
   const departments = useMemo(() => {
-    const uniqueDepartments = new Set(data.map((item) => item.department));
+    const uniqueDepartments = new Set(
+      data.map((item: DirectoryItem) => item.department)
+    );
     return Array.from(uniqueDepartments).sort();
   }, [data]);
 
@@ -368,7 +369,7 @@ export default function DirectoryTable() {
                 <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
                 <span>All Departments</span>
               </DropdownMenuItem>
-              {departments.map((dept) => {
+              {departments.map((dept: string) => {
                 const Icon =
                   departmentIcons[dept as keyof typeof departmentIcons] ||
                   HelpCircle;
@@ -550,9 +551,11 @@ export default function DirectoryTable() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-muted-foreground"
                 >
-                  No results.
+                  {columnFilters.length > 0 || selectedDepartment
+                    ? "No matching results."
+                    : "No contacts found."}
                 </TableCell>
               </TableRow>
             )}

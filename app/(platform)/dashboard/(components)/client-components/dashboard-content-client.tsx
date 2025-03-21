@@ -10,7 +10,6 @@ import { AnnouncementCard } from "../announcement-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import React from "react";
 import { useAppAuth } from "@/app/providers/auth-provider";
-import { Loading } from "@/components/ui/loading";
 import { formatDate, extractTextFromHtml } from "../dashboard-content";
 import { createLogger } from "@/lib/logger";
 
@@ -22,9 +21,7 @@ const logger = createLogger("dashboard-content-client");
 
 export function DashboardContentClient({ searchQuery = "" }: DashboardContentClientProps) {
   const { isLoaded, orgId, isAdmin } = useAppAuth();
-  const [isInitialLoading, setIsInitialLoading] = React.useState(true);
   
-  // Add debug logging
   logger.debug("Dashboard state", {
     isLoaded,
     orgId,
@@ -37,7 +34,6 @@ export function DashboardContentClient({ searchQuery = "" }: DashboardContentCli
   );
   const allResources = useQuery(api.resources.getAllResources);
 
-  // Add debug logging for announcements
   logger.debug("Dashboard Announcements:", {
     hasAnnouncements: !!announcements,
     count: announcements?.length
@@ -48,31 +44,14 @@ export function DashboardContentClient({ searchQuery = "" }: DashboardContentCli
     latest: announcements?.[0]
   });
 
-  // Handle initial loading state with a delay to prevent flashing
-  React.useEffect(() => {
-    if (isLoaded && orgId && allResources && announcements) {
-      // Add a small delay before showing content to ensure everything is loaded
-      const timer = setTimeout(() => {
-        setIsInitialLoading(false);
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isLoaded, orgId, allResources, announcements]);
-
-  // Show consistent loading state during initial load
-  if (isInitialLoading) {
-    return <Loading message="Loading dashboard..." />;
-  }
-
-  // Show loading state while org data is loading
+  // Show loading state only if auth or data is not ready
   if (!isLoaded || !orgId) {
-    return <Loading message="Loading organization data..." />;
+    return null; // Let the layout handle loading state
   }
 
   // Show loading state while data is loading
   if (!allResources || !announcements) {
-    return <Loading message="Loading content..." />;
+    return null; // Let the layout handle loading state
   }
 
   // Filter content based on search query and categories

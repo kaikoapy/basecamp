@@ -35,12 +35,18 @@ export const DEPARTMENTS = [
 ] as const;
 
 export const getAll = query({
+  args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unauthenticated");
     }
-    return await ctx.db.query("directory").collect();
+
+    return await ctx.db
+      .query("directory")
+      .withIndex("by_department")
+      .order("desc")
+      .collect();
   },
 });
 

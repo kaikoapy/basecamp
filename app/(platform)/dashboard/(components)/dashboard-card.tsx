@@ -357,7 +357,7 @@ export function DashboardCard(props: DashboardCardProps) {
   return (
     <>
       {isResource && resourcePath ? (
-        <Link href={resourcePath}>{renderCard}</Link>
+        <Link href={resourcePath} prefetch={true}>{renderCard}</Link>
       ) : isAffinitySearch ? (
         renderCard
       ) : url ? (
