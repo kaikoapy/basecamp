@@ -117,7 +117,7 @@ export function Navigation() {
     >
       <div className="w-full md:my-auto">
         <div className="relative flex items-center justify-between">
-          <Link href="/" aria-label="Home">
+          <Link href="/" aria-label="Home" className="-mt-2">
             <Image
               src="/Basecamp-logo.png"
               alt="Basecamp Logo"

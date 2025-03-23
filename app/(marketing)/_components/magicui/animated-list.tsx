@@ -49,7 +49,7 @@ export const AnimatedList = React.memo(
     useEffect(() => {
       const newItem = React.cloneElement(
         childrenArray[currentIndex] as React.ReactElement,
-        { key: `${Date.now()}-${currentIndex}` }
+        { key: `${Date.now()}-${currentIndex}-${Math.random()}` }
       );
       setItems(prev => [newItem, ...prev].slice(0, 3));
     }, [currentIndex, childrenArray]);
