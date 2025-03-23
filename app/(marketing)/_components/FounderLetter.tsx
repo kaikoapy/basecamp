@@ -12,7 +12,7 @@ export default function Features() {
          
           
           {/* Letter Container */}
-          <div className="relative w-full max-w-3xl">
+          <div className="relative w-full max-w-3xl shadow-lg  shadow-gray-200 rounded-lg rounded-tr-[69px] bg-none">
             <div className="relative z-10 block h-full w-full overflow-hidden rounded-lg rounded-tr-[39px] bg-[#faf9f7] p-8 md:p-12 shadow-[inset_0_0_0_1px] shadow-gray-200 transition-all duration-[180ms] ease-in-out hover:cursor-pointer hover:rounded-tr-[68px] before:absolute before:top-0 before:right-0 before:z-3 before:h-[45px] before:w-[45px] before:-translate-y-1/2 before:translate-x-1/2 before:rotate-45 before:bg-gray-50 before:shadow-[0_1px_0_0_] before:shadow-gray-200 before:transition-all before:duration-[180ms] before:ease-in-out before:content-[''] after:absolute after:top-0 after:right-0 after:z-2 after:size-[42px] after:-translate-y-2 after:translate-x-2 after:rounded-bl-lg after:border after:bg-gray-50 after:shadow-xs after:transition-all after:duration-[180ms] after:ease-in-out after:content-[''] hover:before:h-[75px] hover:before:w-[75px] hover:after:h-[63px] hover:after:w-[63px] hover:after:shadow-lg hover:after:shadow-black/5">
               {/* Paper texture effect using CSS patterns */}
               <div className="absolute inset-0 rounded-lg pointer-events-none overflow-hidden">
@@ -39,7 +39,7 @@ export default function Features() {
                   Training new hires means overwhelming them with a too-many-to-count number of websites instead of getting them started selling.
                   </p>
                   <p className="mb-4">
-                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as the solution that brings everything together. One place, every link—Carfax, inventory, schedules, store directories, Volvo know-how—all right there.  
+                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as the solution that brings everything together. One place, every link—Carfax, inventory, schedules, directory, documents, Volvo know-how—all right there.  
                   </p>
                   <p className="mb-4">
                   No more leaning on managers for basic answers. No more -CRM here, inventory there, product knowledge somewhere else. That&apos;s chaos, costing deals.
