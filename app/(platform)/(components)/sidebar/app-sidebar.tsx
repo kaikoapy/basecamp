@@ -362,7 +362,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <img
                   src="/Basecamp-Logo.svg"
                   alt="Basecamp Logo"
-                  className="h-24 w-auto dark:invert"
+                  className="h-8 w-auto dark:invert"
                 />
               </Link>
             </SidebarMenuButton>
