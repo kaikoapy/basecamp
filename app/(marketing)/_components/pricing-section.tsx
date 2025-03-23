@@ -4,16 +4,16 @@ import { PricingCard } from "./pricing-card"
 
 export function PricingSection() {
   const annualFeatures = [
-    "Over 50+ sections — Everything you need to build beautiful landing pages",
-    "3+ templates — Templates built with React, Next.js, and TailwindCSS",
-    "Commercial Use — Use the templates for commercial projects. Re-selling of code is NOT allowed.",
-    "Perpetual license — You own the templates, forever",
+    "Over 50+ resources — Easy to access and all in one place",
+    "Sales Schedule Builder — Templates built with React, Next.js, and TailwindCSS",
+    "Store Directory — Use the templates for commercial projects. Re-selling of code is NOT allowed.",
+    "Lifetime updates - We will continue to update the templates for the life of the product",
   ]
 
   const lifetimeFeatures = [
     ...annualFeatures,
-    "Lifetime access — Get access to everything available today, plus everything added in the future",
-    "Lifetime updates — Get access to all future updates for the original purchase price",
+    "SuperFast Inventory — Get access to our super fast internal inventory tool",
+    "BestUp Uplist — Get access to the best uplist software and app",
   ]
 
   const teamFeatures = [
