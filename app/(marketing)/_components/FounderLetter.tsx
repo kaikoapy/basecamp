@@ -21,31 +21,31 @@ export default function Features() {
               
               {/* Letter content */}
               <div className="relative space-y-6">
-                <div className="space-y-6 text-black font-mono">
-                  <div className="text-sm">Founder Memo</div>
-                  <h2 className="text-xl font-normal tracking-tight">
+                <div className="space-y-6  font-mono">
+                  <div className="text-sm text-black">Founder Memo</div>
+                  <h2 className="text-xl font-mono tracking-tight text-black">
                     Everything. One place.
                   </h2>
                   <div className="h-px w-24 bg-black/40" />
                 </div>
                 <div className="space-y-6 text-muted-foreground md:text-lg/relaxed lg:text-sm/relaxed xl:text-lg/relaxed">
-                  <p className="mb-4">
+                  <p className="mb-4 text-gray-700">
                     How many tools does it take to sell a car in 2025?
                   </p>
-                  <p className="mb-4">
+                  <p className="mb-4 text-gray-700">
                     Every day, I watch talented sales professionals waste time searching through a dozen disconnected systems just to answer basic questions—the same questions asked yesterday, with answers lost somewhere in the mess.
                   </p>
-                  <p className="mb-4">
+                  <p className="mb-4 text-gray-700">
                   Training new hires means overwhelming them with a too-many-to-count number of websites instead of getting them started selling.
                   </p>
-                  <p className="mb-4">
-                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as <span className="relative inline-block bg-amber-200/20 px-1 rounded-sm before:absolute before:inset-0 text-gray-700 before:bg-amber-200/20 before:-z-10 before:rounded-sm before:rotate-[-1deg]">the solution that brings everything together</span>. One place, every link—Carfax, inventory, schedules, directory, documents, Volvo know-how—all right there.  
+                  <p className="mb-4 text-gray-700">
+                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as <span className="relative inline-block bg-amber-200/20 px-1 rounded-sm before:absolute before:inset-0 text-gray-900 before:bg-amber-200/20 before:-z-10 before:rounded-sm before:rotate-[-1deg]">the solution that brings everything together</span>. One place, every link—Carfax, inventory, schedules, directory, documents, Volvo know-how—all right there.  
                   </p>
-                  <p className="mb-4">
+                  <p className="mb-4 text-gray-700">
                   No more leaning on managers for basic answers. No more -CRM here, inventory there, product knowledge somewhere else. That&apos;s chaos, costing deals.
                   </p>
-                  <p className="mb-4">
-                    Welcome to Basecamp. Everything your sales team needs in  <span className="relative inline-block text-gray-700">
+                  <p className="mb-4 text-gray-700">
+                    Welcome to Basecamp. Everything your sales team needs in  <span className="relative inline-block text-gray-900">
                       one place.
                       <svg className="absolute -bottom-1 left-0 w-full h-3" viewBox="0 0 100 10" preserveAspectRatio="none">
                         <path 
@@ -59,7 +59,7 @@ export default function Features() {
                       </svg>
                     </span>
                   </p>
-                  <p className="mb-4">
+                  <p className="mb-4 text-gray-700">
                     Because there had to be a better way.
                   </p>
                 </div>

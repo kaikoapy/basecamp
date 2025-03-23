@@ -1,8 +1,6 @@
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import Link from "next/link";
 import { CtaSection } from "../_components/cta-section";
 
 export const metadata: Metadata = {
