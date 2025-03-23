@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Link from "next/link";
+import { CtaSection } from "../_components/cta-section";
 
 export const metadata: Metadata = {
   title: "Resources | Basecamp",
@@ -150,17 +151,7 @@ export default function ResourcesPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="text-center space-y-6">
-          <h2 className="text-2xl font-bold">Ready to give Basecamp a try?</h2>
-          <div className="flex justify-center gap-4">
-            <Button asChild size="lg">
-              <Link href="/sign-up">Get Started</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/contact">Contact Us</Link>
-            </Button>
-          </div>
-        </section>
+        <CtaSection />
       </div>
     </div>
   );

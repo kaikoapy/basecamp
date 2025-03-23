@@ -44,6 +44,14 @@ export default function Footer() {
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
               Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
             </p>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                Got a question?
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                support@dealerbasecamp.com
+              </p>
+            </div>
             <div className="flex space-x-6">
             </div>
             <div></div>
@@ -179,7 +187,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:mt-20 sm:flex-row lg:mt-24 dark:border-gray-800">
+        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:mt-20 sm:flex-row lg:mt-0 dark:border-gray-800">
           <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
             &copy; {new Date().getFullYear()} Dealer Basecamp, Inc. All rights
             reserved.

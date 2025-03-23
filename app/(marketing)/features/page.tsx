@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { TemplateCard } from "./_components/template-card";
 import { Hero } from "./_components/hero";
+import { CtaSection } from "../_components/cta-section";
 
 export const metadata: Metadata = {
   title: "Features",
@@ -46,6 +47,11 @@ export default function DashboardPage() {
               />
             </section>
           ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="px-6 py-24">
+          <CtaSection />
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { RiPlayCircleFill } from "@remixicon/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -22,7 +23,13 @@ export function Hero() {
 </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
-              <Link href="/docs">Watch Demo</Link>
+              <Link href="/docs" className="flex items-center gap-2">
+                <RiPlayCircleFill
+                  aria-hidden="true"
+                  className="size-5 shrink-0"
+                />
+                Watch Demo
+              </Link>
             </Button>
           </div>
         </motion.div>
