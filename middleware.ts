@@ -5,9 +5,7 @@ import { NextResponse } from "next/server";
 const publicRoutes = createRouteMatcher([
   "/", 
   "/sign-in(.*)", 
-  "/sign-up(.*)",
   "/organizations(.*)",
-  "/marketing(.*)",
   "/public(.*)",
   "/imprint(.*)",
   "/privacy(.*)",
@@ -16,7 +14,8 @@ const publicRoutes = createRouteMatcher([
   "/pricing(.*)",
   "/faq(.*)",
   "/features(.*)",
-  "/resources(.*)",
+  "/waitlist(.*)",
+  "/about(.*)",
 ]);
 
 // Define webhook routes that should bypass auth

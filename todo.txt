@@ -1,0 +1,29 @@
+finalize features page
+rename resouces
+finalize pricing page
+
+
+
+
+
+Make the legal pages more official
+
+Make the request access button do something
+
+update footer links
+
+make sign in page better
+
+make the watch demo video be a dialog
+
+Update pictures: 
+    - Change data
+    - Change log in name
+    - Add profile picture
+    - remove faster inventory website
+    - change announcments
+
+
+mobile friendly 
+
+Clerk google auth

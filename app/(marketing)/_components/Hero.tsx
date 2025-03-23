@@ -2,6 +2,7 @@
 
 import { RiPlayCircleFill } from "@remixicon/react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "./Button"
 import HeroImage from "./HeroImage"
 import { motion } from "framer-motion"
@@ -21,12 +22,18 @@ export default function Hero() {
           href="#"
           className="group mb-8 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-[#6a68f1]/20 backdrop-blur-[1px] transition-colors hover:bg-[#6a68f1]/[2.5%]"
         >
-          <span className="shrink-0 rounded-full border bg-gray-50 px-2.5 py-1 text-sm text-gray-600 sm:text-xs">
-            New
+          <span className="shrink-0 rounded-full border bg-gray-50 px-2.5 py-1.5 text-sm text-gray-600 sm:text-xs">
+            <Image 
+              src="/rocket-emoji.png"
+              alt="Rocket"
+              width={16}
+              height={16}
+              className="size-4"
+            />
           </span>
           <span className="flex items-center gap-1 truncate text-sm">
             <span className="w-full truncate">
-              Powering modern Volvo dealerships
+            Launching Now for Volvo Dealerships
             </span>
             <svg
               className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

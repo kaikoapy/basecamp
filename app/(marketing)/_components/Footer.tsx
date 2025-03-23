@@ -10,7 +10,7 @@ const navigation = {
   ],
   resources: [
     { name: "FAQs", href: "/pricing#faq-title", external: false },
-    { name: "About", href: "#", external: true },
+    { name: "About", href: "/about", external: false },
   ],
   company: [
     { name: "Careers", href: "#", external: true },

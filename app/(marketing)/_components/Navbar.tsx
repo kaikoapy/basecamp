@@ -54,20 +54,20 @@ const features = [
   }
 ];
 
-const resources = [
+const about = [
   {
     title: "About Us",
-    href: "/resources",
+    href: "/about",
     description: "Learn how to maximize your Volvo sales team's efficiency with our comprehensive guides.",
   },
   {
     title: "Are we a good fit?",
-    href: "/resources",
+    href: "/about",
     description: "Join our network of Volvo dealerships and share sales strategies and best practices.",
   },
   {
     title: "FAQ",
-    href: "/resources",
+    href: "/about",
     description: "Find quick answers to common questions about using Basecamp in your dealership.",
   },
 ];
@@ -166,19 +166,19 @@ export function Navigation() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent">About</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
                           <Link
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                            href="/resources"
+                            href="/about"
                             prefetch={true}
                           >
                             <RiTaskLine className="h-6 w-6 text-primary" />
                             <div className="mb-2 mt-4 text-lg font-medium">
-                              All Resources
+                              All About
                             </div>
                             <p className="text-sm leading-tight text-muted-foreground">
                               Access comprehensive guides, FAQs, and best practices to help your dealership succeed.
@@ -186,7 +186,7 @@ export function Navigation() {
                           </Link>
                         </NavigationMenuLink>
                       </li>
-                      {resources.map((resource) => (
+                      {about.map((resource) => (
                         <ListItem
                           key={resource.title}
                           title={resource.title}
@@ -227,7 +227,7 @@ export function Navigation() {
                   Sign in
                 </Button>
               </Link>
-              <Link href="/about">
+              <Link href="/waitlist">
               <Button className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
                   Request Access
                 </Button>
@@ -265,8 +265,8 @@ export function Navigation() {
               ))}
             </div>
             <div className="space-y-2">
-              <div className="font-medium px-3">Resources</div>
-              {resources.map((resource) => (
+              <div className="font-medium px-3">About</div>
+              {about.map((resource) => (
                 <Link
                   key={resource.title}
                   href={resource.href}
