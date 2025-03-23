@@ -79,7 +79,7 @@ const features = [
     description: "Access and manage all your dealership documents in one place.",
     href: "#",
     cta: "View Documents",
-    className: "col-span-3 lg:col-span-1",
+    className: "col-span-3 lg:col-span-1 bg-gradient-to-b from-blue-100/50 to-blue-50/50",
     background: (
       <Marquee
         pauseOnHover
@@ -90,8 +90,8 @@ const features = [
             key={idx}
             className={cn(
               "relative w-32 cursor-pointer overflow-hidden rounded-xl border p-4",
-              "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-              "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
+              "border-gray-950/[.1] bg-white hover:bg-gray-50",
+              "dark:border-gray-50/[.1] dark:bg-gray-950 dark:hover:bg-gray-900",
               "transform-gpu blur-[1px] transition-all duration-300 ease-out hover:blur-none"
             )}
           >
@@ -150,21 +150,23 @@ const features = [
     cta: "Explore Integrations",
     className: "col-span-3 lg:col-span-2",
     background: (
-      <AnimatedBeamMultipleOutputDemo className="absolute right-2 top-4 h-[300px] border-none transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_0%,#000_45%,#000_100%)] group-hover:scale-105" />
+      <div className="absolute inset-0">
+        <AnimatedBeamMultipleOutputDemo className="absolute right-2 top-4 h-[300px] border-none transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_0%,#000_45%,#000_100%)] group-hover:scale-105" />
+      </div>
     ),
   },
   {
     Icon: CalendarIcon,
     name: "Schedule Builder",
     description: "Build, manage, print, and share your sales schedule with ease.",
-    className: "col-span-3 lg:col-span-1",
+    className: "col-span-3 lg:col-span-1 bg-gradient-to-b from-orange-100/50 to-white",
     href: "#",
     cta: "View Calendar",
     background: (
       <Calendar
         mode="single"
         selected={new Date()}
-        className="absolute right-0 top-10 origin-top scale-75 rounded-md border transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:scale-90"
+        className="absolute right-0 top-10 origin-top scale-75 rounded-md border bg-white dark:bg-gray-950 transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:scale-90"
       />
     ),
   },

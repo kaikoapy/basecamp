@@ -358,7 +358,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="h-12 bg-white">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="flex h-12 items-center px-1 py-2">
+            <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
               <Link href="/" aria-label="Home">
                 <Image
                   src="/Basecamp-logo.png"
@@ -367,7 +367,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   height={320}
                   quality={100}
                   priority
-                  className="h-10 w-auto dark:invert"
+                  className="h-6 w-auto dark:invert"
                   style={{ objectFit: 'contain' }}
                 />
               </Link>

@@ -10,8 +10,7 @@ import Balancer from "react-wrap-balancer"
 import {
   RiCheckLine,
   RiCloudLine,
-  RiInformationLine,
-  RiSubtractLine,
+ 
   RiUserLine,
 } from "@remixicon/react"
 import Link from "next/link"

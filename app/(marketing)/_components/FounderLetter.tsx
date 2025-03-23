@@ -24,34 +24,31 @@ export default function Features() {
                 <div className="space-y-6 text-black font-mono">
                   <div className="text-sm">Founder Memo</div>
                   <h2 className="text-xl font-normal tracking-tight">
-                    Simplifying Dealership Life
+                    Everything. One place.
                   </h2>
                   <div className="h-px w-24 bg-black/40" />
                 </div>
                 <div className="space-y-6 text-muted-foreground md:text-lg/relaxed lg:text-sm/relaxed xl:text-lg/relaxed">
                   <p className="mb-4">
-                    Let&apos;s talk about the chaos of the modern dealership.
+                    How many tools does it take to sell a car in 2025?
                   </p>
                   <p className="mb-4">
-                    Every day, I watched talented sales professionals waste time searching through countless systems just to answer basic questions—the same questions asked yesterday, with answers buried somewhere in our digital sprawl. Training new hires meant overwhelming them with dozens of separate tools instead of helping them connect with customers.
+                    Every day, I watch talented sales professionals waste time searching through a dozen disconnected systems just to answer basic questions—the same questions asked yesterday, with answers lost somewhere in the mess.
                   </p>
                   <p className="mb-4">
-                    This isn&apos;t just inefficient. It&apos;s broken.
+                  Training new hires means overwhelming them with a too-many-to-count number of websites instead of getting them started selling.
                   </p>
                   <p className="mb-4">
-                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as the solution that brings everything together. One place where every resource lives. No more digital treasure hunts. No more &quot;where do I find that again?&quot;
+                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as the solution that brings everything together. One place, every link—Carfax, inventory, schedules, store directories, Volvo know-how—all right there.  
                   </p>
                   <p className="mb-4">
-                    This is about giving you back the time to do what you do best: connecting with customers and selling Volvos.
+                  No more leaning on managers for basic answers. No more -CRM here, inventory there, product knowledge somewhere else. That&apos;s chaos, costing deals.
                   </p>
                   <p className="mb-4">
                     Welcome to Basecamp. Everything your sales team needs in one place.
                   </p>
                   <p className="mb-4">
                     Because there had to be a better way.
-                  </p>
-                  <p className="mb-4">
-                    Now there is.
                   </p>
                 </div>
 
