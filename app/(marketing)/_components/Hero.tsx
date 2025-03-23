@@ -71,7 +71,7 @@ export default function Hero() {
                 className="size-5 shrink-0 text-gray-900 dark:text-gray-50"
               />
             </span>
-            Watch video
+            Watch Demo
           </Link>
         </Button>
       </div>

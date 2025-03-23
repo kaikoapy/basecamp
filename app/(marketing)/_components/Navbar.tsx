@@ -21,6 +21,12 @@ import {
 
 const features = [
   {
+    title: "View All Features",
+    href: "/features",
+    description: "Explore our comprehensive suite of dealership tools. From dashboard to training, everything you need in one place.",
+    colSpan: 2
+  },
+  {
     title: "Dashboard",
     href: "/features#dashboard",
     description: "Quick access to frequently used templates with organized, relevant content and important announcements.",
@@ -49,24 +55,19 @@ const features = [
 
 const resources = [
   {
-    title: "Dealership Guide",
-    href: "/docs",
+    title: "About Us",
+    href: "/resources",
     description: "Learn how to maximize your Volvo sales team's efficiency with our comprehensive guides.",
   },
   {
-    title: "Integration Hub",
-    href: "/docs/integrations",
-    description: "Connect Basecamp with your existing dealership tools and CRM systems.",
+    title: "Are we a good fit?",
+    href: "/resources",
+    description: "Join our network of Volvo dealerships and share sales strategies and best practices.",
   },
   {
     title: "FAQ",
-    href: "/faq",
+    href: "/resources",
     description: "Find quick answers to common questions about using Basecamp in your dealership.",
-  },
-  {
-    title: "Dealer Network",
-    href: "/community",
-    description: "Join our network of Volvo dealerships and share sales strategies and best practices.",
   },
 ];
 
@@ -146,30 +147,13 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">Features</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                      <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                            href="/features"
-                            prefetch={true}
-                          >
-                            <RiTaskLine className="h-6 w-6 text-primary" />
-                            <div className="mb-2 mt-4 text-lg font-medium">
-                              All Features
-                            </div>
-                            <p className="text-sm leading-tight text-muted-foreground">
-                              Explore our comprehensive suite of dealership tools. 
-                              From dashboard to training, everything you need in one place.
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
+                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
                       {features.map((feature) => (
                         <ListItem
                           key={feature.title}
                           title={feature.title}
                           href={feature.href}
+                          className={feature.colSpan ? "col-span-2" : ""}
                         >
                           {feature.description}
                         </ListItem>
@@ -180,7 +164,24 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <li className="row-span-3">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                            href="/resources"
+                            prefetch={true}
+                          >
+                            <RiTaskLine className="h-6 w-6 text-primary" />
+                            <div className="mb-2 mt-4 text-lg font-medium">
+                              All Resources
+                            </div>
+                            <p className="text-sm leading-tight text-muted-foreground">
+                              Access comprehensive guides, FAQs, and best practices to help your dealership succeed.
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
                       {resources.map((resource) => (
                         <ListItem
                           key={resource.title}
