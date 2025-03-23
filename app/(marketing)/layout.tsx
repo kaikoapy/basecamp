@@ -9,7 +9,7 @@ export default function Layout({
   return (
     <>
       <Navigation />
-      <main className="mx-auto mt-36 max-w-full">{children}</main>
+      <main className="mx-auto max-w-full">{children}</main>
       <Footer />
     </>
   )

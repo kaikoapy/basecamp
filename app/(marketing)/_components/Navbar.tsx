@@ -21,20 +21,30 @@ import {
 
 const features = [
   {
-    title: "Sales Hub",
-    href: "/features/sales-hub",
-    description: "Centralize all your Volvo sales tools and resources in one powerful dashboard.",
+    title: "Dashboard",
+    href: "/features#dashboard",
+    description: "Quick access to frequently used templates with organized, relevant content and important announcements.",
   },
   {
-    title: "Resource Management",
-    href: "/features/resources",
-    description: "Access Carfax reports, schedules, and dealership tools seamlessly in one place.",
+    title: "Resources",
+    href: "/features#resources",
+    description: "Essential tools including gas calculator, out-of-state guides, and dealer trade information.",
   },
   {
-    title: "Team Efficiency",
-    href: "/features/efficiency",
-    description: "Streamline your sales team's workflow with our dealership-focused platform.",
+    title: "Directory",
+    href: "/features#directory",
+    description: "Comprehensive staff listings with powerful search that recognizes both formal names and nicknames.",
   },
+  {
+    title: "Schedule",
+    href: "/features#schedule",
+    description: "Create, edit and print schedules with flexible publishing controls and sensitive information protection.",
+  },
+  {
+    title: "Product Training",
+    href: "/features#product-training",
+    description: "Stay current with latest Volvo product knowledge through regularly updated materials and customer FAQs.",
+  }
 ];
 
 const resources = [
@@ -115,7 +125,7 @@ export function Navigation() {
           : "bg-white/0 dark:bg-gray-950/0",
       )}
     >
-      <div className="w-full md:my-auto">
+      <div className="w-full md:my-auto ">
         <div className="relative flex items-center justify-between">
           <Link href="/" aria-label="Home" className="-mt-2">
             <Image
@@ -130,7 +140,7 @@ export function Navigation() {
             />
           </Link>
 
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center ">
             <NavigationMenu className="hidden md:block">
               <NavigationMenuList className="gap-2">
                 <NavigationMenuItem>
@@ -146,11 +156,11 @@ export function Navigation() {
                           >
                             <RiTaskLine className="h-6 w-6 text-primary" />
                             <div className="mb-2 mt-4 text-lg font-medium">
-                              Project Management
+                              All Features
                             </div>
                             <p className="text-sm leading-tight text-muted-foreground">
-                              Streamline your workflow with powerful project management tools. 
-                              Track tasks, collaborate with your team, and deliver projects on time.
+                              Explore our comprehensive suite of dealership tools. 
+                              From dashboard to training, everything you need in one place.
                             </p>
                           </Link>
                         </NavigationMenuLink>

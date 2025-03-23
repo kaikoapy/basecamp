@@ -126,7 +126,9 @@
   display: none !important;
 }
 
-
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#6a68f1] via-[#8a88f3] to-[#a9a8f5];
+}
 
 @layer base {
   * {
@@ -134,5 +136,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .hero-heading {
+    @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6;
   }
 }

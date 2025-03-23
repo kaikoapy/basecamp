@@ -6,7 +6,7 @@ import { BentoDemo } from "./_components/bento-grid"
 
 export default function Home() {
   return (
-    <main className="flex flex-col overflow-hidden">
+    <main className="flex flex-col overflow-hidden mt-32">
       <Hero />
       <Testimonial />
       <ImageSection />

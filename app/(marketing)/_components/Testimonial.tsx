@@ -8,7 +8,7 @@ export default function Testimonial() {
         <blockquote className="mx-auto max-w-2xl text-center text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9 dark:text-gray-50">
           <p>
             <Balancer>
-              "Basecamp has transformed how our sales team operates. Having all our tools—Carfax, inventory, and Volvo resources—in one place means we spend less time searching and more time selling. It's exactly what we needed."
+              &quot;Basecamp has transformed how our sales team operates. Having all our tools—Carfax, inventory, and Volvo resources—in one place means we spend less time searching and more time selling. It&apos;s exactly what we needed.&quot;
             </Balancer>
           </p>
         </blockquote>
