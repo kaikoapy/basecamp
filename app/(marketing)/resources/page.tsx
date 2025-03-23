@@ -79,7 +79,7 @@ export default function ResourcesPage() {
             <AccordionItem value="trust">
               <AccordionTrigger>Why should we trust you guys? Aren&apos;t you just another software company?</AccordionTrigger>
               <AccordionContent>
-                Fair question. We&apos;re not here to dazzle you with empty hype and then vanish when the check clears. We&apos;re a team that&apos;s seen the dealership grind up close—frustrated by overpriced, outdated tools—and decided to do something about it. We&apos;re in this to help, not to hustle you. No overpromising, just delivering.
+                Fair question. We&apos;re not here to dazzle you with empty hype and then vanish when the check clears. We&apos;re a team that&apos;s seen the dealership grind up close—frustrated by overpriced, outdated tools—and decided to do something about it. We&apos;re in this to help, not to hustle you. No overpromising, just delivering.  We&apos;re not fans of the typical software playbook—overcharge, underdeliver, treat you like a cog. We&apos;re more like your dealership&apos;s co-pilot: affordable, approachable, and obsessed with making your life easier. Our proof? Stick with us, and you&apos;ll feel the difference—no fluff, just results.
               </AccordionContent>
             </AccordionItem>
 
@@ -111,31 +111,10 @@ export default function ResourcesPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="different">
-              <AccordionTrigger>Why do you keep saying you&apos;re different? Prove it.</AccordionTrigger>
-              <AccordionContent>
-                We&apos;re not fans of the typical software playbook—overcharge, underdeliver, treat you like a cog. We&apos;re more like your dealership&apos;s co-pilot: affordable, approachable, and obsessed with making your life easier. Our proof? Stick with us, and you&apos;ll feel the difference—no fluff, just results.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="goal">
-              <AccordionTrigger>Are you just in it for the money, or what&apos;s your real goal?</AccordionTrigger>
-              <AccordionContent>
-                Money&apos;s nice (gotta eat!), but we&apos;re here because we genuinely think dealerships deserve better than clunky, overpriced tech. Our goal&apos;s to cut the chaos, save you time, and maybe even make your day a little brighter. We&apos;re small enough to care, big enough to deliver.
-              </AccordionContent>
-            </AccordionItem>
-
             <AccordionItem value="bail">
               <AccordionTrigger>What if we hate it? Can we bail?</AccordionTrigger>
               <AccordionContent>
                 We&apos;d be bummed, but yeah, you&apos;re not locked in. We don&apos;t trap you with shady contracts or guilt trips. If Basecamp&apos;s not your vibe, you&apos;re free to roll—we just hope you&apos;ll tell us why so we can keep getting better.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="team">
-              <AccordionTrigger>Who&apos;s behind Basecamp anyway?</AccordionTrigger>
-              <AccordionContent>
-                A bunch of folks who&apos;ve been around cars and tech long enough to spot the gaps. We&apos;re not some faceless corporation—just a team tired of seeing dealerships struggle with bad software. We&apos;re building what we wish we&apos;d had back in the day.
               </AccordionContent>
             </AccordionItem>
 
