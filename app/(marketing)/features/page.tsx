@@ -2,16 +2,22 @@ import { Metadata } from "next";
 import { TemplateCard } from "./_components/template-card";
 import { Hero } from "./_components/hero";
 import { CtaSection } from "../_components/cta-section";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Features",
   description: "Main dashboard with quick access to essential tools and resources",
 };
 
-const dashboardItems = [
+interface DashboardItem {
+  title: string;
+  description: string | (string | React.ReactNode)[];
+}
+
+const dashboardItems: DashboardItem[] = [
     {
       title: "Dashboard",
-      description: "Quick access to frequently used templates with organized, relevant content. Features a navigation bar with search and speed dial quick links, plus important announcements all in one place."
+      description: ["This is ", <i key="italic">the basecamp</i>, " where everything begins. Find store wide announcements, resource links, and side and navbar with intuitive search and quick-access navigation, it's the starting point for every successful day."]
     },
     {
       title: "Resources",

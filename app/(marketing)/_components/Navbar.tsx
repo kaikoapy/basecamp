@@ -149,7 +149,7 @@ export function Navigation() {
             <NavigationMenu className="hidden md:block">
               <NavigationMenuList className="gap-2">
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent">Features</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">Features</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
                       {features.map((feature) => (
@@ -166,7 +166,7 @@ export function Navigation() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent">About</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">About</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                       <li className="row-span-3">
@@ -202,7 +202,7 @@ export function Navigation() {
                   <Link href={siteConfig.baseLinks.pricing} legacyBehavior passHref>
                     <NavigationMenuLink className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent hover:bg-accent active:bg-accent/80"
+                      "bg-transparent hover:bg-accent hover:text-accent-foreground"
                     )}>
                       Pricing
                     </NavigationMenuLink>

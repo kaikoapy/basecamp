@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { FormattedDescription } from "../../about/_components/formatted-description";
+import React from "react";
 
 interface Technology {
   name: string;
@@ -9,7 +11,7 @@ interface Technology {
 
 interface TemplateCardProps {
   title: string;
-  description: string;
+  description: string | (string | React.ReactNode)[];
   technologies?: Technology[];
   className?: string;
 }
@@ -17,7 +19,6 @@ interface TemplateCardProps {
 export function TemplateCard({
   title,
   description,
-
   technologies,
   className,
 }: TemplateCardProps) {
@@ -25,14 +26,12 @@ export function TemplateCard({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <div className={cn("p-6 space-y-6 lg:col-span-5", className)}>
         <div className="space-y-2">
-          <p className="text-[#6a68f1] text-sm font-medium">
+          <p className="text-[#6a68f1] text-sm font-semibold">
             Included
           </p>
           <h3 className="font-heading text-3xl font-bold">{title}</h3>
-          <p className="text-muted-foreground text-lg max-w-md">{description}</p>
+          <FormattedDescription text={description} />
         </div>
-
-     
 
         {technologies && (
           <div className="flex items-center gap-2">

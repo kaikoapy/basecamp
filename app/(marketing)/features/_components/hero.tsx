@@ -19,8 +19,8 @@ export function Hero() {
             Our <span className="gradient-text">awesome</span> features in <span className="italic">one</span> place
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-  A stacked lineup of features—<strong>Dashboard</strong>, <strong>Resources</strong>, <strong>Training</strong>, and more—built to <strong>simplify</strong> your dealership&apos;s chaos, save hours, and turn your team into sales rockstars.
-</p>
+            We&apos;ve carefully built every feature with your <strong>sales team&apos;s efficiency</strong> in mind. Our platform includes everything you need to <strong>streamline operations</strong> and we&apos;re relentless in adding more features and improving the product.
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">
               <Link href="/docs" className="flex items-center gap-2">

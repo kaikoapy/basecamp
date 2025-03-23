@@ -40,9 +40,9 @@ export default function Footer() {
               className="w-40 sm:w-48 dark:invert"
               style={{ objectFit: 'contain', height: 'auto' }}
             />
-            <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
-              Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
-            </p>
+          <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
+  Simplifying dealership operations. Everything. One place. Honest pricing, constantly improving, and evolving with your dealership.
+</p>
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Got a question?
