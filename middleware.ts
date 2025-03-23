@@ -13,6 +13,8 @@ const publicRoutes = createRouteMatcher([
   "/privacy(.*)",
   "/terms(.*)",
   "/dpa(.*)",
+  "/pricing(.*)",
+  "/faq(.*)",
 ]);
 
 // Define webhook routes that should bypass auth

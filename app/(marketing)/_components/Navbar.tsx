@@ -130,70 +130,72 @@ export function Navigation() {
             />
           </Link>
 
-          <NavigationMenu className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">Features</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                    <li className="row-span-3">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                          href="/features"
-                          prefetch={true}
+          <div className="flex-1 flex justify-center">
+            <NavigationMenu className="hidden md:block">
+              <NavigationMenuList className="gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">Features</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                      <li className="row-span-3">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                            href="/features"
+                            prefetch={true}
+                          >
+                            <RiTaskLine className="h-6 w-6 text-primary" />
+                            <div className="mb-2 mt-4 text-lg font-medium">
+                              Project Management
+                            </div>
+                            <p className="text-sm leading-tight text-muted-foreground">
+                              Streamline your workflow with powerful project management tools. 
+                              Track tasks, collaborate with your team, and deliver projects on time.
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      {features.map((feature) => (
+                        <ListItem
+                          key={feature.title}
+                          title={feature.title}
+                          href={feature.href}
                         >
-                          <RiTaskLine className="h-6 w-6 text-primary" />
-                          <div className="mb-2 mt-4 text-lg font-medium">
-                            Project Management
-                          </div>
-                          <p className="text-sm leading-tight text-muted-foreground">
-                            Streamline your workflow with powerful project management tools. 
-                            Track tasks, collaborate with your team, and deliver projects on time.
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    {features.map((feature) => (
-                      <ListItem
-                        key={feature.title}
-                        title={feature.title}
-                        href={feature.href}
-                      >
-                        {feature.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-                    {resources.map((resource) => (
-                      <ListItem
-                        key={resource.title}
-                        title={resource.title}
-                        href={resource.href}
-                      >
-                        {resource.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href={siteConfig.baseLinks.pricing} legacyBehavior passHref>
-                  <NavigationMenuLink className={cn(
-                    navigationMenuTriggerStyle(),
-                    "bg-transparent hover:bg-accent active:bg-accent/80"
-                  )}>
-                    Pricing
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                          {feature.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                      {resources.map((resource) => (
+                        <ListItem
+                          key={resource.title}
+                          title={resource.title}
+                          href={resource.href}
+                        >
+                          {resource.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href={siteConfig.baseLinks.pricing} legacyBehavior passHref>
+                    <NavigationMenuLink className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent hover:bg-accent active:bg-accent/80"
+                    )}>
+                      Pricing
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
           {user ? (
             <div className="hidden items-center gap-4 md:flex">
@@ -212,7 +214,7 @@ export function Navigation() {
               </Link>
               <Link href="/about">
               <Button className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
-                  Book Demo
+                  Request Access
                 </Button>
               </Link>
             </div>

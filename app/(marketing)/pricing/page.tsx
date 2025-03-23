@@ -40,8 +40,8 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    name: "Single Agent",
-    price: "$0",
+    name: "Starter",
+    price: { monthly: "$47", annually: "$39" },
     description:
       "For individual salespeople who need organization and quick access to essential tools.",
     capacity: ["1 user", "Personal dashboard"],
@@ -57,8 +57,8 @@ const plans: Plan[] = [
     buttonLink: "#",
   },
   {
-    name: "Sales Team",
-    price: { monthly: "$29", annually: "$24" },
+    name: "Pro",
+    price: { monthly: "$197", annually: "$159" },
     description: "For small to mid-sized dealerships ready to streamline their sales process.",
     capacity: ["Up to 15 users, 2 managers", "Team workspace"],
     features: [
@@ -70,26 +70,27 @@ const plans: Plan[] = [
     ],
     isStarter: false,
     isRecommended: false,
-    buttonText: "Start 14-day trial",
+    buttonText: "Contact sales",
     buttonLink: "#",
   },
   {
-    name: "Dealership Pro",
-    price: { monthly: "$79", annually: "$65" },
+    name: "Pro Max",
+    price: { monthly: "$297", annually: "$239" },
     description:
       "For larger dealerships needing comprehensive tools and advanced features.",
     capacity: ["Unlimited users & managers", "Multiple locations"],
     features: [
-      "Everything in Sales Team",
+      "Everything in Pro",
       "Multi-location management",
       "Advanced analytics",
       "Customer pipeline tracking",
       "Custom integrations",
       "Dedicated support",
+      "Uplist integration",
     ],
     isStarter: false,
     isRecommended: true,
-    buttonText: "Start 14-day trial",
+    buttonText: "Contact sales",
     buttonLink: "#",
   },
 ]
@@ -113,22 +114,22 @@ const sections: Section[] = [
         name: "Centralized bookmarks",
         tooltip:
           "All your essential links in one organized dashboard - Carfax, inventory, Volvo portals, and more.",
-        plans: { "Single Agent": true, "Sales Team": true, "Dealership Pro": true },
+        plans: { "Starter": true, "Pro": true, "Pro Max": true },
       },
       {
         name: "User accounts",
         tooltip:
           "Number of team members who can access the platform with personalized dashboards.",
-        plans: { "Single Agent": "1 user", "Sales Team": "Up to 15", "Dealership Pro": "Unlimited" },
+        plans: { "Starter": "1 user", "Pro": "Up to 15", "Pro Max": "Unlimited" },
       },
       {
         name: "Volvo resources",
         tooltip:
           "Access to product specifications, pricing guides, and Volvo-specific documentation.",
         plans: {
-          "Single Agent": "Basic",
-          "Sales Team": "Advanced",
-          "Dealership Pro": "Complete",
+          "Starter": "Basic",
+          "Pro": "Advanced",
+          "Pro Max": "Complete",
         },
       },
       {
@@ -136,9 +137,9 @@ const sections: Section[] = [
         tooltip:
           "Share important links, resources, and information across your sales team.",
         plans: {
-          "Single Agent": false,
-          "Sales Team": true,
-          "Dealership Pro": true,
+          "Starter": false,
+          "Pro": true,
+          "Pro Max": true,
         },
       },
     ],
@@ -150,19 +151,19 @@ const sections: Section[] = [
         name: "Carfax integration",
         tooltip:
           "Quick access to vehicle history reports directly in your dashboard.",
-        plans: { "Single Agent": "Basic", "Sales Team": "Advanced", "Dealership Pro": "Premium" },
+        plans: { "Starter": "Basic", "Pro": "Advanced", "Pro Max": "Premium" },
       },
       {
         name: "Inventory system",
         tooltip:
           "Connect to your dealership's inventory management system.",
-        plans: { "Single Agent": false, "Sales Team": true, "Dealership Pro": true },
+        plans: { "Starter": false, "Pro": true, "Pro Max": true },
       },
       {
         name: "Calendar & scheduling",
         tooltip:
           "Sync with your existing calendar and manage appointments.",
-        plans: { "Single Agent": false, "Sales Team": "Standard", "Dealership Pro": "Advanced" },
+        plans: { "Starter": false, "Pro": "Standard", "Pro Max": "Advanced" },
       },
     ],
   },
@@ -173,19 +174,19 @@ const sections: Section[] = [
         name: "Usage reports",
         tooltip:
           "Track how your team is using Basecamp and which resources they access most.",
-        plans: { "Single Agent": false, "Sales Team": "Basic", "Dealership Pro": "Advanced" },
+        plans: { "Starter": false, "Pro": "Basic", "Pro Max": "Advanced" },
       },
       {
         name: "Sales performance",
         tooltip:
           "Visualize team performance and identify top performers.",
-        plans: { "Single Agent": false, "Sales Team": false, "Dealership Pro": true },
+        plans: { "Starter": false, "Pro": false, "Pro Max": true },
       },
       {
         name: "Custom dashboards",
         tooltip:
           "Build personalized analytics views for managers and team leaders.",
-        plans: { "Single Agent": false, "Sales Team": false, "Dealership Pro": true },
+        plans: { "Starter": false, "Pro": false, "Pro Max": true },
       },
     ],
   },
@@ -195,18 +196,18 @@ const sections: Section[] = [
       {
         name: "Customer support",
         plans: {
-          "Single Agent": "Email only",
-          "Sales Team": "Email & chat",
-          "Dealership Pro": "Dedicated agent",
+          "Starter": "Email only",
+          "Pro": "Email & chat",
+          "Pro Max": "Dedicated agent",
         },
       },
       {
         name: "Response time",
-        plans: { "Single Agent": "48 hours", "Sales Team": "24 hours", "Dealership Pro": "Priority" },
+        plans: { "Starter": "48 hours", "Pro": "24 hours", "Pro Max": "Priority" },
       },
       {
         name: "Training",
-        plans: { "Single Agent": false, "Sales Team": "Group session", "Dealership Pro": "Personalized" },
+        plans: { "Starter": false, "Pro": "Group session", "Pro Max": "Personalized" },
       },
     ],
   },
