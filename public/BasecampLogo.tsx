@@ -5,7 +5,7 @@ export const BasecampLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg
     aria-hidden="true"
     fill="none"
-    viewBox="0 0 280 44" // Increased width from 200 to 280 to fit full text at fontSize 40
+    viewBox="0 0 280 44"
     {...props}
   >
     <mask
@@ -48,11 +48,11 @@ export const BasecampLogo = (props: SVGProps<SVGSVGElement>) => (
       />
     </g>
     <text
-      x="60" // Kept at 60 since it aligns well with the graphic now that viewBox is wider
-      y="38" // Restored to 38 for original vertical positioning
+      x="60"
+      y="38"
       fontFamily="sans-serif"
       fontWeight="bold"
-      fontSize="40" // Restored to 40 as per your original preference
+      fontSize="40"
       fill="currentColor"
     >
       Basecamp
