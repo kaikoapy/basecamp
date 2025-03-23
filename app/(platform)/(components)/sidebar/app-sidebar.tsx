@@ -20,6 +20,7 @@ import {
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 import { NavMain } from "./nav-main";
 import { NavProjects, type NavProject } from "./nav-projects";
@@ -359,10 +360,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
               <Link href="/" aria-label="Home">
-                <img
-                  src="/Basecamp-Logo.svg"
+                <Image
+                  src="/Basecamp-logo.png"
                   alt="Basecamp Logo"
-                  className="h-8 w-auto dark:invert"
+                  width={240}
+                  height={240}
+                  quality={100}
+                  priority
+                  className="h-12 w-auto dark:invert"
+                  style={{ objectFit: 'contain' }}
                 />
               </Link>
             </SidebarMenuButton>
