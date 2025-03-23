@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function DPAPage() {
   return (
-    <div className="container mx-auto px-4 py-16 max-w-4xl">
+    <div className="container mx-auto px-4 pt-32 pb-16 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8">Data Processing Agreement</h1>
       
       <div className="prose prose-lg dark:prose-invert">
@@ -83,8 +83,8 @@ export default function DPAPage() {
             For any questions regarding this DPA, please contact our Data Protection Officer at:
           </p>
           <p>
-            Email: [dpo@example.com]<br />
-            Address: [Your Company Address]
+            Email: support@dealerbasecamp.com<br />
+            Address: 2921 SW 11th Street, Miami, FL 33135
           </p>
         </section>
       </div>

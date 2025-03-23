@@ -18,7 +18,6 @@ const navigation = {
     { name: "Status", href: "#", external: false },
   ],
   legal: [
-    { name: "Imprint", href: "/imprint", external: false },
     { name: "Privacy", href: "/privacy", external: false },
     { name: "Terms", href: "/terms", external: false },
     { name: "DPA", href: "/dpa", external: false },

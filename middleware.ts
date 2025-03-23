@@ -7,7 +7,7 @@ const publicRoutes = createRouteMatcher([
   "/sign-in(.*)", 
   "/organizations(.*)",
   "/public(.*)",
-  "/imprint(.*)",
+  
   "/privacy(.*)",
   "/terms(.*)",
   "/dpa(.*)",

@@ -10,7 +10,7 @@ export const siteConfig = {
     pricing: "/pricing",
     changelog: "/changelog",
     legal: {
-      imprint: "/imprint",
+     
       privacy: "/privacy",
       terms: "/terms",
       dpa: "/dpa",
