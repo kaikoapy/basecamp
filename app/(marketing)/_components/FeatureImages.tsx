@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { BookOpen, Calendar, LayoutDashboard, Library, Users } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 const ImageSection = () => {
   const [activeImage, setActiveImage] = useState(1)
@@ -115,14 +116,20 @@ const ImageSection = () => {
               <div key={index} data-image-number={image.imageNumber} className="relative">
                 {activeImage === image.imageNumber && (
                   <>
-                    <motion.img
-                      src={image.imageSource}
-                      alt={`Image ${image.imageNumber}`}
+                    <motion.div
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="w-full rounded-xl border border-white/5 shadow-2xl"
-                    />
+                    >
+                      <Image
+                        src={image.imageSource}
+                        alt={`Image ${image.imageNumber}`}
+                        width={1920}
+                        height={1080}
+                        priority={image.imageNumber === 1}
+                        className="w-full rounded-xl border border-white/5 shadow-2xl"
+                      />
+                    </motion.div>
                     <div className="absolute bottom-0 h-1/2 w-full rounded-b-xl bg-gradient-to-b from-transparent via-gray-950/70 to-gray-950" />
                   </>
                 )}

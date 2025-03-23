@@ -9,6 +9,12 @@ export const siteConfig = {
     about: "/about",
     pricing: "/pricing",
     changelog: "/changelog",
+    legal: {
+      imprint: "/imprint",
+      privacy: "/privacy",
+      terms: "/terms",
+      dpa: "/dpa",
+    },
     settings: {
       general: "/settings/general",
       billing: "/settings/billing",
