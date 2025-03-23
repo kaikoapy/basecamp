@@ -39,14 +39,14 @@ export default function Features() {
                   Training new hires means overwhelming them with a too-many-to-count number of websites instead of getting them started selling.
                   </p>
                   <p className="mb-4">
-                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as <span className="relative inline-block bg-amber-200/20 px-1 rounded-sm before:absolute before:inset-0 before:bg-amber-200/20 before:-z-10 before:rounded-sm before:rotate-[-1deg]">the solution that brings everything together</span>. One place, every link—Carfax, inventory, schedules, directory, documents, Volvo know-how—all right there.  
+                    Basecamp was born from this frustration. Not as another tool to add to your collection—but as <span className="relative inline-block bg-amber-200/20 px-1 rounded-sm before:absolute before:inset-0 text-gray-700 before:bg-amber-200/20 before:-z-10 before:rounded-sm before:rotate-[-1deg]">the solution that brings everything together</span>. One place, every link—Carfax, inventory, schedules, directory, documents, Volvo know-how—all right there.  
                   </p>
                   <p className="mb-4">
                   No more leaning on managers for basic answers. No more -CRM here, inventory there, product knowledge somewhere else. That&apos;s chaos, costing deals.
                   </p>
                   <p className="mb-4">
-                    Welcome to Basecamp. Everything your sales team needs in  <span className="relative inline-block">
-                      one place
+                    Welcome to Basecamp. Everything your sales team needs in  <span className="relative inline-block text-gray-700">
+                      one place.
                       <svg className="absolute -bottom-1 left-0 w-full h-3" viewBox="0 0 100 10" preserveAspectRatio="none">
                         <path 
                           d="M0,5 C20,2 40,8 60,5 C80,2 100,8 100,5" 
@@ -57,7 +57,7 @@ export default function Features() {
                           className="text-gray-900/50"
                         />
                       </svg>
-                    </span>.
+                    </span>
                   </p>
                   <p className="mb-4">
                     Because there had to be a better way.
