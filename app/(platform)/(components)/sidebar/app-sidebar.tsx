@@ -367,7 +367,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   height={320}
                   quality={100}
                   priority
-                  className="h-12 w-auto dark:invert"
+                  className="h-10 w-auto dark:invert"
                   style={{ objectFit: 'contain' }}
                 />
               </Link>

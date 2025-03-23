@@ -34,12 +34,12 @@ export default function Footer() {
             <Image
               src="/Basecamp-logo.png"
               alt="Basecamp Logo"
-              width={480}
-              height={480}
+              width={320}
+              height={320}
               quality={100}
               priority
               className="w-40 sm:w-48 dark:invert"
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: 'contain', height: 'auto' }}
             />
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
               Reshaping how Volvo dealerships work. Chaos tamed, sales unleashed. A Dealershipt Inc product built for your showroom.
