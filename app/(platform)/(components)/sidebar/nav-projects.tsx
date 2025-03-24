@@ -1,8 +1,8 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
+import { type Icon } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import {
   SidebarGroup,
@@ -15,7 +15,7 @@ import {
 
 export interface NavProject {
   name: string;
-  icon: LucideIcon;
+  icon: Icon;
   section: string;
   iconColor?: string;
   iconBgColor?: string;
@@ -27,8 +27,6 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const scrollToSection = (section: string) => {
     if (section === "dashboard") {
@@ -75,42 +73,17 @@ export function NavProjects({ projects }: { projects: NavProject[] }) {
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               asChild
+              className="flex h-8 items-center gap-1.5 px-2 py-1.5 hover:bg-slate-200/90 transition-colors cursor-pointer"
               onPointerDown={(e) => handleClick(e, item)}
               tooltip={item.name}
-              onMouseEnter={() => setHoveredItem(item.name)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className="hover:bg-slate-200/80 transition-colors"
+              size="sm"
             >
-              <button className="flex w-full items-center text-sm font-medium text-gray-700">
-                <div
-                  className={`flex items-center justify-center transition-all duration-200 ${
-                    state === "collapsed"
-                      ? "w-10 h-10"
-                      : "w-7 h-7 rounded-md bg-white border"
-                  }`}
-                  style={{
-                    borderColor:
-                      state !== "collapsed" && hoveredItem === item.name
-                        ? "#64748b"
-                        : "#d1d5db",
-                    boxShadow:
-                      state !== "collapsed" && hoveredItem === item.name
-                        ? `0 1px 2px ${item.iconColor}20, 0 1px 3px ${item.iconColor}20`
-                        : "none",
-                  }}
-                >
-                  <item.icon
-                    className="h-4 w-4 opacity-90 transition-opacity duration-200 [button:hover_&]:opacity-100"
-                    style={{
-                      color:
-                        state === "collapsed" ? "currentColor" : item.iconColor,
-                    }}
-                  />
-                </div>
+              <div className="text-sm text-left text-gray-700">
+                <item.icon className="size-4" />
                 {state !== "collapsed" && (
-                  <span className="ml-2">{item.name}</span>
+                  <span className="flex-1 ml-1">{item.name}</span>
                 )}
-              </button>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

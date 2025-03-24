@@ -108,7 +108,7 @@ export function DashboardContentClient({ searchQuery = "" }: DashboardContentCli
 
   return (
     <>
-    <main className="flex-1 p-6 max-w-8xl mx-auto bg-[rgb(250,250,252)]">
+    <main className="flex-1 p-6 max-w-8xl mx-auto">
     {filteredContent.announcements.length > 0 && (
           <section id="announcements" className="mb-6">
             <div className="flex items-center gap-2 mb-3">

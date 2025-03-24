@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { type Icon } from "@tabler/icons-react";
 import { Protect } from "@clerk/nextjs";
 import {
   Collapsible,
@@ -21,7 +22,7 @@ import { useEffect, useState } from "react";
 interface NavMainItem {
   title: string;
   url?: string;
-  icon: LucideIcon;
+  icon: Icon;
   isActive?: boolean;
   requiresAdmin?: boolean;
   items?: {

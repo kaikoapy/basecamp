@@ -4,7 +4,7 @@ import { PricingCard } from "./pricing-card"
 
 export function PricingSection() {
   const annualFeatures = [
-    "Over 50+ resources — Easy to access and all in one place",
+    "All your tools and resources accessible in one place",
     "Sales Schedule Builder — Templates built with React, Next.js, and TailwindCSS",
     "Store Directory — Use the templates for commercial projects. Re-selling of code is NOT allowed.",
     "Lifetime updates - We will continue to update the templates for the life of the product",
@@ -17,7 +17,7 @@ export function PricingSection() {
   ]
 
   const teamFeatures = [
-    "Up to 25 developer licenses",
+    "Exclusive onboarding and consultation to simplify dealership operations, find waste in tech spend, and more.",
   ]
 
   return (
@@ -30,13 +30,13 @@ export function PricingSection() {
             {/* Annual License Card */}
             <div className="lg:mr-[-60px] lg:mt-12 mb-8 lg:mb-0 w-full">
               <PricingCard
-                title="Standard Dealer"
+                title="Basecamp Standard"
                 price="$47"
                 originalPrice="$97"
                 billingPeriod="billed monthly"
-                description="Beautifully crafted React + Tailwind CSS + Framer Motion components and templates for your next web project."
+                description="Full access to all resources, directory, Schedule Builder, product training, announcments and more."
                 features={annualFeatures}
-                buttonText="Get Annual Access"
+                buttonText="Request Access"
                 buttonVariant="outline"
                 className="lg:max-w-[560px] ml-auto"
               />
@@ -45,14 +45,14 @@ export function PricingSection() {
             {/* Lifetime License Card */}
             <div className="relative w-full">
               <PricingCard
-                title="Dealer Pro +"
+                title="Basecamp Pro +"
                 price="$297"
                 originalPrice="$397"
                 billingPeriod="billed monthly"
-                description="Beautifully crafted React + Tailwind CSS + Framer Motion components and templates for your next web project."
+                description="Full access to all resources, directory, Schedule Builder, product training, announcments and more."
                 features={lifetimeFeatures}
                 isRecommended
-                buttonText="Get Access"
+                buttonText="Request Access"
                 className="lg:max-w-[480px]"
               />
             </div>
@@ -64,13 +64,13 @@ export function PricingSection() {
       <div className="flex justify-center">
         <div className="w-full max-w-[900px] relative right-[30px]">
           <PricingCard
-            title="Dealer Elite - Expert Support"
+            title="Basecamp Elite"
             price="$697"
             originalPrice="$997"
             billingPeriod="billed monthly"
             description="Beautifully crafted React + Tailwind CSS + Framer Motion templates for your team's next web project."
             features={teamFeatures}
-            buttonText="Get Team Access"
+            buttonText="Apply"
             className="!max-w-none bg-white shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
           />
         </div>

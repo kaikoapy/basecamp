@@ -8,14 +8,14 @@ const navigation = {
     { name: "Pricing", href: "/pricing", external: false },
     { name: "Roadmap", href: "/roadmap", external: false },
   ],
-  resources: [
-    { name: "FAQs", href: "/pricing#faq-title", external: false },
-    { name: "About", href: "/about", external: false },
+  account: [
+    { name: "Sign In", href: "/signin", external: false },
+    { name: "Request Access", href: "/waitlist", external: false },
   ],
   company: [
-    { name: "Careers", href: "#", external: true },
-    { name: "Contact", href: "#", external: false },
-    { name: "Status", href: "#", external: false },
+    { name: "About", href: "/about", external: false },
+    { name: "Contact", href: "#", external: true },
+    { name: "FAQs", href: "/pricing#faq-title", external: false },
   ],
   legal: [
     { name: "Privacy", href: "/privacy", external: false },
@@ -90,14 +90,14 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-50">
-                  Resources
+                  Account
                 </h3>
                 <ul
                   role="list"
                   className="mt-6 space-y-4"
                   aria-label="Quick links Resources"
                 >
-                  {navigation.resources.map((item) => (
+                  {navigation.account.map((item) => (
                     <li key={item.name} className="w-fit">
                       <Link
                         className="flex rounded-md text-sm text-gray-500 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"

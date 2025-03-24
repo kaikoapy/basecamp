@@ -7,10 +7,10 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     return (
       <span
         ref={forwardedRef}
-        className={`z-10 block w-fit rounded-lg border border-indigo-200/20 bg-indigo-50/50 px-3 py-1.5 font-semibold uppercase leading-4 tracking-tighter sm:text-sm dark:border-indigo-800/30 dark:bg-indigo-900/20 ${className || ""}`}
+        className={`z-10 block w-fit rounded-lg border border-[#6a68f1]/20 bg-[#6a68f1]/10 px-3 py-1.5 font-semibold uppercase leading-4 tracking-tighter sm:text-sm dark:border-[#5553d4]/30 dark:bg-[#5553d4]/20 ${className || ""}`}
         {...props}
       >
-        <span className="bg-gradient-to-b from-indigo-500 to-indigo-600 bg-clip-text text-transparent dark:from-indigo-200 dark:to-indigo-400">
+        <span className="bg-gradient-to-b from-[#6a68f1] to-[#5553d4] bg-clip-text text-transparent dark:from-[#6a68f1] dark:to-[#5553d4]">
           {children}
         </span>
       </span>

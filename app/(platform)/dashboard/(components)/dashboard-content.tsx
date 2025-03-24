@@ -41,9 +41,9 @@ export function extractTextFromHtml(html: string): string {
 // Main export - Server Component wrapper
 export function DashboardContent({ searchQuery = "" }: DashboardContentProps) {
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <DashboardContentClient searchQuery={searchQuery} />
       <OnboardingDialogWrapper />
-    </>
+    </div>
   );
 }

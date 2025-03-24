@@ -85,7 +85,7 @@ export function NavHeader() {
 
   return (
     <>
-      <header className="flex h-16 shrink-0 items-center justify-between px-2 sm:px-4 border-b sticky top-0 bg-background z-50">
+      <header className="flex h-16 shrink-0 items-center justify-between px-2 sm:px-4 border-b sticky top-0 bg-gray-50 z-50">
         <div className="flex items-center gap-2 sm:gap-4">
           <Tooltip>
             <TooltipTrigger asChild>

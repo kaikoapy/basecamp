@@ -2,21 +2,21 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Command,
-  GalleryVerticalEnd,
-  Bookmark,
-  Wrench,
-  Tag,
-  GraduationCap,
-  Home,
-  Globe,
-  MessageSquare,
-  Printer,
-  Brain,
-  Settings,
-} from "lucide-react";
+  IconChartBar,
+  IconBook,
+  IconCommand,
+  IconLayoutGrid,
+  IconBookmark,
+  IconTool,
+  IconTag,
+  IconSchool,
+  IconHome,
+  IconWorld,
+  IconMessage,
+  IconPrinter,
+  IconBrain,
+  IconSettings,
+} from "@tabler/icons-react";
 import { useDialog } from "@/components/providers/dialog-provider";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -37,7 +37,10 @@ import {
 } from "@/components/ui/sidebar";
 import { DOCUMENT_URLS } from "@/app/data/document-urls";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ 
+  variant = "sidebar", 
+  ...props 
+}: React.ComponentProps<typeof Sidebar> & { variant?: "sidebar" | "floating" | "inset" }) {
   const pathname = usePathname();
   const router = useRouter();
   // const { openOrganizationProfile } = useClerk();
@@ -70,66 +73,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigationItems: NavProject[] = [
     {
       name: "Dashboard",
-      icon: Home,
+      icon: IconHome,
       section: "dashboard",
-      iconColor: "#8B6DFF", // RoadeoPurple
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("dashboard"),
     },
     {
       name: "Announcements",
-      icon: MessageSquare,
+      icon: IconMessage,
       section: "announcements",
-      iconColor: "#FF6B6B", // Coral Red
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("announcements"),
     },
     {
       name: "Quick Access",
-      icon: Bookmark,
+      icon: IconBookmark,
       section: "quick-access",
-      iconColor: "#4CAF50", // Green
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("quick-access"),
     },
     {
       name: "Dealer Sites",
-      icon: Globe,
+      icon: IconWorld,
       section: "dealer-sites",
-      iconColor: "#2196F3", // Blue
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("dealer-sites"),
     },
     {
       name: "Communication",
-      icon: MessageSquare,
+      icon: IconMessage,
       section: "communication",
-      iconColor: "#9C27B0", // Purple
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("communication"),
     },
     {
       name: "Incentives",
-      icon: Tag,
+      icon: IconTag,
       section: "incentives",
-      iconColor: "#FF9800", // Orange
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("incentives"),
     },
     {
       name: "Tools",
-      icon: Wrench,
+      icon: IconTool,
       section: "tools",
-      iconColor: "#607D8B", // Blue Gray
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("tools"),
     },
     {
       name: "Volvo Sites",
-      icon: Globe,
+      icon: IconWorld,
       section: "volvo-sites",
-      iconColor: "#00BCD4", // Cyan
-      iconBgColor: "white",
       onMouseDown: () => handleSectionNavigation("volvo-sites"),
     },
   ];
@@ -138,17 +125,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     teams: [
       {
         name: "Sales",
-        logo: GalleryVerticalEnd,
+        logo: IconLayoutGrid,
         plan: "Volvo Cars North Miami",
       },
       {
         name: "Finance",
-        logo: AudioWaveform,
+        logo: IconChartBar,
         plan: "Volvo Cars North Miami",
       },
       {
         name: "Accounting",
-        logo: Command,
+        logo: IconCommand,
         plan: "Volvo Cars North Miami",
       },
     ],
@@ -156,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Click to Print",
         url: "#",
-        icon: Printer,
+        icon: IconPrinter,
         items: [
           {
             title: "Credit Application",
@@ -175,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Resources",
         url: "#",
-        icon: BookOpen,
+        icon: IconBook,
         items: [
           {
             title: "Business Applications",
@@ -236,7 +223,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Product Knowledge",
         url: "#",
-        icon: Brain,
+        icon: IconBrain,
         // isActive: true,
         items: [
           {
@@ -272,7 +259,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "New Hires",
         url: "#",
-        icon: GraduationCap,
+        icon: IconSchool,
         items: [
           {
             title: "Start Here",
@@ -304,7 +291,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Settings",
         url: "#",
-        icon: Settings,
+        icon: IconSettings,
         requiresAdmin: true,
         items: [
           {
@@ -354,8 +341,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="offcanvas" className="text-gray-800" {...props}>
-      <SidebarHeader className="h-12 bg-white">
+    <Sidebar 
+      collapsible="offcanvas" 
+      className={`text-gray-800 ${variant === "inset" ? "border-r" : ""}`} 
+      variant={variant}
+      {...props}
+    >
+      <SidebarHeader className={`h-12 ${variant === "inset" ? "bg-background" : "bg-gray-50"}`}>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="flex h-12 items-center px-2 py-2">
@@ -375,14 +367,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-gray-50">
         <NavProjects projects={navigationItems} />
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>
-      <SidebarRail />
+      {variant === "sidebar" && <SidebarRail />}
     </Sidebar>
   );
 }
