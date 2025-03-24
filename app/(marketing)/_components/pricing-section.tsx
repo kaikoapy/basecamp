@@ -62,7 +62,7 @@ export function PricingSection() {
 
       {/* Team License Card */}
       <div className="flex justify-center">
-        <div className="w-full max-w-[900px] relative right-[30px]">
+        <div className="w-full max-w-[900px] lg:relative lg:right-[30px]">
           <PricingCard
             title="Basecamp Elite"
             price="$697"

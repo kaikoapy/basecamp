@@ -47,7 +47,7 @@ export function PricingCard({
         </div>
       )}
 
-      <div className={cn("space-y-5", !isRecommended && "pr-16")}>
+      <div className={cn("space-y-5", !isRecommended && "lg:pr-16")}>
         <h3 className="text-xl font-medium text-gray-900">{title}</h3>
 
         <div>
@@ -91,20 +91,22 @@ export function PricingCard({
           </div>
         </div>
 
-        <Button
-          className={cn(
-            "w-full group h-12 rounded-xl mt-6",
-            buttonVariant === "outline"
-              ? "bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
-              : "bg-black hover:bg-black/90 text-white"
-          )}
-          variant={buttonVariant}
-        >
-          <span className="mx-auto flex items-center">
-            {buttonText}
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </span>
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            className={cn(
+              "w-full group h-12 rounded-xl mt-6",
+              buttonVariant === "outline"
+                ? "bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
+                : "bg-black hover:bg-black/90 text-white"
+            )}
+            variant={buttonVariant}
+          >
+            <span className="mx-auto flex items-center">
+              {buttonText}
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Button>
+        </div>
       </div>
     </div>
   )

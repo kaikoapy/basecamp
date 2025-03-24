@@ -11,7 +11,7 @@ export default function Hero() {
   return (
     <section
       aria-labelledby="hero-title"
-      className="mt-32 flex flex-col items-center justify-center text-center sm:mt-30"
+      className="mt-16 flex flex-col items-center justify-center text-center sm:mt-32"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -20,7 +20,7 @@ export default function Hero() {
       >
         <Link
           href="#"
-          className="group mb-8 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-[#6a68f1]/20 backdrop-blur-[1px] transition-colors hover:bg-[#6a68f1]/[2.5%]"
+          className="group mb-4 inline-flex max-w-full items-center gap-3 rounded-full bg-white/5 px-2.5 py-0.5 pr-3 pl-0.5 text-gray-900 ring-1 ring-black/10 shadow-lg shadow-[#6a68f1]/20 backdrop-blur-[1px] transition-colors hover:bg-[#6a68f1]/[2.5%] sm:mb-8"
         >
           <span className="shrink-0 rounded-full border bg-gray-50 px-2.5 py-1.5 text-sm text-gray-600 sm:text-xs">
             <Image 

@@ -40,7 +40,7 @@ const faqs = [
 
 export function Faqs() {
   return (
-    <section className="mt-20 sm:mt-36" aria-labelledby="faq-title">
+    <section className="mt-20 sm:mt-36 px-4" aria-labelledby="faq-title">
       <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-14">
         <div className="col-span-full sm:col-span-5">
           <h2
