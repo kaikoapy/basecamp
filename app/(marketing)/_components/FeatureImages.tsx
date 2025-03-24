@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, Calendar, LayoutDashboard, Library, Users } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
@@ -56,20 +56,20 @@ const ImageSection = () => {
   ]
 
   const handleImageChange = (index: number) => {
-    setActiveImage(index)
+    setActiveImage(index + 1)
   }
 
   return (
     <div className="px-3">
       <section
         aria-labelledby="syntax-ui-title"
-        className="relative mx-auto mt-28 flex w-full max-w-6xl flex-col items-center justify-center overflow-hidden rounded-3xl bg-gray-950 pt-24 shadow-xl shadow-black/30 md:mt-40"
+        className="relative mx-auto mt-16 flex w-full max-w-6xl flex-col items-center justify-center overflow-hidden rounded-3xl bg-gray-950 pt-12 sm:pt-24 shadow-xl shadow-black/30 sm:mt-28 md:mt-40"
       >
         {/* Glow effect - positioned lower */}
-        <div className="absolute top-[40rem] h-[30rem] w-[90%] rounded-2xl bg-indigo-800/50 blur-3xl md:top-[44rem]" />
+        <div className="absolute top-[30rem] sm:top-[40rem] h-[30rem] w-[90%] rounded-2xl bg-indigo-800/50 blur-3xl md:top-[44rem]" />
 
         {/* Top pill/badge */}
-        <div className="z-10 inline-block rounded-lg border border-indigo-400/20 bg-indigo-800/20 px-3 py-1.5 font-semibold uppercase leading-4 tracking-tight sm:text-sm">
+        <div className="z-10 inline-block rounded-lg border border-indigo-400/20 bg-indigo-800/20 px-3 py-1.5 font-semibold uppercase leading-4 tracking-tight text-xs sm:text-sm">
           <span className="bg-gradient-to-b from-indigo-200 to-indigo-400 bg-clip-text text-transparent">
             Core Features
           </span>
@@ -78,19 +78,19 @@ const ImageSection = () => {
         {/* Main heading */}
         <h2
           id="syntax-ui-title"
-          className="z-10 mt-6 inline-block bg-gradient-to-b from-white to-indigo-100 bg-clip-text px-2 text-center text-5xl font-bold tracking-tighter text-transparent md:text-6xl"
+          className="z-10 mt-4 sm:mt-6 inline-block bg-gradient-to-b from-white to-indigo-100 bg-clip-text px-2 text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-transparent"
         >
           See Basecamp <br /> in action
         </h2>
 
         {/* Feature selection tabs */}
-        <div className="z-20 mt-8 w-full max-w-4xl px-6">
-          <div className="flex justify-center gap-4">
+        <div className="z-20 mt-4 sm:mt-8 w-full max-w-4xl px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-1.5 sm:gap-4">
             {ImageTabs.map((tab, index) => (
               <button
                 key={index}
-                onClick={() => handleImageChange(index + 1)}
-                className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition-all duration-200 hover:bg-indigo-900/20 ${
+                onClick={() => handleImageChange(index)}
+                className={`flex items-center gap-2 rounded-lg border px-3 sm:px-4 py-1.5 sm:py-2 transition-all duration-200 hover:bg-indigo-900/20 ${
                   activeImage === index + 1
                     ? "border-indigo-500/50 bg-indigo-900/30"
                     : "border-white/5 bg-transparent"
@@ -110,31 +110,34 @@ const ImageSection = () => {
         </div>
 
         {/* Image display area */}
-        <div className="z-10 mt-10 h-[36rem] w-full overflow-hidden">
-          <div className="relative mx-auto max-w-5xl px-6">
-            {Images.map((image, index) => (
-              <div key={index} data-image-number={image.imageNumber} className="relative">
-                {activeImage === image.imageNumber && (
-                  <>
-                    <motion.div
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
+        <div className="z-10 mt-4 sm:mt-10 h-[20rem] sm:h-[24rem] md:h-[28rem] lg:h-[36rem] w-full overflow-hidden">
+          <div className="relative mx-auto max-w-5xl px-4 sm:px-6 h-full">
+            <AnimatePresence mode="wait">
+              {Images.map((image, index) => (
+                activeImage === image.imageNumber && (
+                  <motion.div
+                    key={image.imageNumber}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative h-full"
+                  >
+                    <div className="absolute inset-0 flex items-end">
                       <Image
                         src={image.imageSource}
-                        alt={`Image ${image.imageNumber}`}
+                        alt={`${ImageTabs[index].name} feature image`}
                         width={1920}
                         height={1080}
                         priority={image.imageNumber === 1}
-                        className="w-full rounded-xl border border-white/5 shadow-2xl"
+                        className="w-full rounded-xl border border-white/5 shadow-2xl object-cover"
                       />
-                    </motion.div>
+                    </div>
                     <div className="absolute bottom-0 h-1/2 w-full rounded-b-xl bg-gradient-to-b from-transparent via-gray-950/70 to-gray-950" />
-                  </>
-                )}
-              </div>
-            ))}
+                  </motion.div>
+                )
+              ))}
+            </AnimatePresence>
           </div>
         </div>
       </section>
