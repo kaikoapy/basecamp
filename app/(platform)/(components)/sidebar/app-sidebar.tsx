@@ -359,7 +359,17 @@ export function AppSidebar({
                   height={320}
                   quality={100}
                   priority
-                  className="h-6 w-auto dark:invert"
+                  className="hidden md:block h-6 w-auto dark:invert"
+                  style={{ objectFit: 'contain' }}
+                />
+                <Image
+                  src="/Basecamp-B-logo.png"
+                  alt="Basecamp Logo"
+                  width={320}
+                  height={320}
+                  quality={100}
+                  priority
+                  className="block md:hidden h-6 w-auto dark:invert"
                   style={{ objectFit: 'contain' }}
                 />
               </Link>

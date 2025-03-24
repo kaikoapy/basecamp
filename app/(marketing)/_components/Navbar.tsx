@@ -124,9 +124,9 @@ export function Navigation() {
     <header
       className={cn(
         "animate-slide-down-fade fixed inset-x-3 top-4 z-50 mx-auto flex max-w-6xl transform-gpu justify-center rounded-xl border border-transparent px-3 py-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1.03)] will-change-transform",
-        open === true ? "h-52" : "h-16",
+        open === true ? "h-[320px]" : "h-16",
         scrolled || open === true
-          ? "backdrop-blur-nav max-w-3xl border-gray-100 bg-white/80 shadow-xl shadow-black/5 dark:border-white/15 dark:bg-black/70"
+          ? "backdrop-blur-nav max-w-3xl border-gray-100 bg-white dark:border-white/15 dark:bg-gray-950"
           : "bg-white/0 dark:bg-gray-950/0",
       )}
     >
@@ -140,7 +140,17 @@ export function Navigation() {
               height={320}
               quality={100}
               priority
-              className="w-28 md:w-40 dark:invert"
+              className="hidden md:block w-28 md:w-40 dark:invert"
+              style={{ objectFit: 'contain' }}
+            />
+            <Image
+              src="/Basecamp-B-logo.png"
+              alt="Basecamp Logo"
+              width={320}
+              height={320}
+              quality={100}
+              priority
+              className="block md:hidden w-8 dark:invert"
               style={{ objectFit: 'contain' }}
             />
           </Link>
@@ -228,60 +238,71 @@ export function Navigation() {
                 </Button>
               </Link>
               <Link href="/waitlist">
-              <Button className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
+                <Button className="inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-5 py-3 font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
                   Request Access
                 </Button>
               </Link>
             </div>
           )}
 
-          <button
-            type="button"
-            aria-label="Toggle menu"
-            onClick={() => setOpen(!open)}
-            className="inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:focus:ring-gray-700 md:hidden"
-          >
-            {open ? (
-              <RiCloseLine className="size-6" />
+          <div className="flex items-center gap-2 md:hidden">
+            {user ? (
+              <Link href="/dashboard">
+                <Button className="inline-flex h-9 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-3 py-2 text-sm font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
+                  Open
+                </Button>
+              </Link>
             ) : (
-              <RiMenuLine className="size-6" />
+              <Link href="/waitlist">
+                <Button className="inline-flex h-9 cursor-pointer items-center justify-center gap-1 rounded-xl border-b-[1.5px] border-[#5553d4] bg-gradient-to-b from-[#6a68f1] to-[#5553d4] px-3 py-2 text-sm font-medium tracking-wide text-white shadow-[0_0_0_2px_rgba(0,0,0,0.04),0_0_14px_0_rgba(106,104,241,0.19)] transition-all duration-200 ease-in-out hover:shadow-[#6a68f1]/30 active:scale-[0.98]">
+                  Request Access
+                </Button>
+              </Link>
             )}
-          </button>
+            <button
+              type="button"
+              aria-label="Toggle menu"
+              onClick={() => setOpen(!open)}
+              className="inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:focus:ring-gray-700"
+            >
+              {open ? (
+                <RiCloseLine className="size-6" />
+              ) : (
+                <RiMenuLine className="size-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {open && (
-          <div className="mt-4 space-y-4 md:hidden">
-            <div className="space-y-2">
-              <div className="font-medium px-3">Features</div>
-              {features.map((feature) => (
-                <Link
-                  key={feature.title}
-                  href={feature.href}
-                  className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-                >
-                  {feature.title}
-                </Link>
-              ))}
-            </div>
-            <div className="space-y-2">
-              <div className="font-medium px-3">About</div>
-              {about.map((resource) => (
-                <Link
-                  key={resource.title}
-                  href={resource.href}
-                  className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-                >
-                  {resource.title}
-                </Link>
-              ))}
-            </div>
+          <div className="mt-6 space-y-4 md:hidden">
+            <Link
+              href="/features"
+              className="flex w-full items-center justify-end rounded-lg px-4 py-3 text-[15px] font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800/50"
+            >
+              Features
+            </Link>
+            <Link
+              href="/about"
+              className="flex w-full items-center justify-end rounded-lg px-4 py-3 text-[15px] font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800/50"
+            >
+              About
+            </Link>
             <Link
               href={siteConfig.baseLinks.pricing}
-              className="block rounded-lg px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800"
+              className="flex w-full items-center justify-end rounded-lg px-4 py-3 text-[15px] font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800/50"
             >
               Pricing
             </Link>
+            {!user && (
+              <Link
+                href="/sign-in"
+                className="flex w-full items-center justify-end rounded-lg px-4 py-3 text-[15px] font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-gray-800/50"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         )}
       </div>
