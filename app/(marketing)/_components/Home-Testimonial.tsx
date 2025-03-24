@@ -18,7 +18,7 @@ export default function Testimonial() {
             Basecamp is the perfect tool for any sales team.
             </span>{" "}
             <span className="text-muted-foreground">
-            I can now find everything I need in one place, which means I spend less time searching and more time connecting with customers. It's made my job so much easier!
+            I can now find everything I need in one place, which means I spend less time searching and more time connecting with customers. It&apos;s made my job so much easier!
             </span>
           </blockquote>
           <figcaption className="mt-4 sm:mt-6 flex items-center gap-x-3 sm:gap-x-4 pl-6">
