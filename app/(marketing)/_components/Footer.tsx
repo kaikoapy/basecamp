@@ -16,6 +16,10 @@ const navigation = {
     { name: "About", href: "/about", external: false },
     { name: "Contact", href: "#", external: true },
     { name: "FAQs", href: "/pricing#faq-title", external: false },
+    { name: "Bestup", href: "#", external: false, comingSoon: true },
+    { name: "Fastermind", href: "#", external: false, comingSoon: true },
+    { name: "ReliablePDF", href: "#", external: false, comingSoon: true },
+    { name: "SuperFast", href: "#", external: false, comingSoon: true },
   ],
   legal: [
     { name: "Privacy", href: "/privacy", external: false },
@@ -145,6 +149,11 @@ export default function Footer() {
                               aria-hidden="true"
                               className="size-full shrink-0 text-gray-900 dark:text-gray-300"
                             />
+                          </div>
+                        )}
+                        {item.comingSoon && (
+                          <div className="ml-1.5 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                            Coming Soon
                           </div>
                         )}
                       </Link>
