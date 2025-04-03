@@ -83,7 +83,7 @@ export default function PrivacyPage() {
             If you have any questions about this Privacy Policy, please contact us at:
           </p>
           <p>
-            Email: support@dealerbasecamp.com<br />
+            Email: support@dealershipt.com<br />
             Address: 2921 SW 11th Street, Miami, FL 33135
           </p>
         </section>

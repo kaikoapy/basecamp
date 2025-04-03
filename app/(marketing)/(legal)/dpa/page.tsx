@@ -83,7 +83,7 @@ export default function DPAPage() {
             For any questions regarding this DPA, please contact our Data Protection Officer at:
           </p>
           <p>
-            Email: support@dealerbasecamp.com<br />
+            Email: support@dealershipt.com<br />
             Address: 2921 SW 11th Street, Miami, FL 33135
           </p>
         </section>

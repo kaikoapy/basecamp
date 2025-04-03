@@ -48,7 +48,7 @@ export default function Footer() {
                 Got a question?
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                support@dealerbasecamp.com
+                support@dealershipt.com
               </p>
             </div>
             <div className="flex space-x-6">
@@ -188,7 +188,7 @@ export default function Footer() {
         </div>
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:mt-20 sm:flex-row lg:mt-0 dark:border-gray-800">
           <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} Dealer Basecamp, Inc. All rights
+            &copy; {new Date().getFullYear()} Dealershipt, Inc. All rights
             reserved.
           </p>
           <div className="rounded-full border border-gray-200 py-1 pl-1 pr-2 dark:border-gray-800">
